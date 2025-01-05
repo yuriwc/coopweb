@@ -1,16 +1,15 @@
-import { Cooperativa } from "@/src/model/cooperativas";
-import { Card } from "@nextui-org/card";
-import { Link } from "@nextui-org/link";
 import Image from "next/image";
+import TablePassegers from "./table-passegers";
+import { Funcionario } from "@/src/model/funcionario";
 
-export default async function Home() {
+const App = async ({ params }: { params: { id: string } }) => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/cooperativa/78e32edc-1a78-4c55-af28-eecf02c67436`,
+    `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/${params.id}/funcionarios`,
     {
       method: "GET",
       headers: {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN}`,
-        "Content-Type": "application/json", // Opcional, mas recomendado para APIs REST.
+        "Content-Type": "application/json",
       },
     },
   );
@@ -19,32 +18,15 @@ export default async function Home() {
     console.error("Erro na requisição:", response.status, response.statusText);
     return null;
   }
-  const cooperativas = await response.json();
+  const funcionarios = (await response.json()) as Funcionario[];
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
         <h1 className="text-4xl font-bold text-center sm:text-left">
-          Bem vindo ao CoopWeb
+          Você está em Empresa 1
         </h1>
-        <p className="text-lg text-center sm:text-left">
-          Selecione em qual empresa deseja entrar
-        </p>
-
-        {cooperativas.map((cooperativa: Cooperativa) => (
-          <Link
-            className="w-full"
-            href={`/${cooperativa.id}`}
-            key={cooperativa.id}
-          >
-            <Card
-              isHoverable
-              isPressable
-              className="w-full max-w-[400px] p-4 flex flex-col gap-2 items-center"
-            >
-              <span className="text-lg font-bold">{cooperativa.nome}</span>
-            </Card>
-          </Link>
-        ))}
+        <p className="text-lg text-center sm:text-left">O que deseja fazer?</p>
+        <TablePassegers funcionarios={funcionarios} empresa={params.id} />
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
         <a
@@ -95,4 +77,6 @@ export default async function Home() {
       </footer>
     </div>
   );
-}
+};
+
+export default App;
