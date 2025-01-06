@@ -46,7 +46,10 @@ export default function App({ setSelectedPlan }: RadioGroupProps) {
       >
         Apanha
       </CustomRadio>
-      <CustomRadio description="Levar passageiro para casa" value="retprno">
+      <CustomRadio
+        description="Levar passageiro da fábrica para casa"
+        value="Retorno"
+      >
         Retorno
       </CustomRadio>
       <CustomRadio

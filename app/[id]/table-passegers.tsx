@@ -53,7 +53,6 @@ const TablePassegers = ({ funcionarios, empresa }: TablePassegersProps) => {
     <div className="flex flex-col gap-3">
       <Table
         aria-label="Tabela de funciários de uma empresa"
-        color="default"
         selectionMode="multiple"
         onSelectionChange={(selected: Selection) => {
           if (selected instanceof Set) {

@@ -81,7 +81,6 @@ export default function App({ isOpen, onOpen, passagers, empresa }: Props) {
     <>
       <Button onPress={() => onOpen(true)}>Solicitar Viagem</Button>
       <Drawer
-        classNames={{ backdrop: "backdrop" }}
         isOpen={isOpen}
         motionProps={{
           variants: {
@@ -104,7 +103,7 @@ export default function App({ isOpen, onOpen, passagers, empresa }: Props) {
                 Solicitar Viagem
               </DrawerHeader>
               <DrawerBody>
-                <div className="flex flex-col gap-4 items-start bg-gray-300 bg-opacity-10 p-4 rounded-lg">
+                <div className="flex flex-col gap-4 items-start p-4 rounded-lg">
                   <h3>Passageiros</h3>
                   <span>Quantidade de passageiros: {passagers.length}</span>
                   <div className="space-y-4 flex flex-col items-start">

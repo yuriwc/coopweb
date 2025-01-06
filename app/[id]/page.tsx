@@ -1,6 +1,7 @@
 import Image from "next/image";
 import TablePassegers from "./table-passegers";
 import { Funcionario } from "@/src/model/funcionario";
+import { ThemeSwitcher } from "../components/theme-switcher";
 
 const App = async ({ params }: { params: { id: string } }) => {
   const response = await fetch(
@@ -74,6 +75,7 @@ const App = async ({ params }: { params: { id: string } }) => {
           />
           Go to nextjs.org →
         </a>
+        <ThemeSwitcher />
       </footer>
     </div>
   );

@@ -19,7 +19,7 @@ export default async function Home() {
     console.error("Erro na requisição:", response.status, response.statusText);
     return null;
   }
-  const cooperativas = await response.json();
+  const empresas = await response.json();
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
@@ -30,18 +30,14 @@ export default async function Home() {
           Selecione em qual empresa deseja entrar
         </p>
 
-        {cooperativas.map((cooperativa: Cooperativa) => (
-          <Link
-            className="w-full"
-            href={`/${cooperativa.id}`}
-            key={cooperativa.id}
-          >
+        {empresas.map((empresa: Cooperativa) => (
+          <Link className="w-full" href={`/${empresa.id}`} key={empresa.id}>
             <Card
               isHoverable
               isPressable
               className="w-full max-w-[400px] p-4 flex flex-col gap-2 items-center"
             >
-              <span className="text-lg font-bold">{cooperativa.nome}</span>
+              <span className="text-lg font-bold">{empresa.nome}</span>
             </Card>
           </Link>
         ))}
