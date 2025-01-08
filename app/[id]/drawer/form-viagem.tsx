@@ -7,7 +7,7 @@ import {
   DrawerFooter,
   DrawerHeader,
 } from "@nextui-org/drawer";
-import TipoViagem from "./tipoViagem";
+import TipoViagem from "../tipoViagem";
 import { User } from "@nextui-org/user";
 import { useState } from "react";
 import { UUID } from "crypto";

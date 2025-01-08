@@ -6,7 +6,7 @@ export default {
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/@nextui-org/theme/dist/components/(button|card|chip|drawer|dropdown|input|link|pagination|radio|table|user|ripple|spinner|modal|menu|divider|popover|form|checkbox|spacer|avatar).js"
+    "./node_modules/@nextui-org/theme/dist/components/(button|calendar|card|checkbox|chip|date-input|drawer|dropdown|input|link|pagination|radio|table|user|ripple|spinner|form|modal|menu|divider|popover|spacer|avatar).js"
   ],
   theme: {
     extend: {

@@ -12,7 +12,8 @@ import {
   Selection,
 } from "@nextui-org/table";
 import React, { useEffect, useState } from "react";
-import Drawer from "./drawer";
+import FormViagem from "./drawer/form-viagem";
+import FormViagemProgramada from "./drawer/form-viagem-programada";
 
 interface TablePassegersProps {
   funcionarios: Funcionario[];
@@ -64,12 +65,20 @@ const TablePassegers = ({ funcionarios, empresa }: TablePassegersProps) => {
           }
         }}
         topContent={
-          <Drawer
-            isOpen={isOpen}
-            onOpen={setOpen}
-            passagers={selected}
-            empresa={empresa}
-          />
+          <div>
+            <FormViagem
+              isOpen={isOpen}
+              onOpen={setOpen}
+              passagers={selected}
+              empresa={empresa}
+            />
+            <FormViagemProgramada
+              isOpen={isOpen}
+              onOpen={setOpen}
+              passagers={selected}
+              empresa={empresa}
+            />
+          </div>
         }
       >
         <TableHeader columns={columns}>

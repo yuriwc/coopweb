@@ -17,7 +17,7 @@ export const CustomRadio = (props: Props) => {
       classNames={{
         base: cn(
           "inline-flex m-0 bg-content1 hover:bg-content2",
-          "flex-row-reverse max-w-[300px] cursor-pointer rounded-lg gap-4 p-4 border-2 border-transparent",
+          "flex-row max-w-[300px] cursor-pointer rounded-lg gap-4 p-4 border-2 border-transparent",
           "data-[selected=true]:border-primary",
         ),
       }}
@@ -40,29 +40,14 @@ export default function App({ setSelectedPlan }: RadioGroupProps) {
       description="Selecione o plano de viagem"
       label="Plans"
     >
-      <CustomRadio
-        description="Buscar passageiro em casa para levar para fábrica"
-        value="Apanha"
-      >
+      <CustomRadio description="" value="Apanha">
         Apanha
       </CustomRadio>
-      <CustomRadio
-        description="Levar passageiro da fábrica para casa"
-        value="Retorno"
-      >
+      <CustomRadio description="" value="Retorno">
         Retorno
       </CustomRadio>
-      <CustomRadio
-        description="Buscar passageiro em casa e levar de volta após expediente"
-        value="apanhaeretorno"
-      >
+      <CustomRadio description="" value="apanhaeretorno">
         Apanha e Retorno
-      </CustomRadio>
-      <CustomRadio
-        description="Viagem programada para uma hora específica"
-        value="programada"
-      >
-        Programada
       </CustomRadio>
     </RadioGroup>
   );
