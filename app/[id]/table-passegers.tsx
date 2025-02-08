@@ -10,7 +10,7 @@ import {
   TableCell,
   getKeyValue,
   Selection,
-} from "@nextui-org/table";
+} from "@heroui/table";
 import React, { useEffect, useState } from "react";
 import FormViagem from "./drawer/form-viagem";
 import FormViagemProgramada from "./drawer/form-viagem-programada";
@@ -42,6 +42,7 @@ const columns = [
 const TablePassegers = ({ funcionarios, empresa }: TablePassegersProps) => {
   const [isClient, setIsClient] = useState(false);
   const [isOpen, setOpen] = useState(false);
+  const [openProgramada, setOpenProgramada] = useState(false);
   const [selected, setSelected] = useState<Funcionario[]>([]);
 
   useEffect(() => {
@@ -65,7 +66,7 @@ const TablePassegers = ({ funcionarios, empresa }: TablePassegersProps) => {
           }
         }}
         topContent={
-          <div>
+          <div className="flex justify-between">
             <FormViagem
               isOpen={isOpen}
               onOpen={setOpen}
@@ -73,8 +74,8 @@ const TablePassegers = ({ funcionarios, empresa }: TablePassegersProps) => {
               empresa={empresa}
             />
             <FormViagemProgramada
-              isOpen={isOpen}
-              onOpen={setOpen}
+              isOpen={openProgramada}
+              onOpen={setOpenProgramada}
               passagers={selected}
               empresa={empresa}
             />

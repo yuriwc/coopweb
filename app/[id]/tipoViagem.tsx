@@ -1,5 +1,5 @@
-import { Radio, RadioGroup } from "@nextui-org/radio";
-import { cn } from "@nextui-org/theme";
+import { Radio, RadioGroup } from "@heroui/radio";
+import { cn } from "@heroui/theme";
 import { Dispatch, SetStateAction } from "react";
 
 interface Props {

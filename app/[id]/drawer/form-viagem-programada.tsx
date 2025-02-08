@@ -1,21 +1,28 @@
 import { Funcionario } from "@/src/model/funcionario";
-import { Button } from "@nextui-org/button";
-import { Spacer } from "@nextui-org/spacer";
+import { Button } from "@heroui/button";
+import { Spacer } from "@heroui/spacer";
 import {
   Drawer,
   DrawerBody,
   DrawerContent,
   DrawerFooter,
   DrawerHeader,
-} from "@nextui-org/drawer";
+} from "@heroui/drawer";
 import TipoViagem from "../tipoViagem";
-import { User } from "@nextui-org/user";
+import { User } from "@heroui/user";
 import { useState } from "react";
-import { DateValue, RangeCalendar, RangeValue } from "@nextui-org/calendar";
+import { DateValue, RangeCalendar, RangeValue } from "@heroui/calendar";
 import { today, getLocalTimeZone, isWeekend } from "@internationalized/date";
-import { Checkbox } from "@nextui-org/checkbox";
+import { Checkbox } from "@heroui/checkbox";
 import { useLocale } from "@react-aria/i18n";
-import { TimeInput, TimeInputValue } from "@nextui-org/date-input";
+import { TimeInput, TimeInputValue } from "@heroui/date-input";
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+} from "@heroui/modal";
 
 interface Props {
   isOpen: boolean;
@@ -104,7 +111,7 @@ export default function App({ isOpen, onOpen, passagers, empresa }: Props) {
     <>
       <Button onPress={() => onOpen(true)}>Programar Viagem</Button>
 
-      <Drawer
+      <Modal
         isOpen={isOpen}
         onOpenChange={onOpen}
         motionProps={{
@@ -114,14 +121,14 @@ export default function App({ isOpen, onOpen, passagers, empresa }: Props) {
           },
         }}
       >
-        <DrawerContent>
+        <ModalContent>
           {(onClose) => (
             <>
-              <DrawerHeader className="flex flex-col gap-1">
+              <ModalHeader className="flex flex-col gap-1">
                 Solicitar Viagem
-              </DrawerHeader>
+              </ModalHeader>
 
-              <DrawerBody className="h-[80vh] overflow-y-auto">
+              <ModalBody className="h-[80vh] overflow-y-auto">
                 <section className="flex flex-col gap-4">
                   <h3>Passageiros</h3>
                   <p>Quantidade de passageiros: {passagers.length}</p>
@@ -153,7 +160,6 @@ export default function App({ isOpen, onOpen, passagers, empresa }: Props) {
                 />
 
                 <RangeCalendar
-                  className="w-full"
                   aria-label="Data da Viagem"
                   value={value}
                   onChange={setValue}
@@ -167,20 +173,20 @@ export default function App({ isOpen, onOpen, passagers, empresa }: Props) {
                 >
                   Evitar fins de semana
                 </Checkbox>
-              </DrawerBody>
+              </ModalBody>
 
-              <DrawerFooter className="flex justify-end gap-2">
+              <ModalFooter className="flex justify-end gap-2">
                 <Button color="danger" variant="light" onPress={onClose}>
                   Cancelar
                 </Button>
                 <Button color="primary" onPress={handleSolicitarViagem}>
                   Solicitar Viagem
                 </Button>
-              </DrawerFooter>
+              </ModalFooter>
             </>
           )}
-        </DrawerContent>
-      </Drawer>
+        </ModalContent>
+      </Modal>
     </>
   );
 }

@@ -1,16 +1,17 @@
 import { Funcionario } from "@/src/model/funcionario";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import {
   Drawer,
   DrawerBody,
   DrawerContent,
   DrawerFooter,
   DrawerHeader,
-} from "@nextui-org/drawer";
+} from "@heroui/drawer";
 import TipoViagem from "../tipoViagem";
-import { User } from "@nextui-org/user";
+import { User } from "@heroui/user";
 import { useState } from "react";
 import { UUID } from "crypto";
+import { TimeInput, TimeInputValue } from "@heroui/date-input";
 interface Props {
   isOpen: boolean;
   onOpen: (open: boolean) => void;
@@ -20,6 +21,9 @@ interface Props {
 
 export default function App({ isOpen, onOpen, passagers, empresa }: Props) {
   const [selectedPlan, setSelectedPlan] = useState<string>("");
+  const [horaViagem, setHoraViagem] = useState<TimeInputValue | null>(null);
+  const [horaRetorno, setHoraRetorno] = useState<TimeInputValue | null>(null);
+
   function validate() {
     const cidade = [] as string[];
     passagers.forEach((passager) => {
@@ -75,7 +79,6 @@ export default function App({ isOpen, onOpen, passagers, empresa }: Props) {
       },
     );
     const result = await response.json();
-    console.log(result);
   }
   return (
     <>
@@ -120,6 +123,23 @@ export default function App({ isOpen, onOpen, passagers, empresa }: Props) {
                   </div>
                 </div>
                 <TipoViagem setSelectedPlan={setSelectedPlan} />
+                <TimeInput
+                  hourCycle={24}
+                  isRequired
+                  label="Hora da viagem"
+                  onChange={setHoraViagem}
+                  value={horaViagem}
+                />
+
+                {selectedPlan === "apanhaeretorno" && (
+                  <TimeInput
+                    hourCycle={24}
+                    isRequired
+                    label="Hora do retorno"
+                    onChange={setHoraRetorno}
+                    value={horaRetorno}
+                  />
+                )}
               </DrawerBody>
               <DrawerFooter>
                 <Button color="danger" variant="light" onPress={onClose}>

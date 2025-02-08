@@ -43,7 +43,7 @@ const App = async ({ params }: { params: { id: string } }) => {
             width={16}
             height={16}
           />
-          Learn
+          Desenvolvido por Yuri Cavalcante
         </a>
         <a
           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
@@ -73,7 +73,7 @@ const App = async ({ params }: { params: { id: string } }) => {
             width={16}
             height={16}
           />
-          Go to nextjs.org →
+          Algo deu errado? Entre em contato com o suporte →
         </a>
         <ThemeSwitcher />
       </footer>
