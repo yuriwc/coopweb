@@ -4,6 +4,7 @@ import { Funcionario } from "@/src/model/funcionario";
 import { ThemeSwitcher } from "../components/theme-switcher";
 
 const App = async ({ params }: { params: { id: string } }) => {
+  const { id } = await params;
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/${params.id}/funcionarios`,
     {
