@@ -5,12 +5,12 @@ import Image from "next/image";
 
 export default async function Home() {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/cooperativa/78e32edc-1a78-4c55-af28-eecf02c67436`,
+    `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/cooperativa/77c73ddc-1331-427a-b2b2-031a55ff8a73`,
     {
       method: "GET",
       headers: {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN}`,
-        "Content-Type": "application/json", // Opcional, mas recomendado para APIs REST.
+        "Content-Type": "application/json",
       },
     },
   );
