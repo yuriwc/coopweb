@@ -12,8 +12,11 @@ import {
   Selection,
 } from "@heroui/table";
 import React, { useEffect, useState } from "react";
-import FormViagem from "./drawer/form-viagem";
 import FormViagemProgramada from "./drawer/form-viagem-programada";
+import Menu from "./menu";
+import { Button } from "@heroui/button";
+import { usePathname, useRouter } from "next/navigation";
+import Icon from "@/src/components/icon";
 
 interface TablePassegersProps {
   funcionarios: Funcionario[];
@@ -40,8 +43,9 @@ const columns = [
 ];
 
 const TablePassegers = ({ funcionarios, empresa }: TablePassegersProps) => {
+  const router = useRouter();
+  const currentPath = usePathname();
   const [isClient, setIsClient] = useState(false);
-  const [isOpen, setOpen] = useState(false);
   const [openProgramada, setOpenProgramada] = useState(false);
   const [selected, setSelected] = useState<Funcionario[]>([]);
 
@@ -50,6 +54,10 @@ const TablePassegers = ({ funcionarios, empresa }: TablePassegersProps) => {
   }, []);
 
   if (!isClient) return null;
+
+  const handleCreate = () => {
+    router.push(`${currentPath}/passegers`);
+  };
 
   return (
     <div className="flex flex-col gap-3">
@@ -66,19 +74,22 @@ const TablePassegers = ({ funcionarios, empresa }: TablePassegersProps) => {
           }
         }}
         topContent={
-          <div className="flex justify-between">
-            <FormViagem
-              isOpen={isOpen}
-              onOpen={setOpen}
-              passagers={selected}
-              empresa={empresa}
-            />
-            <FormViagemProgramada
-              isOpen={openProgramada}
-              onOpen={setOpenProgramada}
-              passagers={selected}
-              empresa={empresa}
-            />
+          <div className="flex items-center w-[90vh] gap-3 justify-between">
+            <div>
+              <Menu />
+              <span className="text-lg">Tabela de Colaboradores</span>
+            </div>
+            <div className="flex flex-row justify-center items-center">
+              <Button onPress={handleCreate} variant="ghost">
+                <Icon icon="iconoir:plus" height={30} />
+              </Button>
+              <FormViagemProgramada
+                isOpen={openProgramada}
+                onOpen={setOpenProgramada}
+                passagers={selected}
+                empresa={empresa}
+              />
+            </div>
           </div>
         }
       >

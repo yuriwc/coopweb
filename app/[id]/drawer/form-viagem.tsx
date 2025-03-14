@@ -79,6 +79,7 @@ export default function App({ isOpen, onOpen, passagers, empresa }: Props) {
       },
     );
     const result = await response.json();
+    console.log(result);
   }
   return (
     <>

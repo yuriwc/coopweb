@@ -1,10 +1,10 @@
 import Image from "next/image";
 import TablePassegers from "./table-passegers";
 import { Funcionario } from "@/src/model/funcionario";
-import { ThemeSwitcher } from "../components/theme-switcher";
+import { ThemeSwitcher } from "@/src/components/theme-switcher";
 
-const App = async ({ params }: { params: { id: string } }) => {
-  const { id } = await params;
+const App = async (props: { params: Promise<{ id: string }> }) => {
+  const params = await props.params;
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/${params.id}/funcionarios`,
     {

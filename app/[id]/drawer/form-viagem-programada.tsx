@@ -1,13 +1,6 @@
 import { Funcionario } from "@/src/model/funcionario";
 import { Button } from "@heroui/button";
 import { Spacer } from "@heroui/spacer";
-import {
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-} from "@heroui/drawer";
 import TipoViagem from "../tipoViagem";
 import { User } from "@heroui/user";
 import { useState } from "react";
@@ -106,10 +99,11 @@ export default function App({ isOpen, onOpen, passagers, empresa }: Props) {
     }
   }
 
-  // Componente principal
   return (
     <>
-      <Button onPress={() => onOpen(true)}>Programar Viagem</Button>
+      <Button variant="light" onPress={() => onOpen(true)}>
+        Solicitar Viagem
+      </Button>
 
       <Modal
         isOpen={isOpen}

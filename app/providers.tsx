@@ -2,6 +2,7 @@
 
 // app/providers.tsx
 import { HeroUIProvider } from "@heroui/system";
+import { ToastProvider } from "@heroui/toast";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { useEffect, useState } from "react";
 
@@ -16,6 +17,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <HeroUIProvider>
+      <ToastProvider />
       <NextThemesProvider attribute="class" defaultTheme="light">
         {children}
       </NextThemesProvider>
