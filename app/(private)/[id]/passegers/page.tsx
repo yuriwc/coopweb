@@ -1,7 +1,8 @@
 import Breadcrumb from "@/src/components/breadcrumb";
 import FormPassegers from "./form";
 
-const App = () => {
+const App = async (props: { params: Promise<{ id: string }> }) => {
+  const params = await props.params;
   const url = [
     {
       name: "Inicio",
@@ -15,7 +16,7 @@ const App = () => {
   return (
     <section>
       <Breadcrumb items={url} />
-      <FormPassegers />
+      <FormPassegers id={params.id} />
     </section>
   );
 };

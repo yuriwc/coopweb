@@ -8,6 +8,9 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/${params.id}/funcionarios`,
     {
+      next: {
+        tags: ["getFuncionarios"],
+      },
       method: "GET",
       headers: {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN}`,

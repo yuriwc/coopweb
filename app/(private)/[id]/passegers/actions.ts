@@ -1,12 +1,13 @@
 "use server";
-
-import { IColaborador } from "@/app/interface/IColaborador";
-import { IForm } from "@/app/interface/IForm";
+import { IColaborador } from "@/src/interface/IColaborador";
+import { IForm } from "@/src/interface/IForm";
 import { createFuncionario } from "@/src/services/funcionario";
+import { revalidateTag } from "next/cache";
 
 export async function handleSubmit(
   prevState: IForm<IColaborador>,
   formData: FormData,
+  idEmpresa: string,
 ) {
   const data = {
     nome: formData.get("nome") as string,
@@ -23,10 +24,7 @@ export async function handleSubmit(
   };
 
   try {
-    const response = await createFuncionario(
-      data,
-      "5f461c7e-07dd-437c-b3f4-76956a3945ff",
-    );
+    const response = await createFuncionario(data, idEmpresa);
 
     if (!response) {
       return {
@@ -35,6 +33,8 @@ export async function handleSubmit(
         data,
       };
     }
+
+    revalidateTag("getFuncionarios");
 
     return {
       success: true,

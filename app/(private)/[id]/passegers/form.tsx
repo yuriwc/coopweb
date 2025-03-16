@@ -11,26 +11,36 @@ import { Spacer } from "@heroui/spacer";
 import { addToast } from "@heroui/toast";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/navigation";
+import { IForm } from "@/src/interface/IForm";
+import { IColaborador } from "@/src/interface/IColaborador";
 
-export default function App() {
+interface Props {
+  id: string;
+}
+
+export default function App({ id }: Props) {
   const router = useRouter();
-  const [state, action, isLoading] = useActionState(handleSubmit, {
-    success: false,
-    message: "",
-    data: {
-      nome: "",
-      sobrenome: "",
-      rua: "",
-      numero: "",
-      bairro: "",
-      cidade: "",
-      cep: "",
-      estado: "",
-      telefone: "",
-      email: "",
-      referencia: "",
+  const [state, action, isLoading] = useActionState(
+    (prevState: IForm<IColaborador>, formData: FormData) =>
+      handleSubmit(prevState, formData, id),
+    {
+      success: false,
+      message: "",
+      data: {
+        nome: "",
+        sobrenome: "",
+        rua: "",
+        numero: "",
+        bairro: "",
+        cidade: "",
+        cep: "",
+        estado: "",
+        telefone: "",
+        email: "",
+        referencia: "",
+      },
     },
-  });
+  );
 
   useEffect(() => {
     if (state.success) {

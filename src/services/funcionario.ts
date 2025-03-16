@@ -1,4 +1,4 @@
-import { IColaborador } from "@/app/interface/IColaborador";
+import { IColaborador } from "../interface/IColaborador";
 
 export async function createFuncionario(
   data: IColaborador,
