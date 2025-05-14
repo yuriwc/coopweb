@@ -34,6 +34,7 @@ export async function handleSubmit(
     }
 
     cookieStore.set("token", response.token, { secure: true });
+
     return {
       success: true,
       data: {

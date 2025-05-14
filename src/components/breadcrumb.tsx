@@ -1,7 +1,7 @@
 "use client";
 
 import { Breadcrumbs, BreadcrumbItem } from "@heroui/breadcrumbs";
-import { redirect } from "next/navigation";
+import Link from "next/link";
 
 interface IProps {
   name: string;
@@ -13,15 +13,11 @@ interface AppProps {
 }
 
 export default function App({ items }: AppProps) {
-  function handleNavigate(url: string) {
-    redirect(url);
-  }
-
   return (
-    <Breadcrumbs className="absolute top-24 right-10 z-10">
+    <Breadcrumbs variant="bordered" className="absolute top-24 right-2 z-10">
       {items.map((item) => (
-        <BreadcrumbItem key={item.url} onPress={() => handleNavigate(item.url)}>
-          {item.name}
+        <BreadcrumbItem key={item.url}>
+          <Link href={item.url}>{item.name}</Link>
         </BreadcrumbItem>
       ))}
     </Breadcrumbs>

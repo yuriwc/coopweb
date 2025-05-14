@@ -1,7 +1,7 @@
-import Image from "next/image";
+import { ActionButton } from "@/src/components/ActionButton";
 import TablePassegers from "./table-passegers";
 import { Funcionario } from "@/src/model/funcionario";
-import { ThemeSwitcher } from "@/src/components/theme-switcher";
+import { Spacer } from "@heroui/spacer";
 
 const App = async (props: { params: Promise<{ id: string }> }) => {
   const params = await props.params;
@@ -24,62 +24,75 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
     return null;
   }
   const funcionarios = (await response.json()) as Funcionario[];
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <h1 className="text-4xl font-bold text-center sm:text-left">
-          Você está em Empresa 1
-        </h1>
-        <p className="text-lg text-center sm:text-left">O que deseja fazer?</p>
+    <div className="min-h-screen p-4 sm:p-8">
+      {/* Header */}
+      <header className="border-b border-neutral-200 dark:border-neutral-800 pb-4 mb-8">
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+            EMPRESA {params.id}
+          </h1>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="mb-12">
+        <div className="mb-8">
+          <p className="text-neutral-500 dark:text-neutral-400 mb-2">
+            O QUE DESEJA FAZER?
+          </p>
+          <div className="h-px bg-neutral-200 dark:bg-neutral-800 w-full my-4"></div>
+        </div>
         <TablePassegers funcionarios={funcionarios} empresa={params.id} />
+        <Spacer y={16} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <ActionButton
+            title="Acompanhar Viagens"
+            description="Monitoramento em tempo real"
+            href="/acompanhamento"
+            variant="secondary"
+          />
+
+          <ActionButton
+            title="Acompanhar Viagens"
+            description="Monitoramento em tempo real"
+            href="/acompanhamento"
+            variant="secondary"
+          />
+        </div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Desenvolvido por Yuri Cavalcante
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Algo deu errado? Entre em contato com o suporte →
-        </a>
-        <ThemeSwitcher />
+
+      {/* Footer */}
+      <footer className="fixed bottom-0 left-0 right-0 py-4 px-4 sm:px-8 border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950">
+        <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-sm text-neutral-500 dark:text-neutral-400">
+          <a
+            className="hover:text-neutral-900 dark:hover:text-white transition-colors flex items-center gap-1"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>DESENVOLVIDO POR YURI CAVALCANTE</span>
+          </a>
+          <span className="text-neutral-300 dark:text-neutral-600">|</span>
+          <a
+            className="hover:text-neutral-900 dark:hover:text-white transition-colors flex items-center gap-1"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>EXAMPLES</span>
+          </a>
+          <span className="text-neutral-300 dark:text-neutral-600">|</span>
+          <a
+            className="hover:text-neutral-900 dark:hover:text-white transition-colors flex items-center gap-1"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>SUPORTE →</span>
+          </a>
+        </div>
       </footer>
     </div>
   );

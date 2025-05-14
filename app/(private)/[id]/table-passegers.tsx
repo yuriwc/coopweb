@@ -12,11 +12,12 @@ import {
   Selection,
 } from "@heroui/table";
 import React, { useEffect, useState } from "react";
-import FormViagemProgramada from "./drawer/form-viagem-programada";
 import Menu from "./menu";
 import { Button } from "@heroui/button";
 import { usePathname, useRouter } from "next/navigation";
 import Icon from "@/src/components/icon";
+import FormViagem from "./modal/form-viagem";
+import { Spacer } from "@heroui/spacer";
 
 interface TablePassegersProps {
   funcionarios: Funcionario[];
@@ -46,8 +47,8 @@ const TablePassegers = ({ funcionarios, empresa }: TablePassegersProps) => {
   const router = useRouter();
   const currentPath = usePathname();
   const [isClient, setIsClient] = useState(false);
-  const [openProgramada, setOpenProgramada] = useState(false);
-  const [selected, setSelected] = useState<Funcionario[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [passagers, setPassagers] = useState<Funcionario[]>([]);
 
   useEffect(() => {
     setIsClient(true);
@@ -66,7 +67,7 @@ const TablePassegers = ({ funcionarios, empresa }: TablePassegersProps) => {
         selectionMode="multiple"
         onSelectionChange={(selected: Selection) => {
           if (selected instanceof Set) {
-            setSelected(
+            setPassagers(
               funcionarios.filter((funcionario) =>
                 selected.has(funcionario.id),
               ),
@@ -74,21 +75,28 @@ const TablePassegers = ({ funcionarios, empresa }: TablePassegersProps) => {
           }
         }}
         topContent={
-          <div className="flex items-center w-[90vh] gap-3 justify-between">
+          <div className="flex items-center gap-3 justify-between w-full">
             <div>
               <Menu />
               <span className="text-lg">Tabela de Colaboradores</span>
             </div>
-            <div className="flex flex-row justify-center items-center">
+            <div className="flex flex-row items-center">
               <Button onPress={handleCreate} variant="ghost">
                 <Icon icon="iconoir:plus" height={30} />
               </Button>
-              <FormViagemProgramada
-                isOpen={openProgramada}
-                onOpen={setOpenProgramada}
-                passagers={selected}
-                empresa={empresa}
-              />
+              <Spacer x={5} />
+              <div>
+                <Button variant="ghost" onPress={() => setIsModalOpen(true)}>
+                  Solicitar Viagem
+                </Button>
+
+                <FormViagem
+                  isOpen={isModalOpen}
+                  onOpen={setIsModalOpen}
+                  passagers={passagers}
+                  empresa={empresa}
+                />
+              </div>
             </div>
           </div>
         }

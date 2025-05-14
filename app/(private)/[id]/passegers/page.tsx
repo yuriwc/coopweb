@@ -5,12 +5,12 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
   const params = await props.params;
   const url = [
     {
-      name: "Inicio",
-      url: "#",
+      name: "Início",
+      url: `/${params.id}`,
     },
     {
-      name: "Cadastrar Passageiro",
-      url: "/passegers",
+      name: "Novo Passageiro",
+      url: `/passegers/${params.id}`,
     },
   ];
   return (

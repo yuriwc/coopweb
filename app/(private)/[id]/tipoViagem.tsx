@@ -37,8 +37,7 @@ export default function App({ setSelectedPlan }: RadioGroupProps) {
       onValueChange={(e) => {
         setSelectedPlan(e);
       }}
-      description="Selecione o plano de viagem"
-      label="Plans"
+      label="Selecione o plano de viagem"
     >
       <CustomRadio description="" value="Apanha">
         Apanha
