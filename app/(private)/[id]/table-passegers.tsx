@@ -22,6 +22,7 @@ import { Spacer } from "@heroui/spacer";
 interface TablePassegersProps {
   funcionarios: Funcionario[];
   empresa: string;
+  token: string;
 }
 
 const columns = [
@@ -43,7 +44,11 @@ const columns = [
   },
 ];
 
-const TablePassegers = ({ funcionarios, empresa }: TablePassegersProps) => {
+const TablePassegers = ({
+  funcionarios,
+  empresa,
+  token,
+}: TablePassegersProps) => {
   const router = useRouter();
   const currentPath = usePathname();
   const [isClient, setIsClient] = useState(false);
@@ -91,6 +96,7 @@ const TablePassegers = ({ funcionarios, empresa }: TablePassegersProps) => {
                 </Button>
 
                 <FormViagem
+                  token={token}
                   isOpen={isModalOpen}
                   onOpen={setIsModalOpen}
                   passagers={passagers}

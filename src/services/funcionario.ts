@@ -1,4 +1,5 @@
 import { IColaborador } from "../interface/IColaborador";
+import { getToken } from "../utils/token/get-token";
 
 export async function createFuncionario(
   data: IColaborador,
@@ -10,7 +11,7 @@ export async function createFuncionario(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN}`,
+        Authorization: `Bearer ${getToken()}`,
       },
       body: JSON.stringify(data),
     },

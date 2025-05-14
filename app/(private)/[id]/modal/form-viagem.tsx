@@ -1,13 +1,17 @@
+"use client";
+
 import { useState } from "react";
 import { Funcionario } from "@/src/model/funcionario";
 import TipoViagem from "../tipoViagem";
 import ShowToast from "@/src/components/Toast";
+import SelectCooperativas from "../select/cooperativas";
 
 interface Props {
   isOpen: boolean;
   onOpen: (open: boolean) => void;
   passagers: Funcionario[];
   empresa: string;
+  token: string;
 }
 
 export default function TripRequestModal({
@@ -15,8 +19,10 @@ export default function TripRequestModal({
   onOpen,
   passagers,
   empresa,
+  token,
 }: Props) {
   const [selectedPlan, setSelectedPlan] = useState<string>("");
+  const [cooperativa, setCooperativa] = useState<string>("");
 
   // Função de validação
   function validate() {
@@ -48,7 +54,7 @@ export default function TripRequestModal({
     return {
       empresaID: empresa,
       tipoViagem: selectedPlan,
-      cooperativaID: "77c73ddc-1331-427a-b2b2-031a55ff8a73",
+      cooperativaID: cooperativa,
       passageiros: passagersID,
     };
   }
@@ -64,7 +70,7 @@ export default function TripRequestModal({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN}`,
+            authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(data),
         },
@@ -108,6 +114,13 @@ export default function TripRequestModal({
 
           {/* Modal body */}
           <div className="max-h-[60vh] overflow-y-auto px-6 py-4">
+            <section className="mb-6">
+              <SelectCooperativas
+                setCooperativa={setCooperativa}
+                empresa={empresa}
+                token={token}
+              />
+            </section>
             <section className="mb-6">
               <h4 className="mb-2 text-sm font-medium text-gray-700">
                 Passageiros

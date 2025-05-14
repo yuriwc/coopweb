@@ -1,15 +1,18 @@
 import { Cooperativa } from "@/src/model/cooperativas";
 import { Card } from "@heroui/card";
 import { Link } from "@heroui/link";
+import { cookies } from "next/headers";
 import Image from "next/image";
 
 export default async function Home() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value || "";
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/findByUser/c260fb00-dffb-4aba-9ade-7e8112d498f7`,
+    `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/findByUser`,
     {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     },
