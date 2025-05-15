@@ -11,12 +11,13 @@ export async function createFuncionario(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
+        Authorization: `Bearer ${await getToken()}`,
       },
       body: JSON.stringify(data),
     },
   );
 
+  console.log(response, await getToken());
   if (!response.ok) {
     console.error("Erro na requisição:", response.status, response.statusText);
     return null;

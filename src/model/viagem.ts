@@ -14,3 +14,17 @@ export interface ViagemResumo {
   totalViagens: number;
   totalValor: number;
 }
+
+export interface ViagemTempoReal {
+  id: string;
+  nomePassageiro: string;
+  statusViagem: string;
+  enderecoOrigem: string;
+  enderecoDestino: string;
+  latitudeOrigem: number;
+  longitudeOrigem: number;
+  latitudeDestino: number;
+  longitudeDestino: number;
+  latitudeMotorista?: number;
+  longitudeMotorista?: number;
+}

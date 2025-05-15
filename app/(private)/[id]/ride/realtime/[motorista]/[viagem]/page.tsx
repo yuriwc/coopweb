@@ -10,6 +10,7 @@ import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import CarIcon from "@/src/assets/car.png";
 import CompanyIcon from "@/src/assets/office-building.png";
+import { ViagemTempoReal } from "@/src/model/viagem";
 
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
@@ -41,7 +42,7 @@ const destinoIcon = L.icon({
 });
 
 const Page = () => {
-  const [viagem, setViagem] = useState<any>(null);
+  const [viagem, setViagem] = useState<ViagemTempoReal | null>(null);
   const params = useParams();
   const motoristaID = params?.motorista as string;
 
@@ -93,64 +94,72 @@ const Page = () => {
           </div>
 
           {/* Mapa */}
-          <div className="h-[60vh] w-full border">
-            <MapContainer
-              center={[viagem.latitudeMotorista, viagem.longitudeMotorista]}
-              zoom={20}
-              scrollWheelZoom={false}
-              className="h-full w-full"
-            >
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
-                className="opacity-70"
-              />
-
-              {/* Linha tracejada até o destino */}
-              <Polyline
-                positions={[
-                  [viagem.latitudeMotorista, viagem.longitudeMotorista],
-                  [viagem.latitudeDestino, viagem.longitudeDestino],
-                ]}
-                pathOptions={{
-                  color: "#000",
-                  dashArray: "8 12",
-                  weight: 3,
-                  opacity: 0.8,
-                }}
-              />
-
-              {/* Marker do motorista */}
-              <Marker
-                position={[viagem.latitudeMotorista, viagem.longitudeMotorista]}
-                icon={motoristaIcon}
+          {(viagem.latitudeMotorista !== undefined && viagem.longitudeMotorista !== undefined) ? (
+            <div className="h-[60vh] w-full border">
+              <MapContainer
+                center={[viagem.latitudeMotorista, viagem.longitudeMotorista]}
+                zoom={20}
+                scrollWheelZoom={false}
+                className="h-full w-full"
               >
-                <Popup className="font-mono text-xs uppercase tracking-wider">
-                  <span style={{ color: "#000" }}>MOTORISTA</span>
-                </Popup>
-              </Marker>
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
+                  className="opacity-70"
+                />
 
-              {/* Marker de origem */}
-              <Marker
-                position={[viagem.latitudeOrigem, viagem.longitudeOrigem]}
-                icon={origemIcon}
-              >
-                <Popup className="font-mono text-xs uppercase tracking-wider">
-                  <span style={{ color: "#000" }}>ORIGEM</span>
-                </Popup>
-              </Marker>
+                {/* Linha tracejada até o destino */}
+                <Polyline
+                  positions={[
+                    [viagem.latitudeMotorista, viagem.longitudeMotorista],
+                    [viagem.latitudeDestino, viagem.longitudeDestino],
+                  ]}
+                  pathOptions={{
+                    color: "#000",
+                    dashArray: "8 12",
+                    weight: 3,
+                    opacity: 0.8,
+                  }}
+                />
 
-              {/* Marker de destino */}
-              <Marker
-                position={[viagem.latitudeDestino, viagem.longitudeDestino]}
-                icon={destinoIcon}
-              >
-                <Popup className="font-mono text-xs uppercase tracking-wider">
-                  <span style={{ color: "#000" }}>DESTINO</span>
-                </Popup>
-              </Marker>
-            </MapContainer>
-          </div>
+                {/* Marker do motorista */}
+                <Marker
+                  position={[viagem.latitudeMotorista, viagem.longitudeMotorista]}
+                  icon={motoristaIcon}
+                >
+                  <Popup className="font-mono text-xs uppercase tracking-wider">
+                    <span style={{ color: "#000" }}>MOTORISTA</span>
+                  </Popup>
+                </Marker>
+
+                {/* Marker de origem */}
+                <Marker
+                  position={[viagem.latitudeOrigem, viagem.longitudeOrigem]}
+                  icon={origemIcon}
+                >
+                  <Popup className="font-mono text-xs uppercase tracking-wider">
+                    <span style={{ color: "#000" }}>ORIGEM</span>
+                  </Popup>
+                </Marker>
+
+                {/* Marker de destino */}
+                <Marker
+                  position={[viagem.latitudeDestino, viagem.longitudeDestino]}
+                  icon={destinoIcon}
+                >
+                  <Popup className="font-mono text-xs uppercase tracking-wider">
+                    <span style={{ color: "#000" }}>DESTINO</span>
+                  </Popup>
+                </Marker>
+              </MapContainer>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-[60vh]">
+              <p className="text-white/60 uppercase tracking-widest">
+                Localização do motorista não disponível no momento.
+              </p>
+            </div>
+          )}
 
           <div className="text-center text-xs tracking-widest">
             ATUALIZANDO EM TEMPO REAL

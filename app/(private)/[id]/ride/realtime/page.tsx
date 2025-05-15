@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { ref, onValue } from "firebase/database";
 import { database } from "@/scripts/firebase-config";
 import ViagemCard from "@/src/components/ViagemCard";
+import { ViagemTempoReal } from "@/src/model/viagem";
 
 interface Viagem {
   id: string;
@@ -30,19 +31,22 @@ export default function Page() {
       if (!data) return;
 
       const viagensArray = Object.entries(data).map(
-        ([id, value]: [string, any]) => ({
-          id,
-          nomePassageiro: value.nomePassageiro,
-          statusViagem: value.statusViagem,
-          enderecoOrigem: value.enderecoOrigem,
-          enderecoDestino: value.enderecoDestino,
-          latitudeOrigem: value.latitudeOrigem,
-          longitudeOrigem: value.longitudeOrigem,
-          latitudeDestino: value.latitudeDestino,
-          longitudeDestino: value.longitudeDestino,
-          latitudeMotorista: value.latitudeMotorista,
-          longitudeMotorista: value.longitudeMotorista,
-        }),
+        ([id, value]: [string, unknown]) => {
+          const v = value as Partial<ViagemTempoReal>;
+          return {
+            id,
+            nomePassageiro: v.nomePassageiro ?? "",
+            statusViagem: v.statusViagem ?? "",
+            enderecoOrigem: v.enderecoOrigem ?? "",
+            enderecoDestino: v.enderecoDestino ?? "",
+            latitudeOrigem: v.latitudeOrigem ?? 0,
+            longitudeOrigem: v.longitudeOrigem ?? 0,
+            latitudeDestino: v.latitudeDestino ?? 0,
+            longitudeDestino: v.longitudeDestino ?? 0,
+            latitudeMotorista: v.latitudeMotorista, // opcional
+            longitudeMotorista: v.longitudeMotorista, // opcional
+          };
+        },
       );
 
       setViagens(viagensArray);
