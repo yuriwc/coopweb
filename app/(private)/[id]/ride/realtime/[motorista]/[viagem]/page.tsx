@@ -2,11 +2,14 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { ref, onValue } from "firebase/database";
 import { database } from "@/scripts/firebase-config";
 import "leaflet/dist/leaflet.css";
 import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
+import CarIcon from "@/src/assets/car.png";
+import CompanyIcon from "@/src/assets/office-building.png";
 
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
@@ -21,30 +24,30 @@ const Polyline = dynamic(
   { ssr: false },
 );
 
-// Ícones customizados no estilo Yeezy
+// Ícones customizados
 const motoristaIcon = L.icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/2909/2909777.png", // Ícone de carro minimalista
+  iconUrl: CarIcon.src,
   iconSize: [40, 40],
-  className: "", // Sem filtro para manter preto
 });
 
 const origemIcon = L.icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/744/744465.png", // Ícone de carro
-  iconSize: [48, 48],
-  className: "", // Sem filtro para manter preto
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/854/854878.png", // Ícone de carro parado
+  iconSize: [44, 44],
 });
 
 const destinoIcon = L.icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/484/484167.png", // Ícone de casa
+  iconUrl: CompanyIcon.src,
   iconSize: [48, 48],
-  className: "", // Sem filtro para manter preto
 });
 
 const Page = () => {
   const [viagem, setViagem] = useState<any>(null);
-  const motoristaID = "7622778a-59c0-4f55-805a-4da53db29ff9";
+  const params = useParams();
+  const motoristaID = params?.motorista as string;
 
   useEffect(() => {
+    if (!motoristaID) return;
+
     const viagensRef = ref(database, `/motoristas/${motoristaID}`);
     const unsubscribe = onValue(viagensRef, (snapshot) => {
       if (snapshot.exists()) {
@@ -53,14 +56,10 @@ const Page = () => {
     });
 
     return () => unsubscribe();
-  }, []);
-
-  // Estilo do mapa no tema Yeezy
-  const mapStyle = {};
+  }, [motoristaID]);
 
   return (
-    <div className="min-h-screen  p-4">
-      {/* Cabeçalho */}
+    <div className="min-h-screen p-4">
       <header className="border-b border-white pb-4 mb-6">
         <h1 className="text-2xl font-light tracking-widest uppercase">
           ACOMPANHAMENTO DE VIAGEM
@@ -100,7 +99,6 @@ const Page = () => {
               zoom={20}
               scrollWheelZoom={false}
               className="h-full w-full"
-              style={mapStyle}
             >
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -108,7 +106,7 @@ const Page = () => {
                 className="opacity-70"
               />
 
-              {/* Linha tracejada entre motorista e destino */}
+              {/* Linha tracejada até o destino */}
               <Polyline
                 positions={[
                   [viagem.latitudeMotorista, viagem.longitudeMotorista],
@@ -122,7 +120,7 @@ const Page = () => {
                 }}
               />
 
-              {/* Motorista */}
+              {/* Marker do motorista */}
               <Marker
                 position={[viagem.latitudeMotorista, viagem.longitudeMotorista]}
                 icon={motoristaIcon}
@@ -132,17 +130,17 @@ const Page = () => {
                 </Popup>
               </Marker>
 
-              {/* Origem */}
+              {/* Marker de origem */}
               <Marker
                 position={[viagem.latitudeOrigem, viagem.longitudeOrigem]}
                 icon={origemIcon}
               >
                 <Popup className="font-mono text-xs uppercase tracking-wider">
-                  <span style={{ color: "#000" }}>{viagem.nomePassageiro}</span>
+                  <span style={{ color: "#000" }}>ORIGEM</span>
                 </Popup>
               </Marker>
 
-              {/* Destino */}
+              {/* Marker de destino */}
               <Marker
                 position={[viagem.latitudeDestino, viagem.longitudeDestino]}
                 icon={destinoIcon}
@@ -154,7 +152,6 @@ const Page = () => {
             </MapContainer>
           </div>
 
-          {/* Rodapé */}
           <div className="text-center text-xs tracking-widest">
             ATUALIZANDO EM TEMPO REAL
           </div>
