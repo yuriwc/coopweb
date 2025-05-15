@@ -78,7 +78,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
           <ActionButton
             title="Acompanhar Viagens"
             description="Monitoramento em tempo real"
-            href="/acompanhamento"
+            href={`${params.id}/ride/realtime`}
             variant="secondary"
           />
         </div>
