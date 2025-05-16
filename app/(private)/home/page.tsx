@@ -1,5 +1,5 @@
 import { Cooperativa } from "@/src/model/cooperativas";
-import { Card } from "@heroui/card";
+import { Button } from "@heroui/button";
 import { cookies } from "next/headers";
 import Link from "next/link";
 
@@ -37,14 +37,11 @@ export default async function Home() {
         <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch justify-items-center">
           {empresas.map((empresa: Cooperativa) => (
             <Link className="w-full" href={`/${empresa.id}`} key={empresa.id}>
-              <Card
-                isHoverable
-                className="w-full h-full border rounded-none bg-white p-6 flex flex-col items-center transition hover:bg-black group"
-              >
+              <Button className="w-full h-full border rounded-none p-6 flex flex-col items-center transition hover:bg-black group">
                 <span className="text-base sm:text-lg font-light tracking-[0.18em] uppercase transition">
                   {empresa.nome}
                 </span>
-              </Card>
+              </Button>
             </Link>
           ))}
         </div>

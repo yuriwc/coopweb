@@ -3,6 +3,7 @@
 import { IForm } from "@/src/interface/IForm";
 import { login } from "@/src/services/user";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function handleSubmit(
   prevState: IForm<{ username: string; password: string }>,
@@ -33,16 +34,14 @@ export async function handleSubmit(
       };
     }
 
-    cookieStore.set("token", response.token, { secure: true });
+    // Ajuste para secure/sameSite conforme ambiente
+    const isProd = process.env.NODE_ENV === "production";
+    cookieStore.set("token", response.token, {
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+    });
 
-    return {
-      success: true,
-      data: {
-        username: "",
-        password: "",
-      },
-      message: "Login Efetuado com sucesso",
-    };
+    redirect("/home");
   } catch (error: unknown) {
     console.error("Erro ao enviar formulário:", error);
     return {

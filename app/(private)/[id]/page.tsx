@@ -87,7 +87,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
               variant="secondary"
             />
           </div>
-          <div className="w-full h-[180px]">
+          <div className="w-full h-[180px] mb-10">
             <ActionButton
               title="Monitoramento"
               description="Acompanhe as viagens dos seus colaboradores em tempo real"

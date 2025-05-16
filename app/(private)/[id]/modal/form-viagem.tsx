@@ -5,6 +5,14 @@ import { Funcionario } from "@/src/model/funcionario";
 import TipoViagem from "../tipoViagem";
 import ShowToast from "@/src/components/Toast";
 import SelectCooperativas from "../select/cooperativas";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from "@heroui/modal";
+import { Button } from "@heroui/button";
 
 interface Props {
   isOpen: boolean;
@@ -92,98 +100,83 @@ export default function TripRequestModal({
     }
   }
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex min-h-screen items-center justify-center p-4 text-center">
-        {/* Background overlay */}
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
-          onClick={() => onOpen(false)}
-        ></div>
+    <Modal isOpen={isOpen} onOpenChange={onOpen}>
+      <ModalContent>
+        {(onClose) => (
+          <>
+            <ModalHeader>
+              <h3 className="text-lg font-medium leading-6 text-gray-900">
+                Solicitar Viagem
+              </h3>
+            </ModalHeader>
+            <ModalBody>
+              <section className="mb-6">
+                <SelectCooperativas
+                  setCooperativa={setCooperativa}
+                  empresa={empresa}
+                  token={token}
+                />
+              </section>
+              <section className="mb-6">
+                <h4 className="mb-2 text-sm font-medium text-gray-700">
+                  Passageiros
+                </h4>
+                <p className="mb-4 text-sm text-gray-500">
+                  Quantidade de passageiros: {passagers.length}
+                </p>
 
-        {/* Modal container */}
-        <div className="relative w-full max-w-md transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all">
-          {/* Modal header */}
-          <div className="border-b border-gray-200 px-6 py-4">
-            <h3 className="text-lg font-medium leading-6 text-gray-900">
-              Solicitar Viagem
-            </h3>
-          </div>
-
-          {/* Modal body */}
-          <div className="max-h-[60vh] overflow-y-auto px-6 py-4">
-            <section className="mb-6">
-              <SelectCooperativas
-                setCooperativa={setCooperativa}
-                empresa={empresa}
-                token={token}
-              />
-            </section>
-            <section className="mb-6">
-              <h4 className="mb-2 text-sm font-medium text-gray-700">
-                Passageiros
-              </h4>
-              <p className="mb-4 text-sm text-gray-500">
-                Quantidade de passageiros: {passagers.length}
-              </p>
-
-              <div className="space-y-3">
-                {passagers.map((passager) => (
-                  <div
-                    key={passager.id}
-                    className="flex items-center space-x-3 border-b border-gray-100 py-2"
-                  >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 text-gray-500"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
+                <div className="space-y-3">
+                  {passagers.map((passager) => (
+                    <div
+                      key={passager.id}
+                      className="flex items-center space-x-3 border-b border-gray-100 py-2"
+                    >
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5 text-gray-500"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">
+                          {passager.name}
+                        </p>
+                        <p className="text-xs text-gray-500">{passager.phone}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">
-                        {passager.name}
-                      </p>
-                      <p className="text-xs text-gray-500">{passager.phone}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <TipoViagem setSelectedPlan={setSelectedPlan} />
-          </div>
-
-          {/* Modal footer */}
-          <div className="border-t border-gray-200 px-6 py-4">
-            <div className="flex justify-end space-x-3">
-              <button
-                type="button"
-                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onClick={() => onOpen(false)}
+                  ))}
+                </div>
+              </section>
+              <TipoViagem setSelectedPlan={setSelectedPlan} />
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                color="default"
+                variant="light"
+                onPress={onClose}
+                className="mr-2"
               >
                 Cancelar
-              </button>
-              <button
-                type="button"
-                className="rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onClick={handleSolicitarViagem}
+              </Button>
+              <Button
+                color="primary"
+                onPress={handleSolicitarViagem}
               >
                 Solicitar Viagem
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+              </Button>
+            </ModalFooter>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
   );
 }

@@ -5,10 +5,12 @@
 
 :root {
     --color-primary: #000;
+    --color-secondary: #fff;
 }
 
 .dark {
     --color-primary: #fff;
+    --color-secondary: #000;
 }
 
 body {

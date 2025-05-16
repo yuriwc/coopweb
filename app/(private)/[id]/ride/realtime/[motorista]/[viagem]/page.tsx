@@ -32,7 +32,7 @@ const motoristaIcon = L.icon({
 });
 
 const origemIcon = L.icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/854/854878.png", // Ícone de carro parado
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/854/854878.png",
   iconSize: [44, 44],
 });
 
@@ -61,7 +61,7 @@ const Page = () => {
   }, [motoristaID]);
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="min-h-screen p-4 pb-20">
       <header className="border-b border-white pb-4 mb-6">
         <button
           className="mb-4 px-4 py-2 border uppercase tracking-widest text-xs rounded-none hover:bg-black dark:hover:bg-white dark:hover:text-black hover:text-white transition"
@@ -76,7 +76,7 @@ const Page = () => {
 
       {viagem ? (
         <div className="flex flex-col md:flex-row gap-8">
-          {/* Mapa à esquerda */}
+          {/* Mapa - sempre em cima no mobile */}
           <div className="md:w-2/3 w-full h-[40vh] md:h-[70vh] border">
             {viagem.latitudeMotorista !== undefined &&
             viagem.longitudeMotorista !== undefined ? (
@@ -92,7 +92,6 @@ const Page = () => {
                   className="opacity-70"
                 />
 
-                {/* Linha tracejada até o destino */}
                 <Polyline
                   positions={[
                     [viagem.latitudeMotorista, viagem.longitudeMotorista],
@@ -106,7 +105,6 @@ const Page = () => {
                   }}
                 />
 
-                {/* Marker do motorista */}
                 <Marker
                   position={[
                     viagem.latitudeMotorista,
@@ -119,7 +117,6 @@ const Page = () => {
                   </Popup>
                 </Marker>
 
-                {/* Marker de origem */}
                 <Marker
                   position={[viagem.latitudeOrigem, viagem.longitudeOrigem]}
                   icon={origemIcon}
@@ -129,7 +126,6 @@ const Page = () => {
                   </Popup>
                 </Marker>
 
-                {/* Marker de destino */}
                 <Marker
                   position={[viagem.latitudeDestino, viagem.longitudeDestino]}
                   icon={destinoIcon}
@@ -148,31 +144,35 @@ const Page = () => {
             )}
           </div>
 
-          {/* Informações à direita */}
-          <div className="md:w-1/3 w-full flex flex-col justify-between">
-            <div className="space-y-4 text-sm uppercase tracking-wider">
+          {/* Informações - com scroll no mobile */}
+          <div className="md:w-1/3 w-full flex flex-col">
+            <div className="overflow-y-auto max-h-[40vh] md:max-h-none md:flex-1 space-y-4 text-sm uppercase tracking-wider p-2">
               <div className="flex justify-between border-b pb-2">
                 <span>PASSAGEIRO:</span>
-                <span>{viagem.nomePassageiro.toUpperCase()}</span>
+                <span className="font-medium">
+                  {viagem.nomePassageiro.toUpperCase()}
+                </span>
               </div>
               <div className="flex justify-between border-b pb-2">
                 <span>STATUS:</span>
-                <span>{viagem.statusViagem.toUpperCase()}</span>
+                <span className="font-medium">
+                  {viagem.statusViagem.toUpperCase()}
+                </span>
               </div>
               <div className="flex justify-between border-b pb-2">
                 <span>ORIGEM:</span>
-                <span className="text-right">
+                <span className="text-right font-medium">
                   {viagem.enderecoOrigem.toUpperCase()}
                 </span>
               </div>
               <div className="flex justify-between border-b pb-2">
                 <span>DESTINO:</span>
-                <span className="text-right">
+                <span className="text-right font-medium">
                   {viagem.enderecoDestino.toUpperCase()}
                 </span>
               </div>
             </div>
-            <div className="text-center text-xs tracking-widest mt-8">
+            <div className="text-center text-xs tracking-widest mt-4 md:mt-8">
               ATUALIZANDO EM TEMPO REAL
             </div>
           </div>
