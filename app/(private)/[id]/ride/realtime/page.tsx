@@ -6,6 +6,7 @@ import { ref, onValue } from "firebase/database";
 import { database } from "@/scripts/firebase-config";
 import ViagemCard from "@/src/components/ViagemCard";
 import { ViagemTempoReal } from "@/src/model/viagem";
+import { useRouter } from "next/navigation";
 
 interface Viagem {
   id: string;
@@ -23,6 +24,7 @@ interface Viagem {
 
 export default function Page() {
   const [viagens, setViagens] = useState<Viagem[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     const motoristasRef = ref(database, "/motoristas");
@@ -57,6 +59,12 @@ export default function Page() {
 
   return (
     <div className="p-4">
+      <button
+        className="mb-4 px-4 py-2 border uppercase tracking-widest text-xs rounded-none hover:bg-black dark:hover:bg-white dark:hover:text-black hover:text-white transition"
+        onClick={() => router.back()}
+      >
+        Voltar
+      </button>
       <h1 className="text-xl font-bold mb-4">Viagens em Andamento</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {viagens.map((viagem) => (
