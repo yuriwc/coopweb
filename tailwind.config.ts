@@ -16,6 +16,7 @@ export default {
         // Cores adicionais no estilo Yeezy (preto e branco puros)
         black: "#000000",
         white: "#FFFFFF",
+        primary: "var(--color-primary)", // Primary dinâmico
       },
       fontFamily: {
         // Fontes finas e modernas (similar ao Yeezy)
@@ -40,3 +41,7 @@ export default {
   },
   plugins: [heroui()],
 } satisfies Config;
+
+// Defina as variáveis CSS para primary no seu CSS global (ex: globals.css):
+// :root { --color-primary: #000; }
+// .dark { --color-primary: #fff; }

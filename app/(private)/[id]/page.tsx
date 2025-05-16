@@ -12,6 +12,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
     `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/${params.id}`,
     {
       next: {
+        revalidate: 3600,
         tags: ["getEmpresa"],
       },
       method: "GET",
@@ -43,78 +44,58 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
   const empresa = (await responseEmpresa.json()) as Empresa;
 
   return (
-    <div className="min-h-screen p-4 sm:p-8">
+    <div className="h-screen flex flex-col p-4 sm:p-8 overflow-y-auto">
       {/* Header */}
-      <header className="border-b border-neutral-200 dark:border-neutral-800 pb-4 mb-8">
+      <header className="pb-4 mb-8">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-light tracking-[0.18em] uppercase">
             {empresa.nome}
           </h1>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="mb-12">
+      <main className="mb-12 overflow-visible">
         <div className="mb-8">
-          <p className="text-neutral-500 dark:text-neutral-400 mb-2">
-            O QUE DESEJA FAZER?
+          <p className="mb-6 text-sm font-light tracking-[0.15em] uppercase">
+            O que deseja fazer?
           </p>
-          <div className="h-px bg-neutral-200 dark:bg-neutral-800 w-full my-4"></div>
         </div>
+
         <TablePassegers
           funcionarios={funcionarios}
           empresa={params.id}
           token={await getToken()}
         />
-        <Spacer y={16} />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <ActionButton
-            title="Relatório de Viagens"
-            description="Veja suas viagens por fatura"
-            href={`${params.id}/ride`}
-            variant="secondary"
-          />
 
-          <ActionButton
-            title="Acompanhar Viagens"
-            description="Monitoramento em tempo real"
-            href={`${params.id}/ride/realtime`}
-            variant="secondary"
-          />
+        <Spacer y={16} />
+
+        {/* Container único dos ActionButtons - Grid Responsivo */}
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch pb-16">
+          <div className="w-full h-[180px]">
+            <ActionButton
+              title="Nova Viagem"
+              description="Crie uma nova viagem para um passageiro"
+              href="/nova-viagem"
+            />
+          </div>
+          <div className="w-full h-[180px]">
+            <ActionButton
+              title="Relatórios"
+              description="Acesse relatórios detalhados de suas viagens"
+              href="/relatorios"
+              variant="secondary"
+            />
+          </div>
+          <div className="w-full h-[180px]">
+            <ActionButton
+              title="Monitoramento"
+              description="Acompanhe as viagens dos seus colaboradores em tempo real"
+              href={params.id + "/ride/realtime"}
+            />
+          </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="fixed bottom-0 left-0 right-0 py-4 px-4 sm:px-8 border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950">
-        <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-sm text-neutral-500 dark:text-neutral-400">
-          <a
-            className="hover:text-neutral-900 dark:hover:text-white transition-colors flex items-center gap-1"
-            href="#"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span>DESENVOLVIDO POR YURI CAVALCANTE</span>
-          </a>
-          <span className="text-neutral-300 dark:text-neutral-600">|</span>
-          <a
-            className="hover:text-neutral-900 dark:hover:text-white transition-colors flex items-center gap-1"
-            href="#"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span>EXAMPLES</span>
-          </a>
-          <span className="text-neutral-300 dark:text-neutral-600">|</span>
-          <a
-            className="hover:text-neutral-900 dark:hover:text-white transition-colors flex items-center gap-1"
-            href="#"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span>SUPORTE →</span>
-          </a>
-        </div>
-      </footer>
     </div>
   );
 };

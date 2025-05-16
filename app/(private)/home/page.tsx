@@ -1,8 +1,7 @@
 import { Cooperativa } from "@/src/model/cooperativas";
 import { Card } from "@heroui/card";
-import { Link } from "@heroui/link";
 import { cookies } from "next/headers";
-import Image from "next/image";
+import Link from "next/link";
 
 export default async function Home() {
   const cookieStore = await cookies();
@@ -24,60 +23,32 @@ export default async function Home() {
   }
   const empresas = await response.json();
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <h1 className="text-4xl font-bold text-center sm:text-left">
-          Bem vindo ao CoopWeb
+    <div className="flex flex-col min-h-screen bg-white items-center justify-center px-4 py-12">
+      <main className="flex flex-col items-center w-full max-w-2xl mx-auto gap-10 flex-1 justify-center">
+        <h1 className="text-3xl sm:text-4xl font-light tracking-[0.25em] uppercase text-black text-center mb-2">
+          CoopWeb
         </h1>
-        <p className="text-lg text-center sm:text-left">
+        <h2 className="text-xs sm:text-sm font-light tracking-[0.18em] uppercase text-black text-center mb-8">
+          Gestão e Controle de Mobilidade
+        </h2>
+        <p className="text-xs sm:text-base font-light tracking-[0.15em] uppercase text-black text-center mb-6">
           Selecione em qual empresa deseja entrar
         </p>
-
-        {empresas.map((empresa: Cooperativa) => (
-          <Link className="w-full" href={`/${empresa.id}`} key={empresa.id}>
-            <Card
-              isHoverable
-              isPressable
-              className="w-full max-w-[400px] p-4 flex flex-col gap-2 items-center"
-            >
-              <span className="text-lg font-bold">{empresa.nome}</span>
-            </Card>
-          </Link>
-        ))}
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch justify-items-center">
+          {empresas.map((empresa: Cooperativa) => (
+            <Link className="w-full" href={`/${empresa.id}`} key={empresa.id}>
+              <Card
+                isHoverable
+                className="w-full h-full border rounded-none bg-white p-6 flex flex-col items-center transition hover:bg-black group"
+              >
+                <span className="text-base sm:text-lg font-light tracking-[0.18em] uppercase transition">
+                  {empresa.nome}
+                </span>
+              </Card>
+            </Link>
+          ))}
+        </div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Desenvolvido por Yuri Cavalcante
-        </a>
-
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Algo deu errado? Entre em contato com o suporte →
-        </a>
-      </footer>
     </div>
   );
 }

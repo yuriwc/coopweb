@@ -3,6 +3,14 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    --color-primary: #000;
+}
+
+.dark {
+    --color-primary: #fff;
+}
+
 body {
     font-family: "Inter", sans-serif;
     font-weight: 300; /* Peso leve por padrão */

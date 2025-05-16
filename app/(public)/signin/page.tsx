@@ -35,13 +35,14 @@ export default function App() {
   }, [router, state.success]);
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-4">
-      <div className="w-full max-w-2xl rounded-xl shadow-lg p-8">
-        <div className="flex flex-row">
-          <h1 className="text-2xl font-semibold mb-6 text-center">
-            Fazer login no sistema
-          </h1>
-        </div>
+    <div className="flex justify-center items-center min-h-screen bg-white p-4">
+      <div className="w-full max-w-md border-[1px] border-black rounded-none p-8 bg-white">
+        <h1 className="text-center text-2xl font-light tracking-[0.35em] uppercase mb-1 text-black">
+          CoopGo
+        </h1>
+        <h2 className="text-center text-xs font-light tracking-[0.25em] uppercase mb-8 text-black">
+          Gestão e Controle de mobilidade
+        </h2>
         <Form
           key={JSON.stringify(state.data)}
           action={action}
@@ -54,8 +55,9 @@ export default function App() {
             defaultValue={state.data.username}
             isRequired
             variant="bordered"
+            className="border-black border-[1px] rounded-none text-xs tracking-[0.18em] uppercase bg-white text-black placeholder:text-black/40"
           />
-          <Spacer x={4} />
+          <Spacer x={2} />
           <Input
             name="password"
             type="password"
@@ -63,22 +65,27 @@ export default function App() {
             defaultValue={state.data.password}
             isRequired
             variant="bordered"
+            className="border-black border-[1px] rounded-none text-xs tracking-[0.18em] uppercase bg-white text-black placeholder:text-black/40"
           />
 
-          <Button type="submit" color="primary" className="w-full">
+          <Button
+            isDisabled={isLoading}
+            type="submit"
+            color="primary"
+            className="w-full flex justify-center items-center border-[1px] border-black rounded-none bg-white text-black text-xs tracking-[0.2em] uppercase font-light hover:bg-black hover:text-white transition"
+          >
             {isLoading ? (
               <Spinner
-                classNames={{ label: "text-foreground mt-4" }}
-                label="wave"
+                classNames={{ label: "text-foreground" }}
                 variant="wave"
               />
             ) : (
-              "Enviar"
+              "Entrar"
             )}
           </Button>
 
           {state.message && !state.success && (
-            <p className={`text-sm text-center "text-red-600"}`}>
+            <p className="text-xs text-center text-red-600 tracking-[0.1em] uppercase">
               {state.message}
             </p>
           )}

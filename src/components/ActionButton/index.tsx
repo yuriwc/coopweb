@@ -1,3 +1,4 @@
+import { Card } from "@heroui/card";
 import Link from "next/link";
 
 interface ActionButtonProps {
@@ -7,33 +8,20 @@ interface ActionButtonProps {
   variant?: "primary" | "secondary";
 }
 
-export function ActionButton({
-  title,
-  description,
-  href,
-  variant = "primary",
-}: ActionButtonProps) {
-  const baseClasses = "flex items-start p-4 rounded-lg border transition-all";
-  const variantClasses = {
-    primary:
-      "border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 bg-white dark:bg-neutral-900 hover:bg-neutral-50 dark:hover:bg-neutral-800",
-    secondary:
-      "border-blue-200 dark:border-blue-800 hover:border-blue-300 dark:hover:border-blue-700 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50",
-  };
-
+export function ActionButton({ title, description, href }: ActionButtonProps) {
   return (
-    <Link
-      href={href}
-      className={`${baseClasses} ${variantClasses[variant]} group`}
-    >
-      <div>
-        <h3 className="text-lg font-medium text-neutral-900 dark:text-white">
+    <Link href={href} className="block w-full h-full">
+      <Card
+        isHoverable
+        className="w-full h-full min-h-[180px] border border-black dark:border-white rounded-none bg-white dark:bg-black p-6 flex flex-col justify-center items-center transition-all duration-300 hover:bg-neutral-100 dark:hover:bg-neutral-900 group"
+      >
+        <span className="text-base sm:text-lg font-light tracking-[0.18em] uppercase text-black dark:text-white mb-2 text-center w-full overflow-hidden text-ellipsis whitespace-nowrap">
           {title}
-        </h3>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+        </span>
+        <span className="text-sm font-light tracking-[0.12em] text-black/70 dark:text-white/70 text-center w-full overflow-hidden text-ellipsis whitespace-nowrap">
           {description}
-        </p>
-      </div>
+        </span>
+      </Card>
     </Link>
   );
 }
