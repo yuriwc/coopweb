@@ -59,16 +59,10 @@ export default function ViagemCard({ viagem }: { viagem: Viagem }) {
           {/* Botão - mantendo o link mas com estilo Yeezy */}
           <div className="p-3">
             <Link
-              href={`./realtime/${viagem.id}`}
-              className="
-              block w-full text-center
-              border-[0.5px] rounded-none
-              p-2 text-sm
-              font-light tracking-[0.3em] uppercase
-              hover:bg-white hover:text-black transition-colors
-            "
+              href={`./realtime/${viagem.id}/1`}
+              className="block w-full text-center mb-4 px-4 py-2 border uppercase tracking-widest text-xs rounded-none hover:bg-black dark:hover:bg-white dark:hover:text-black hover:text-white transition"
             >
-              Ver Mapa
+              Acompanhar Viagem
             </Link>
           </div>
         </div>
