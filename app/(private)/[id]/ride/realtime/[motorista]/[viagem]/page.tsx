@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { ref, onValue } from "firebase/database";
 import { database } from "@/scripts/firebase-config";
 import "leaflet/dist/leaflet.css";
@@ -45,6 +45,7 @@ const Page = () => {
   const [viagem, setViagem] = useState<ViagemTempoReal | null>(null);
   const params = useParams();
   const motoristaID = params?.motorista as string;
+  const router = useRouter();
 
   useEffect(() => {
     if (!motoristaID) return;
@@ -62,40 +63,23 @@ const Page = () => {
   return (
     <div className="min-h-screen p-4">
       <header className="border-b border-white pb-4 mb-6">
+        <button
+          className="mb-4 px-4 py-2 border uppercase tracking-widest text-xs rounded-none hover:bg-black dark:hover:bg-white dark:hover:text-black hover:text-white transition"
+          onClick={() => router.back()}
+        >
+          Voltar
+        </button>
         <h1 className="text-2xl font-light tracking-widest uppercase">
           ACOMPANHAMENTO DE VIAGEM
         </h1>
       </header>
 
       {viagem ? (
-        <div className="space-y-6">
-          {/* Informações da viagem */}
-          <div className="space-y-2 text-sm uppercase tracking-wider">
-            <div className="flex justify-between border-b pb-2">
-              <span>PASSAGEIRO:</span>
-              <span>{viagem.nomePassageiro.toUpperCase()}</span>
-            </div>
-            <div className="flex justify-between border-b pb-2">
-              <span>STATUS:</span>
-              <span>{viagem.statusViagem.toUpperCase()}</span>
-            </div>
-            <div className="flex justify-between border-b pb-2">
-              <span>ORIGEM:</span>
-              <span className="text-right">
-                {viagem.enderecoOrigem.toUpperCase()}
-              </span>
-            </div>
-            <div className="flex justify-between border-b pb-2">
-              <span>DESTINO:</span>
-              <span className="text-right">
-                {viagem.enderecoDestino.toUpperCase()}
-              </span>
-            </div>
-          </div>
-
-          {/* Mapa */}
-          {(viagem.latitudeMotorista !== undefined && viagem.longitudeMotorista !== undefined) ? (
-            <div className="h-[60vh] w-full border">
+        <div className="flex flex-col md:flex-row gap-8">
+          {/* Mapa à esquerda */}
+          <div className="md:w-2/3 w-full h-[40vh] md:h-[70vh] border">
+            {viagem.latitudeMotorista !== undefined &&
+            viagem.longitudeMotorista !== undefined ? (
               <MapContainer
                 center={[viagem.latitudeMotorista, viagem.longitudeMotorista]}
                 zoom={20}
@@ -124,7 +108,10 @@ const Page = () => {
 
                 {/* Marker do motorista */}
                 <Marker
-                  position={[viagem.latitudeMotorista, viagem.longitudeMotorista]}
+                  position={[
+                    viagem.latitudeMotorista,
+                    viagem.longitudeMotorista,
+                  ]}
                   icon={motoristaIcon}
                 >
                   <Popup className="font-mono text-xs uppercase tracking-wider">
@@ -152,17 +139,42 @@ const Page = () => {
                   </Popup>
                 </Marker>
               </MapContainer>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center h-[60vh]">
-              <p className="text-white/60 uppercase tracking-widest">
-                Localização do motorista não disponível no momento.
-              </p>
-            </div>
-          )}
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-white/60 uppercase tracking-widest">
+                  Localização do motorista não disponível no momento.
+                </p>
+              </div>
+            )}
+          </div>
 
-          <div className="text-center text-xs tracking-widest">
-            ATUALIZANDO EM TEMPO REAL
+          {/* Informações à direita */}
+          <div className="md:w-1/3 w-full flex flex-col justify-between">
+            <div className="space-y-4 text-sm uppercase tracking-wider">
+              <div className="flex justify-between border-b pb-2">
+                <span>PASSAGEIRO:</span>
+                <span>{viagem.nomePassageiro.toUpperCase()}</span>
+              </div>
+              <div className="flex justify-between border-b pb-2">
+                <span>STATUS:</span>
+                <span>{viagem.statusViagem.toUpperCase()}</span>
+              </div>
+              <div className="flex justify-between border-b pb-2">
+                <span>ORIGEM:</span>
+                <span className="text-right">
+                  {viagem.enderecoOrigem.toUpperCase()}
+                </span>
+              </div>
+              <div className="flex justify-between border-b pb-2">
+                <span>DESTINO:</span>
+                <span className="text-right">
+                  {viagem.enderecoDestino.toUpperCase()}
+                </span>
+              </div>
+            </div>
+            <div className="text-center text-xs tracking-widest mt-8">
+              ATUALIZANDO EM TEMPO REAL
+            </div>
           </div>
         </div>
       ) : (
