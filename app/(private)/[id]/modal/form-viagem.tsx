@@ -84,8 +84,7 @@ export default function TripRequestModal({
         },
       );
 
-      const result = await response.json();
-      console.log(result);
+      await response.json();
       alert("Viagem solicitada com sucesso!");
     } catch (error) {
       console.error(error);
@@ -106,7 +105,7 @@ export default function TripRequestModal({
         {(onClose) => (
           <>
             <ModalHeader>
-              <h3 className="text-lg font-medium leading-6 text-gray-900">
+              <h3 className="text-lg font-medium leading-6">
                 Solicitar Viagem
               </h3>
             </ModalHeader>
@@ -119,10 +118,8 @@ export default function TripRequestModal({
                 />
               </section>
               <section className="mb-6">
-                <h4 className="mb-2 text-sm font-medium text-gray-700">
-                  Passageiros
-                </h4>
-                <p className="mb-4 text-sm text-gray-500">
+                <h4 className="mb-2 text-sm font-medium">Passageiros</h4>
+                <p className="mb-4 text-sm">
                   Quantidade de passageiros: {passagers.length}
                 </p>
 
@@ -150,7 +147,9 @@ export default function TripRequestModal({
                         <p className="text-sm font-medium text-gray-900">
                           {passager.name}
                         </p>
-                        <p className="text-xs text-gray-500">{passager.phone}</p>
+                        <p className="text-xs text-gray-500">
+                          {passager.phone}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -159,19 +158,11 @@ export default function TripRequestModal({
               <TipoViagem setSelectedPlan={setSelectedPlan} />
             </ModalBody>
             <ModalFooter>
-              <Button
-                color="default"
-                variant="light"
-                onPress={onClose}
-                className="mr-2"
-              >
+              <Button variant="light" onPress={onClose} className="mr-2">
                 Cancelar
               </Button>
-              <Button
-                color="primary"
-                onPress={handleSolicitarViagem}
-              >
-                Solicitar Viagem
+              <Button color="primary" onPress={handleSolicitarViagem}>
+                <span className="text-secondary">Solicitar Viagem</span>
               </Button>
             </ModalFooter>
           </>

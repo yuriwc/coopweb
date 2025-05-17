@@ -36,7 +36,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
   const viagens = (await response.json()) as ViagemResumo;
 
   return (
-    <div className="mx-auto max-w-4xl w-full">
+    <div className="mx-auto max-w-4xl w-full pt-8">
       <Breadcrumb items={url} />
 
       <div className="mb-8">
@@ -61,7 +61,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
       </div>
 
       {/* Lista de viagens */}
-      <div className="h-[calc(100vh-180px)] overflow-y-auto pr-2">
+      <div className="h-[calc(100vh-180px)] overflow-y-auto pr-2 pb-36">
         <div className="space-y-4">
           {viagens.viagens.map((viagem, index) => (
             <TravelCard key={index} viagem={viagem} />

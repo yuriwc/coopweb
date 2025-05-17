@@ -74,16 +74,16 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
         <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch pb-16">
           <div className="w-full h-[180px]">
             <ActionButton
-              title="Nova Viagem"
-              description="Crie uma nova viagem para um passageiro"
-              href="/nova-viagem"
+              title="Viagens Programadas"
+              description="Gerencie as viagens progradas disponíveis"
+              href="#"
             />
           </div>
           <div className="w-full h-[180px]">
             <ActionButton
               title="Relatórios"
               description="Acesse relatórios detalhados de suas viagens"
-              href="/relatorios"
+              href={params.id + "/ride"}
               variant="secondary"
             />
           </div>

@@ -15,6 +15,7 @@ export default function App() {
   const [state, action, isLoading] = useActionState(handleSubmit, {
     success: false,
     message: "",
+    redirect: "",
     data: {
       username: "",
       password: "",
@@ -22,7 +23,7 @@ export default function App() {
   });
 
   useEffect(() => {
-    if (state.success) {
+    if (state.success && state.redirect) {
       addToast({
         title: "Sucesso",
         description: "Login efetuado com sucesso",
@@ -30,9 +31,9 @@ export default function App() {
         color: "success",
       });
 
-      router.push("/home");
+      router.push(state.redirect);
     }
-  }, [router, state.success]);
+  }, [router, state.success, state.redirect]);
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-white p-4">
