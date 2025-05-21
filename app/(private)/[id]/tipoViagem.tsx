@@ -45,7 +45,7 @@ export default function App({ setSelectedPlan }: RadioGroupProps) {
       <CustomRadio description="" value="Retorno">
         Retorno
       </CustomRadio>
-      <CustomRadio description="" value="apanhaeretorno">
+      <CustomRadio description="" value="APANHA_E_RETORNO">
         Apanha e Retorno
       </CustomRadio>
     </RadioGroup>

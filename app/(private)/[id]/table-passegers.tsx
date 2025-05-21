@@ -18,6 +18,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Icon from "@/src/components/icon";
 import FormViagem from "./modal/form-viagem";
 import { Spacer } from "@heroui/spacer";
+import FormViagemProgramada from "./modal/form-viagem-programada";
 
 interface TablePassegersProps {
   funcionarios: Funcionario[];
@@ -95,7 +96,7 @@ const TablePassegers = ({
                   Solicitar Viagem
                 </Button>
 
-                <FormViagem
+                <FormViagemProgramada
                   token={token}
                   isOpen={isModalOpen}
                   onOpen={setIsModalOpen}
