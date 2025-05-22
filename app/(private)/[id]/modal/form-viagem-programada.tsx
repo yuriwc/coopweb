@@ -156,8 +156,8 @@ export default function App({
 
   return (
     <>
-      <Button variant="light" onPress={() => onOpen(true)}>
-        Solicitar Viagem
+      <Button variant="faded" onPress={() => onOpen(true)}>
+        Programar Viagem
       </Button>
 
       <Modal

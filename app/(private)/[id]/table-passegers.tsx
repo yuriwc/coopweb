@@ -18,6 +18,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Icon from "@/src/components/icon";
 import { Spacer } from "@heroui/spacer";
 import FormViagemProgramada from "./modal/form-viagem-programada";
+import FormViagem from "./modal/form-viagem";
 
 interface TablePassegersProps {
   funcionarios: Funcionario[];
@@ -53,6 +54,7 @@ const TablePassegers = ({
   const currentPath = usePathname();
   const [isClient, setIsClient] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalProgramadaOpen, setIsModalProgramadaOpen] = useState(false);
   const [passagers, setPassagers] = useState<Funcionario[]>([]);
 
   useEffect(() => {
@@ -89,14 +91,18 @@ const TablePassegers = ({
               </Button>
               <Spacer x={5} />
               <div>
-                <Button variant="ghost" onPress={() => setIsModalOpen(true)}>
-                  Solicitar Viagem
-                </Button>
-
-                <FormViagemProgramada
+                <FormViagem
                   token={token}
                   isOpen={isModalOpen}
                   onOpen={setIsModalOpen}
+                  passagers={passagers}
+                  empresa={empresa}
+                />
+
+                <FormViagemProgramada
+                  token={token}
+                  isOpen={isModalProgramadaOpen}
+                  onOpen={setIsModalProgramadaOpen}
                   passagers={passagers}
                   empresa={empresa}
                 />

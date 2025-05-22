@@ -10,19 +10,19 @@ import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import CarIcon from "@/src/assets/car.png";
 import CompanyIcon from "@/src/assets/office-building.png";
-import { ViagemTempoReal } from "@/src/model/viagem";
+import { ViagemRealTime } from "@/src/model/viagem";
 
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
-  { ssr: false },
+  { ssr: false }
 );
 const TileLayer = dynamic(
   () => import("react-leaflet").then((mod) => mod.TileLayer),
-  { ssr: false },
+  { ssr: false }
 );
 const Polyline = dynamic(
   () => import("react-leaflet").then((mod) => mod.Polyline),
-  { ssr: false },
+  { ssr: false }
 );
 
 // Ícones customizados
@@ -42,15 +42,21 @@ const destinoIcon = L.icon({
 });
 
 const Page = () => {
-  const [viagem, setViagem] = useState<ViagemTempoReal | null>(null);
+  const [viagem, setViagem] = useState<ViagemRealTime | null>(null);
   const params = useParams();
   const motoristaID = params?.motorista as string;
+  const cooperativaID = params?.cooperativa as string;
   const router = useRouter();
+
+  console.log(cooperativaID, motoristaID);
 
   useEffect(() => {
     if (!motoristaID) return;
 
-    const viagensRef = ref(database, `/motoristas/${motoristaID}`);
+    const viagensRef = ref(
+      database,
+      `${cooperativaID}/motorista/${motoristaID}/dadosDaViagem`
+    );
     const unsubscribe = onValue(viagensRef, (snapshot) => {
       if (snapshot.exists()) {
         setViagem(snapshot.val());
@@ -58,7 +64,7 @@ const Page = () => {
     });
 
     return () => unsubscribe();
-  }, [motoristaID]);
+  }, [motoristaID, cooperativaID]);
 
   return (
     <div className="min-h-screen p-4 pb-20">
@@ -148,27 +154,53 @@ const Page = () => {
           <div className="md:w-1/3 w-full flex flex-col">
             <div className="overflow-y-auto max-h-[40vh] md:max-h-none md:flex-1 space-y-4 text-sm uppercase tracking-wider p-2">
               <div className="flex justify-between border-b pb-2">
-                <span>PASSAGEIRO:</span>
-                <span className="font-medium">
-                  {viagem.nomePassageiro.toUpperCase()}
+                <span>PASSAGEIRO(S):</span>
+                <span className="font-medium text-right">
+                  {(() => {
+                    // Adiciona log para depuração
+                    console.log("viagem.passageiros:", viagem.passageiros);
+                    if (!viagem.passageiros) return "-";
+                    const passageirosArray = Array.isArray(viagem.passageiros)
+                      ? viagem.passageiros
+                      : Object.values(viagem.passageiros);
+                    if (!passageirosArray.length) return "-";
+                    return (
+                      passageirosArray as Array<{
+                        nome?: string;
+                        sobrenome?: string;
+                      }>
+                    )
+                      .map((p) =>
+                        p.nome ? `${p.nome} ${p.sobrenome ?? ""}` : ""
+                      )
+                      .filter(Boolean)
+                      .join(", ")
+                      .toUpperCase();
+                  })()}
                 </span>
               </div>
               <div className="flex justify-between border-b pb-2">
                 <span>STATUS:</span>
                 <span className="font-medium">
-                  {viagem.statusViagem.toUpperCase()}
+                  {viagem.statusViagem?.toUpperCase()}
                 </span>
               </div>
               <div className="flex justify-between border-b pb-2">
                 <span>ORIGEM:</span>
                 <span className="text-right font-medium">
-                  {viagem.enderecoOrigem.toUpperCase()}
+                  {viagem.enderecoEmpresa?.toUpperCase()}
                 </span>
               </div>
               <div className="flex justify-between border-b pb-2">
                 <span>DESTINO:</span>
                 <span className="text-right font-medium">
-                  {viagem.enderecoDestino.toUpperCase()}
+                  {viagem.passageiros && viagem.passageiros[0]
+                    ? `${viagem.passageiros[0].rua ?? ""}, ${
+                        viagem.passageiros[0].numero ?? ""
+                      } - ${viagem.passageiros[0].bairro ?? ""}, ${
+                        viagem.passageiros[0].cidade ?? ""
+                      } - ${viagem.passageiros[0].estado ?? ""}`.toUpperCase()
+                    : "-"}
                 </span>
               </div>
             </div>

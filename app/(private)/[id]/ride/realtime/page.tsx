@@ -1,76 +1,11 @@
-// app/viagens/page.tsx
-"use client";
+import { getToken } from "../../../../../src/utils/token/get-token";
+import ViagemList from "./viagem-list";
 
-import { useEffect, useState } from "react";
-import { ref, onValue } from "firebase/database";
-import { database } from "@/scripts/firebase-config";
-import ViagemCard from "@/src/components/ViagemCard";
-import { ViagemTempoReal } from "@/src/model/viagem";
-import { useRouter } from "next/navigation";
+const App = async (props: { params: Promise<{ id: string }> }) => {
+  const params = await props.params;
+  const token = await getToken();
 
-interface Viagem {
-  id: string;
-  nomePassageiro: string;
-  statusViagem: string;
-  enderecoOrigem: string;
-  enderecoDestino: string;
-  latitudeOrigem: number;
-  longitudeOrigem: number;
-  latitudeDestino: number;
-  longitudeDestino: number;
-  latitudeMotorista?: number;
-  longitudeMotorista?: number;
-}
+  return <ViagemList empresaId={params.id} token={token} />;
+};
 
-export default function Page() {
-  const [viagens, setViagens] = useState<Viagem[]>([]);
-  const router = useRouter();
-
-  useEffect(() => {
-    const motoristasRef = ref(database, "/motoristas");
-    const unsubscribe = onValue(motoristasRef, (snapshot) => {
-      const data = snapshot.val();
-      if (!data) return;
-
-      const viagensArray = Object.entries(data).map(
-        ([id, value]: [string, unknown]) => {
-          const v = value as Partial<ViagemTempoReal>;
-          return {
-            id,
-            nomePassageiro: v.nomePassageiro ?? "",
-            statusViagem: v.statusViagem ?? "",
-            enderecoOrigem: v.enderecoOrigem ?? "",
-            enderecoDestino: v.enderecoDestino ?? "",
-            latitudeOrigem: v.latitudeOrigem ?? 0,
-            longitudeOrigem: v.longitudeOrigem ?? 0,
-            latitudeDestino: v.latitudeDestino ?? 0,
-            longitudeDestino: v.longitudeDestino ?? 0,
-            latitudeMotorista: v.latitudeMotorista, // opcional
-            longitudeMotorista: v.longitudeMotorista, // opcional
-          };
-        },
-      );
-
-      setViagens(viagensArray);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  return (
-    <div className="p-4">
-      <button
-        className="mb-4 px-4 py-2 border uppercase tracking-widest text-xs rounded-none hover:bg-black dark:hover:bg-white dark:hover:text-black hover:text-white transition"
-        onClick={() => router.back()}
-      >
-        Voltar
-      </button>
-      <h1 className="text-xl font-bold mb-4">Viagens em Andamento</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {viagens.map((viagem) => (
-          <ViagemCard key={viagem.id} viagem={viagem} />
-        ))}
-      </div>
-    </div>
-  );
-}
+export default App;

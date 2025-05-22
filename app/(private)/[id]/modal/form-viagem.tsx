@@ -81,7 +81,7 @@ export default function TripRequestModal({
             authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(data),
-        },
+        }
       );
 
       await response.json();
@@ -100,74 +100,79 @@ export default function TripRequestModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpen}>
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader>
-              <h3 className="text-lg font-medium leading-6">
-                Solicitar Viagem
-              </h3>
-            </ModalHeader>
-            <ModalBody>
-              <section className="mb-6">
-                <SelectCooperativas
-                  setCooperativa={setCooperativa}
-                  empresa={empresa}
-                  token={token}
-                />
-              </section>
-              <section className="mb-6">
-                <h4 className="mb-2 text-sm font-medium">Passageiros</h4>
-                <p className="mb-4 text-sm">
-                  Quantidade de passageiros: {passagers.length}
-                </p>
+    <>
+      <Button variant="faded" onPress={() => onOpen(true)}>
+        Viagem Imediata
+      </Button>
+      <Modal isOpen={isOpen} onOpenChange={onOpen}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader>
+                <h3 className="text-lg font-medium leading-6">
+                  Solicitar Viagem
+                </h3>
+              </ModalHeader>
+              <ModalBody>
+                <section className="mb-6">
+                  <SelectCooperativas
+                    setCooperativa={setCooperativa}
+                    empresa={empresa}
+                    token={token}
+                  />
+                </section>
+                <section className="mb-6">
+                  <h4 className="mb-2 text-sm font-medium">Passageiros</h4>
+                  <p className="mb-4 text-sm">
+                    Quantidade de passageiros: {passagers.length}
+                  </p>
 
-                <div className="space-y-3">
-                  {passagers.map((passager) => (
-                    <div
-                      key={passager.id}
-                      className="flex items-center space-x-3 border-b border-gray-100 py-2"
-                    >
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5 text-gray-500"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
+                  <div className="space-y-3">
+                    {passagers.map((passager) => (
+                      <div
+                        key={passager.id}
+                        className="flex items-center space-x-3 border-b border-gray-100 py-2"
+                      >
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 text-gray-500"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            {passager.name}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {passager.phone}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          {passager.name}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {passager.phone}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-              <TipoViagem setSelectedPlan={setSelectedPlan} />
-            </ModalBody>
-            <ModalFooter>
-              <Button variant="light" onPress={onClose} className="mr-2">
-                Cancelar
-              </Button>
-              <Button color="primary" onPress={handleSolicitarViagem}>
-                <span className="text-secondary">Solicitar Viagem</span>
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+                    ))}
+                  </div>
+                </section>
+                <TipoViagem setSelectedPlan={setSelectedPlan} />
+              </ModalBody>
+              <ModalFooter>
+                <Button variant="light" onPress={onClose} className="mr-2">
+                  Cancelar
+                </Button>
+                <Button color="primary" onPress={handleSolicitarViagem}>
+                  <span className="text-secondary">Solicitar Viagem</span>
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+    </>
   );
 }

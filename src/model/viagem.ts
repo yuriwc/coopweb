@@ -15,12 +15,24 @@ export interface ViagemResumo {
   totalValor: number;
 }
 
-export interface ViagemTempoReal {
+export interface Passageiro {
+  nome?: string;
+  sobrenome?: string;
+  rua?: string;
+  numero?: string;
+  bairro?: string;
+  cidade?: string;
+  estado?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+export interface ViagemRealTime {
   id: string;
-  nomePassageiro: string;
+  motoristaId: string;
+  passageiros: Passageiro[];
   statusViagem: string;
-  enderecoOrigem: string;
-  enderecoDestino: string;
+  enderecoEmpresa: string;
   latitudeOrigem: number;
   longitudeOrigem: number;
   latitudeDestino: number;
