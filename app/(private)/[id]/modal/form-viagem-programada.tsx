@@ -47,7 +47,7 @@ export default function App({
   const [cooperativa, setCooperativa] = useState<string>("");
   const [value, setValue] = useState<RangeValue<DateValue> | null>({
     start: today(getLocalTimeZone()),
-    end: today(getLocalTimeZone()).add({ weeks: 1 }),
+    end: today(getLocalTimeZone()).add({ weeks: 4 }),
   });
 
   // Função de validação
@@ -105,7 +105,7 @@ export default function App({
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER}/api/v1/viagem/programada`,
+        `${process.env.NEXT_PUBLIC_SERVER}/api/v1/programacao/criar`,
         {
           method: "POST",
           headers: {
@@ -113,15 +113,34 @@ export default function App({
             authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(data),
-        },
+        }
       );
 
-      const result = await response.json();
-      console.log(result);
+      if (!response.ok) {
+        console.error("Error response:", response.statusText);
+        ShowToast({
+          color: "danger",
+          title: "Erro ao solicitar a viagem. Tente novamente mais tarde.",
+        });
+        return;
+      }
+      // Se a resposta for bem-sucedida, faça algo com os dados retornados
+      if (response.ok) {
+        // fechar o modal
+        onOpen(false);
+        return ShowToast({
+          color: "success",
+          title: "Programação solicitada com sucesso!",
+        });
+      }
+
+      // Se a resposta não for bem-sucedida, trate o erro
+      console.error("Erro ao solicitar a viagem:", response.statusText);
       ShowToast({
-        color: "success",
-        title: "Programação solicitada com sucesso!",
+        color: "danger",
+        title: "Erro ao solicitar a viagem. Tente novamente mais tarde.",
       });
+      return null;
     } catch (error) {
       console.error(error);
       ShowToast({
@@ -232,6 +251,7 @@ export default function App({
                       <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1">
                           <TimeInput
+                            variant="underlined"
                             hourCycle={24}
                             isRequired
                             label="Hora da viagem"
@@ -242,6 +262,7 @@ export default function App({
                         {selectedPlan === "APANHA_E_RETORNO" && (
                           <div className="flex-1">
                             <TimeInput
+                              variant="underlined"
                               hourCycle={24}
                               isRequired
                               label="Hora do retorno"

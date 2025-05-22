@@ -73,9 +73,7 @@ const TablePassegers = ({
         onSelectionChange={(selected: Selection) => {
           if (selected instanceof Set) {
             setPassagers(
-              funcionarios.filter((funcionario) =>
-                selected.has(funcionario.id),
-              ),
+              funcionarios.filter((funcionario) => selected.has(funcionario.id))
             );
           }
         }}

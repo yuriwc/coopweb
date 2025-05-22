@@ -4,16 +4,16 @@
 @tailwind utilities;
 
 :root {
-    --color-primary: #000;
-    --color-secondary: #fff;
+  --color-primary: #000;
+  --color-secondary: #fff;
 }
 
 .dark {
-    --color-primary: #fff;
-    --color-secondary: #000;
+  --color-primary: #fff;
+  --color-secondary: #000;
 }
 
 body {
-    font-family: "Inter", sans-serif;
-    font-weight: 300; /* Peso leve por padrão */
+  font-family: "Inter", sans-serif;
+  font-weight: 300; /* Peso leve por padrão */
 }

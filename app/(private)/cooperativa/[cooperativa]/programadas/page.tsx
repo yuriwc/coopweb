@@ -1,7 +1,5 @@
-import Link from "next/link";
-import Motorista from "./select/motorista";
 import { cookies } from "next/headers";
-import { Spacer } from "@heroui/spacer";
+import ActionButton from "./action/button";
 
 interface IResponse {
   nome: string;
@@ -31,7 +29,8 @@ const App = async (props: { params: Promise<{ cooperativa: string }> }) => {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-    },
+      next: { tags: ["programacoes"] },
+    }
   );
 
   const response = await fetch(
@@ -42,7 +41,7 @@ const App = async (props: { params: Promise<{ cooperativa: string }> }) => {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-    },
+    }
   );
 
   if (!response.ok || !programadasRequest.ok) {
@@ -144,23 +143,11 @@ const App = async (props: { params: Promise<{ cooperativa: string }> }) => {
               </div>
 
               {/* Botão de Ação */}
-              <div className="flex flex-row border-t-[0.5px] border-black p-3">
-                <Motorista motoristas={motoristas} />
-                <Spacer />
-                <Link
-                  href={`/transportes/${transporte.id}`}
-                  className="
-                  flex justify-center
-                  w-full items-center
-                  border-[0.5px] border-black
-                  p-2 text-xs
-                  font-light tracking-[0.5em] uppercase
-                  hover:bg-black hover:text-white transition-colors
-                "
-                >
-                  Alocar Motorista
-                </Link>
-              </div>
+              <ActionButton
+                token={token}
+                motoristas={motoristas}
+                idProgramacao={transporte.id}
+              />
             </div>
           ))}
         </div>
