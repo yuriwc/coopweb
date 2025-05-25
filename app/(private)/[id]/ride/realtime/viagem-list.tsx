@@ -114,7 +114,7 @@ export default function ViagemList({ empresaId, token }: Props) {
   }, [cooperativaId]);
 
   return (
-    <div className="p-4">
+    <div className="p-4 h-screen overflow-y-auto pb-24">
       <button
         className="mb-4 px-4 py-2 border uppercase tracking-widest text-xs rounded-none hover:bg-black dark:hover:bg-white dark:hover:text-black hover:text-white transition"
         onClick={() => router.back()}

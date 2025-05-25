@@ -29,14 +29,14 @@ export default function SelectCooperativas({
               Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
-          },
+          }
         );
 
         if (!response.ok) {
           console.error(
             "Erro na requisição:",
             response.status,
-            response.statusText,
+            response.statusText
           );
           return;
         }

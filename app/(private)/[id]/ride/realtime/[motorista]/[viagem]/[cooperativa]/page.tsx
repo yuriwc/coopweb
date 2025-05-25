@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ref, onValue } from "firebase/database";
 import { database } from "@/scripts/firebase-config";
@@ -11,6 +11,7 @@ import L from "leaflet";
 import CarIcon from "@/src/assets/car.png";
 import CompanyIcon from "@/src/assets/office-building.png";
 import { ViagemRealTime } from "@/src/model/viagem";
+import type { Map } from "leaflet";
 
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
@@ -43,6 +44,7 @@ const destinoIcon = L.icon({
 
 const Page = () => {
   const [viagem, setViagem] = useState<ViagemRealTime | null>(null);
+  const mapRef = useRef<Map | null>(null);
   const params = useParams();
   const motoristaID = params?.motorista as string;
   const cooperativaID = params?.cooperativa as string;
@@ -65,6 +67,20 @@ const Page = () => {
 
     return () => unsubscribe();
   }, [motoristaID, cooperativaID]);
+
+  // Efeito para centralizar o mapa sempre que a localização do motorista mudar
+  useEffect(() => {
+    if (
+      mapRef.current &&
+      viagem?.latitudeMotorista !== undefined &&
+      viagem?.longitudeMotorista !== undefined
+    ) {
+      mapRef.current.setView([
+        viagem.latitudeMotorista,
+        viagem.longitudeMotorista,
+      ]);
+    }
+  }, [viagem?.latitudeMotorista, viagem?.longitudeMotorista]);
 
   return (
     <div className="min-h-screen p-4 pb-20">
@@ -91,6 +107,10 @@ const Page = () => {
                 zoom={20}
                 scrollWheelZoom={false}
                 className="h-full w-full"
+                // @ts-expect-error react-leaflet whenReady event type is not compatible, but we need the map instance
+                whenReady={(event) => {
+                  mapRef.current = event.target;
+                }}
               >
                 <TileLayer
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
