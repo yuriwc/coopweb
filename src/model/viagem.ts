@@ -39,4 +39,15 @@ export interface ViagemRealTime {
   longitudeDestino: number;
   latitudeMotorista?: number;
   longitudeMotorista?: number;
+  // Campos adicionais que podem estar disponíveis no Firebase
+  velocidade?: number;
+  velocidadeKMH?: number;
+  direcao?: number;
+  direcaoGraus?: number;
+  precisao?: number;
+  precisaoMetros?: number;
+  timestamp?: number;
+  timestampUltimaLocalizacao?: number;
+  distanciaPercorrida?: number;
+  tempoEstimado?: number;
 }
