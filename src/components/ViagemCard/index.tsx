@@ -46,6 +46,8 @@ export default function ViagemCard({
     p0.bairro ?? ""
   }, ${p0.cidade ?? ""} - ${p0.estado ?? ""}`;
 
+  console.log(viagem);
+
   return (
     <div className="border rounded-none bg-transparent p-0">
       <div className="border-[0.5px] rounded-none p-0 bg-transparent">

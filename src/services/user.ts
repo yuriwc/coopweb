@@ -1,7 +1,8 @@
 export async function login(
   username: string,
-  password: string,
+  password: string
 ): Promise<{ token: string } | null> {
+  console.log(process.env.NEXT_PUBLIC_SERVER);
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_SERVER}/api/v1/auth/authenticate`,
     {
@@ -10,8 +11,10 @@ export async function login(
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ username, password }),
-    },
+    }
   );
+
+  console.log(response);
 
   if (!response.ok) {
     console.error("Erro na requisição:", response.status, response.statusText);
