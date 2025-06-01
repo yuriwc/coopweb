@@ -392,52 +392,52 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
   ];
 
   return (
-    <div className="space-y-8">
-      {/* Grid principal com 6 cards */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <div className="space-y-6">
+      {/* Grid principal com 6 cards - máximo 2 colunas para evitar sobreposição */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {data.map((item, index) => (
           <Card
             key={index}
             className="border border-transparent dark:border-default-100 hover:shadow-md transition-shadow duration-200 relative overflow-hidden"
           >
-            <div className="p-6 relative z-10">
-              {/* Header com ícone e título */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div
-                    className={cn(
-                      "flex h-12 w-12 items-center justify-center rounded-lg",
-                      {
-                        "bg-success-100 text-success-600":
-                          item.color === "success",
-                        "bg-warning-100 text-warning-600":
-                          item.color === "warning",
-                        "bg-danger-100 text-danger-600":
-                          item.color === "danger",
-                        "bg-primary-100 text-primary-600":
-                          item.color === "primary",
-                        "bg-secondary-100 text-secondary-600":
-                          item.color === "secondary",
-                        "bg-default-100 text-default-600":
-                          item.color === "default",
-                      }
-                    )}
-                  >
-                    <Icon icon={item.iconName} width={20} />
-                  </div>
-                  <div>
-                    <dt className="text-sm font-medium text-default-500 mb-1">
-                      {item.title}
-                    </dt>
-                    <dd className="text-2xl font-bold text-default-700 leading-none">
-                      {item.value}
-                    </dd>
-                  </div>
+            <div className="p-3 relative z-10">
+              {/* Header com ícone e título - layout compacto */}
+              <div className="flex items-center gap-3 mb-2">
+                <div
+                  className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-lg flex-shrink-0",
+                    {
+                      "bg-success-100 text-success-600":
+                        item.color === "success",
+                      "bg-warning-100 text-warning-600":
+                        item.color === "warning",
+                      "bg-danger-100 text-danger-600": item.color === "danger",
+                      "bg-primary-100 text-primary-600":
+                        item.color === "primary",
+                      "bg-secondary-100 text-secondary-600":
+                        item.color === "secondary",
+                      "bg-default-100 text-default-600":
+                        item.color === "default",
+                    }
+                  )}
+                >
+                  <Icon icon={item.iconName} width={16} />
                 </div>
+                <div className="flex-1 min-w-0">
+                  <dt className="text-xs font-medium text-default-500 mb-0.5 truncate">
+                    {item.title}
+                  </dt>
+                  <dd className="text-base font-semibold text-default-700 leading-none">
+                    {item.value}
+                  </dd>
+                </div>
+              </div>
 
+              {/* Chip de status */}
+              <div className="flex justify-end">
                 <Chip
                   classNames={{
-                    base: "h-6",
+                    base: "h-5",
                     content: "font-medium text-xs px-2",
                   }}
                   color={item.color}
@@ -445,19 +445,15 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
                   size="sm"
                   startContent={
                     item.changeType === "positive" ? (
-                      <Icon
-                        height={10}
-                        icon="solar:arrow-up-linear"
-                        width={10}
-                      />
+                      <Icon height={8} icon="solar:arrow-up-linear" width={8} />
                     ) : item.changeType === "negative" ? (
                       <Icon
-                        height={10}
+                        height={8}
                         icon="solar:arrow-down-linear"
-                        width={10}
+                        width={8}
                       />
                     ) : (
-                      <Icon height={10} icon="solar:minus-linear" width={10} />
+                      <Icon height={8} icon="solar:minus-linear" width={8} />
                     )
                   }
                   variant="flat"
@@ -468,36 +464,49 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
 
               {/* Lista de passageiros se existir */}
               {item.passageiros && item.passageiros.length > 0 && (
-                <div className="mb-4">
-                  <div className="flex flex-wrap gap-2">
-                    {item.passageiros.map((nome, passengerIndex) => (
+                <div className="mt-3">
+                  <div className="flex flex-wrap gap-1">
+                    {item.passageiros
+                      .slice(0, 2)
+                      .map((nome, passengerIndex) => (
+                        <Chip
+                          key={passengerIndex}
+                          classNames={{
+                            base: "h-5",
+                            content: "font-medium text-xs px-1",
+                          }}
+                          color="primary"
+                          radius="full"
+                          size="sm"
+                          variant="flat"
+                          startContent={
+                            <Icon
+                              height={8}
+                              icon="solar:user-circle-linear"
+                              width={8}
+                            />
+                          }
+                        >
+                          {nome.split(" ")[0]}
+                        </Chip>
+                      ))}
+                    {item.passageiros.length > 2 && (
                       <Chip
-                        key={passengerIndex}
                         classNames={{
-                          base: "h-6",
-                          content: "font-medium text-xs px-2",
+                          base: "h-5",
+                          content: "font-medium text-xs px-1",
                         }}
-                        color="primary"
+                        color="default"
                         radius="full"
                         size="sm"
                         variant="flat"
-                        startContent={
-                          <Icon
-                            height={10}
-                            icon="solar:user-circle-linear"
-                            width={10}
-                          />
-                        }
                       >
-                        {nome}
+                        +{item.passageiros.length - 2}
                       </Chip>
-                    ))}
+                    )}
                   </div>
                 </div>
               )}
-
-              {/* Linha de separação sutil */}
-              <div className="h-px bg-gradient-to-r from-transparent via-default-200 to-transparent opacity-60"></div>
             </div>
           </Card>
         ))}
@@ -505,37 +514,43 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
 
       {/* Cards de Estimativas - apenas se houver localização do motorista */}
       {viagem.latitudeMotorista && viagem.longitudeMotorista && (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          {estimativasData.map((item, index) => (
-            <Card
-              key={index}
-              className="border border-transparent dark:border-default-100 hover:shadow-md transition-shadow duration-200 relative overflow-hidden"
-            >
-              {/* Background animado baseado no progresso */}
-              <div
-                className={cn(
-                  "absolute inset-0 opacity-5 transition-all duration-1000 ease-out",
-                  {
-                    "bg-gradient-to-r from-success-200 to-success-300":
-                      item.color === "success",
-                    "bg-gradient-to-r from-warning-200 to-warning-300":
-                      item.color === "warning",
-                    "bg-gradient-to-r from-danger-200 to-danger-300":
-                      item.color === "danger",
-                    "bg-gradient-to-r from-primary-200 to-primary-300":
-                      item.color === "primary",
-                  }
-                )}
-                style={{ width: `${item.progresso}%` }}
-              />
+        <div>
+          <div className="mb-3">
+            <h3 className="text-sm font-semibold text-foreground-600 flex items-center gap-2">
+              <Icon icon="solar:chart-linear" className="w-4 h-4" />
+              Estimativas da Viagem
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {estimativasData.map((item, index) => (
+              <Card
+                key={index}
+                className="border border-transparent dark:border-default-100 hover:shadow-md transition-shadow duration-200 relative overflow-hidden"
+              >
+                {/* Background animado baseado no progresso */}
+                <div
+                  className={cn(
+                    "absolute inset-0 opacity-5 transition-all duration-1000 ease-out",
+                    {
+                      "bg-gradient-to-r from-success-200 to-success-300":
+                        item.color === "success",
+                      "bg-gradient-to-r from-warning-200 to-warning-300":
+                        item.color === "warning",
+                      "bg-gradient-to-r from-danger-200 to-danger-300":
+                        item.color === "danger",
+                      "bg-gradient-to-r from-primary-200 to-primary-300":
+                        item.color === "primary",
+                    }
+                  )}
+                  style={{ width: `${item.progresso}%` }}
+                />
 
-              <div className="p-6 relative z-10">
-                {/* Header com ícone e título */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
+                <div className="p-3 relative z-10">
+                  {/* Header com ícone e título - layout compacto */}
+                  <div className="flex items-center gap-3 mb-2">
                     <div
                       className={cn(
-                        "flex h-12 w-12 items-center justify-center rounded-lg",
+                        "flex h-8 w-8 items-center justify-center rounded-lg flex-shrink-0",
                         {
                           "bg-success-100 text-success-600":
                             item.color === "success",
@@ -548,58 +563,58 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
                         }
                       )}
                     >
-                      <Icon icon={item.iconName} width={20} />
+                      <Icon icon={item.iconName} width={16} />
                     </div>
-                    <div>
-                      <dt className="text-sm font-medium text-default-500 mb-1">
+                    <div className="flex-1 min-w-0">
+                      <dt className="text-xs font-medium text-default-500 mb-0.5 truncate">
                         {item.title}
                       </dt>
-                      <dd className="text-2xl font-bold text-default-700 leading-none">
+                      <dd className="text-base font-semibold text-default-700 leading-none">
                         {item.value}
                       </dd>
                     </div>
                   </div>
 
-                  <Chip
-                    classNames={{
-                      base: "h-6",
-                      content: "font-medium text-xs px-2",
-                    }}
-                    color={item.color}
-                    radius="full"
-                    size="sm"
-                    startContent={
-                      item.changeType === "positive" ? (
-                        <Icon
-                          height={10}
-                          icon="solar:arrow-up-linear"
-                          width={10}
-                        />
-                      ) : item.changeType === "negative" ? (
-                        <Icon
-                          height={10}
-                          icon="solar:arrow-down-linear"
-                          width={10}
-                        />
-                      ) : (
-                        <Icon
-                          height={10}
-                          icon="solar:minus-linear"
-                          width={10}
-                        />
-                      )
-                    }
-                    variant="flat"
-                  >
-                    {item.change}
-                  </Chip>
+                  {/* Chip de status */}
+                  <div className="flex justify-end">
+                    <Chip
+                      classNames={{
+                        base: "h-5",
+                        content: "font-medium text-xs px-2",
+                      }}
+                      color={item.color}
+                      radius="full"
+                      size="sm"
+                      startContent={
+                        item.changeType === "positive" ? (
+                          <Icon
+                            height={8}
+                            icon="solar:arrow-up-linear"
+                            width={8}
+                          />
+                        ) : item.changeType === "negative" ? (
+                          <Icon
+                            height={8}
+                            icon="solar:arrow-down-linear"
+                            width={8}
+                          />
+                        ) : (
+                          <Icon
+                            height={8}
+                            icon="solar:minus-linear"
+                            width={8}
+                          />
+                        )
+                      }
+                      variant="flat"
+                    >
+                      {item.change}
+                    </Chip>
+                  </div>
                 </div>
-
-                {/* Linha de separação sutil */}
-                <div className="h-px bg-gradient-to-r from-transparent via-default-200 to-transparent opacity-60"></div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            ))}
+          </div>
         </div>
       )}
     </div>

@@ -7,50 +7,22 @@ import ViagemCard from "../../../../../src/components/ViagemCard";
 import { useRouter } from "next/navigation";
 import { ISelect } from "../../../../../src/interface/ISelect";
 import { Passageiro, ViagemRealTime } from "../../../../../src/model/viagem";
+import { Select, SelectItem } from "@heroui/select";
+import { Button } from "@heroui/button";
 
 interface Props {
-  empresaId: string;
-  token: string;
+  cooperativas: ISelect[];
 }
 
-export default function ViagemList({ empresaId, token }: Props) {
+export default function ViagemList({ cooperativas }: Props) {
   const [viagens, setViagens] = useState<ViagemRealTime[]>([]);
-  const [cooperativas, setCooperativas] = useState<ISelect[]>([]);
-  const [cooperativaId, setCooperativaId] = useState<string>("");
+  const [cooperativaId, setCooperativaId] = useState<string>(() => {
+    // Seleciona automaticamente a primeira cooperativa se houver apenas uma
+    return cooperativas.length === 1 ? cooperativas[0].value : "";
+  });
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchCooperativas = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/${empresaId}/cooperativas`,
-          {
-            next: { tags: ["getViagens"] },
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (!response.ok) {
-          console.error(
-            "Erro na requisição:",
-            response.status,
-            response.statusText
-          );
-          return;
-        }
-
-        const data: ISelect[] = await response.json();
-        setCooperativas(data);
-      } catch (err) {
-        console.error("Erro ao buscar cooperativas:", err);
-      }
-    };
-
-    fetchCooperativas();
-  }, [empresaId, token]);
+  // Remover o useEffect que buscava cooperativas pois agora vem como props
 
   useEffect(() => {
     if (!cooperativaId) return;
@@ -114,41 +86,75 @@ export default function ViagemList({ empresaId, token }: Props) {
   }, [cooperativaId]);
 
   return (
-    <div className="p-4 pb-24">
-      <button
-        className="mb-4 px-4 py-2 border uppercase tracking-widest text-xs rounded-none hover:bg-black dark:hover:bg-white dark:hover:text-black hover:text-white transition"
-        onClick={() => router.back()}
-      >
-        Voltar
-      </button>
-      <h1 className="text-xl font-bold mb-4">Viagens em Andamento</h1>
-      <div className="mb-4">
-        <label className="block mb-1 text-sm font-medium">
-          Selecione a Cooperativa:
-        </label>
-        <select
-          className="border px-2 py-1 rounded"
-          value={cooperativaId}
-          onChange={(e) => setCooperativaId(e.target.value)}
+    <div className="p-4 pb-24 space-y-6">
+      {/* Header com botão de voltar */}
+      <div className="flex items-center gap-4">
+        <Button
+          variant="bordered"
+          onPress={() => router.back()}
+          className="uppercase tracking-widest text-xs"
         >
-          <option value="">Selecione...</option>
+          ← Voltar
+        </Button>
+        <h1 className="text-xl font-bold">Viagens em Andamento</h1>
+      </div>
+
+      {/* Select de Cooperativas */}
+      <div className="max-w-xs">
+        <Select
+          label="Selecione a Cooperativa"
+          placeholder={
+            cooperativas.length === 0
+              ? "Nenhuma cooperativa disponível"
+              : "Escolha uma cooperativa"
+          }
+          selectedKeys={cooperativaId ? [cooperativaId] : []}
+          onSelectionChange={(keys) => {
+            const selected = Array.from(keys)[0] as string;
+            setCooperativaId(selected || "");
+          }}
+          isDisabled={cooperativas.length === 0}
+          className="w-full"
+        >
           {cooperativas.map((coop) => (
-            <option key={coop.value} value={coop.value}>
-              {coop.label}
-            </option>
+            <SelectItem key={coop.value}>{coop.label}</SelectItem>
           ))}
-        </select>
+        </Select>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {viagens.map((viagem) => (
-          <ViagemCard
-            cooperativaId={cooperativaId}
-            key={viagem.id}
-            viagem={viagem}
-            motoristaId={viagem.motoristaId}
-          />
-        ))}
-      </div>
+
+      {/* Grid de Viagens */}
+      {cooperativaId && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {viagens.length > 0 ? (
+            viagens.map((viagem) => (
+              <ViagemCard
+                cooperativaId={cooperativaId}
+                key={viagem.id}
+                viagem={viagem}
+                motoristaId={viagem.motoristaId}
+              />
+            ))
+          ) : (
+            <div className="col-span-full text-center py-8 text-gray-500">
+              Nenhuma viagem em andamento encontrada
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Mensagem quando nenhuma cooperativa está selecionada */}
+      {!cooperativaId && cooperativas.length > 0 && (
+        <div className="text-center py-8 text-gray-500">
+          Selecione uma cooperativa para visualizar as viagens
+        </div>
+      )}
+
+      {/* Mensagem quando não há cooperativas */}
+      {cooperativas.length === 0 && (
+        <div className="text-center py-8 text-gray-500">
+          Nenhuma cooperativa encontrada para esta empresa
+        </div>
+      )}
     </div>
   );
 }

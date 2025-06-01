@@ -9,15 +9,18 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
       url: `/${params.id}`,
     },
     {
-      name: "Novo Passageiro",
+      name: "Novo Colaborador",
       url: `/passegers/${params.id}`,
     },
   ];
+
   return (
-    <section>
-      <Breadcrumb items={url} />
-      <FormPassegers id={params.id} />
-    </section>
+    <div className="min-h-screen">
+      <div className="container mx-auto p-4">
+        <Breadcrumb items={url} />
+        <FormPassegers id={params.id} />
+      </div>
+    </div>
   );
 };
 

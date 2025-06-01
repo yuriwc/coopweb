@@ -1,7 +1,7 @@
 import { getToken } from "@/src/utils/token/get-token";
-import { TravelCard } from "@/src/components/CardViagem";
 import { ViagemResumo } from "@/src/model/viagem";
 import Breadcrumb from "@/src/components/breadcrumb";
+import ViagemTable from "./viagem-table";
 
 const App = async (props: { params: Promise<{ id: string }> }) => {
   const params = await props.params;
@@ -26,7 +26,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
         Authorization: `Bearer ${await getToken()}`,
         "Content-Type": "application/json",
       },
-    },
+    }
   );
 
   if (!response.ok) {
@@ -60,13 +60,9 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
         </div>
       </div>
 
-      {/* Lista de viagens */}
-      <div className="h-[calc(100vh-180px)] overflow-y-auto pr-2 pb-36">
-        <div className="space-y-4">
-          {viagens.viagens.map((viagem, index) => (
-            <TravelCard key={index} viagem={viagem} />
-          ))}
-        </div>
+      {/* Tabela de viagens */}
+      <div className="h-[calc(100vh-200px)]">
+        <ViagemTable viagens={viagens.viagens} />
       </div>
     </div>
   );

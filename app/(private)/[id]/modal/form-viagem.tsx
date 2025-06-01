@@ -13,6 +13,11 @@ import {
   ModalFooter,
 } from "@heroui/modal";
 import { Button } from "@heroui/button";
+import { Card, CardBody, CardHeader } from "@heroui/card";
+import { Chip } from "@heroui/chip";
+import { Icon } from "@iconify/react";
+import { Avatar } from "@heroui/avatar";
+import { Badge } from "@heroui/badge";
 
 interface Props {
   isOpen: boolean;
@@ -31,6 +36,7 @@ export default function TripRequestModal({
 }: Props) {
   const [selectedPlan, setSelectedPlan] = useState<string>("");
   const [cooperativa, setCooperativa] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // Função de validação
   function validate() {
@@ -70,6 +76,7 @@ export default function TripRequestModal({
   // Função para realizar a solicitação da viagem
   async function requestViagem() {
     const data = generateDataToRequest();
+    setIsLoading(true);
 
     try {
       const response = await fetch(
@@ -85,10 +92,19 @@ export default function TripRequestModal({
       );
 
       await response.json();
-      alert("Viagem solicitada com sucesso!");
+
+      ShowToast({
+        color: "success",
+        title: "Viagem solicitada com sucesso!",
+      });
     } catch (error) {
       console.error(error);
-      alert("Erro ao solicitar a viagem. Tente novamente mais tarde.");
+      ShowToast({
+        color: "danger",
+        title: "Erro ao solicitar a viagem. Tente novamente mais tarde.",
+      });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -101,72 +117,199 @@ export default function TripRequestModal({
 
   return (
     <>
-      <Button variant="faded" onPress={() => onOpen(true)}>
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => onOpen(true)}
+        startContent={<Icon icon="solar:bolt-linear" className="w-4 h-4" />}
+        className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold"
+      >
         Viagem Imediata
       </Button>
-      <Modal isOpen={isOpen} onOpenChange={onOpen}>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpen}
+        size="2xl"
+        classNames={{
+          backdrop:
+            "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
+        }}
+      >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader>
-                <h3 className="text-lg font-medium leading-6">
-                  Solicitar Viagem
-                </h3>
+              <ModalHeader className="flex flex-col gap-1 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/50 dark:to-purple-950/50">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                    <Icon
+                      icon="solar:map-point-wave-linear"
+                      className="w-6 h-6 text-blue-600 dark:text-blue-400"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                      Solicitar Viagem
+                    </h3>
+                    <p className="text-sm text-foreground-600">
+                      Configure sua viagem imediata
+                    </p>
+                  </div>
+                </div>
               </ModalHeader>
-              <ModalBody>
-                <section className="mb-6">
-                  <SelectCooperativas
-                    setCooperativa={setCooperativa}
-                    empresa={empresa}
-                    token={token}
-                  />
-                </section>
-                <section className="mb-6">
-                  <h4 className="mb-2 text-sm font-medium">Passageiros</h4>
-                  <p className="mb-4 text-sm">
-                    Quantidade de passageiros: {passagers.length}
-                  </p>
 
-                  <div className="space-y-3">
-                    {passagers.map((passager) => (
-                      <div
-                        key={passager.id}
-                        className="flex items-center space-x-3 border-b border-gray-100 py-2"
-                      >
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 text-gray-500"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
+              <ModalBody className="py-6 space-y-6">
+                {/* Seção: Cooperativa */}
+                <Card className="border border-default-200">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                        <Icon
+                          icon="solar:buildings-3-linear"
+                          className="w-5 h-5 text-emerald-600 dark:text-emerald-400"
+                        />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-semibold text-foreground">
+                          Cooperativa
+                        </h4>
+                        <p className="text-sm text-foreground-600">
+                          Selecione a cooperativa responsável
+                        </p>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardBody className="pt-0">
+                    <SelectCooperativas
+                      setCooperativa={setCooperativa}
+                      empresa={empresa}
+                      token={token}
+                    />
+                  </CardBody>
+                </Card>
+
+                {/* Seção: Passageiros */}
+                <Card className="border border-default-200">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-3 w-full justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-violet-100 dark:bg-violet-900/30 rounded-lg">
+                          <Icon
+                            icon="solar:users-group-two-rounded-linear"
+                            className="w-5 h-5 text-violet-600 dark:text-violet-400"
+                          />
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-900">
-                            {passager.name}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {passager.phone}
+                          <h4 className="text-lg font-semibold text-foreground">
+                            Passageiros
+                          </h4>
+                          <p className="text-sm text-foreground-600">
+                            Lista de colaboradores selecionados
                           </p>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </section>
-                <TipoViagem setSelectedPlan={setSelectedPlan} />
+                      <Badge
+                        content={passagers.length}
+                        color="primary"
+                        shape="circle"
+                      >
+                        <Chip variant="flat" color="primary" size="sm">
+                          {passagers.length} selecionado
+                          {passagers.length !== 1 ? "s" : ""}
+                        </Chip>
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardBody className="pt-0">
+                    <div className="grid grid-cols-1 gap-3 max-h-60 overflow-y-auto">
+                      {passagers.map((passager, index) => (
+                        <div
+                          key={passager.id}
+                          className="flex items-center gap-4 p-3 bg-default-50 dark:bg-default-100/50 rounded-lg border border-default-200"
+                        >
+                          <Avatar
+                            size="sm"
+                            name={passager.name?.charAt(0).toUpperCase()}
+                            classNames={{
+                              base: "bg-gradient-to-r from-violet-600 to-blue-600",
+                              name: "text-white font-semibold",
+                            }}
+                          />
+                          <div className="flex-1">
+                            <p className="text-sm font-semibold text-foreground">
+                              {passager.name}
+                            </p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <Icon
+                                icon="solar:phone-linear"
+                                className="w-3 h-3 text-default-400"
+                              />
+                              <p className="text-xs text-foreground-600">
+                                {passager.phone}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <Chip variant="flat" size="sm" color="secondary">
+                              #{index + 1}
+                            </Chip>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardBody>
+                </Card>
+
+                {/* Seção: Tipo de Viagem */}
+                <Card className="border border-default-200">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+                        <Icon
+                          icon="solar:route-linear"
+                          className="w-5 h-5 text-amber-600 dark:text-amber-400"
+                        />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-semibold text-foreground">
+                          Tipo de Viagem
+                        </h4>
+                        <p className="text-sm text-foreground-600">
+                          Escolha o tipo de serviço desejado
+                        </p>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardBody className="pt-0">
+                    <TipoViagem setSelectedPlan={setSelectedPlan} />
+                  </CardBody>
+                </Card>
               </ModalBody>
-              <ModalFooter>
-                <Button variant="light" onPress={onClose} className="mr-2">
+
+              <ModalFooter className="bg-default-50 dark:bg-default-100/50">
+                <Button
+                  variant="light"
+                  onPress={onClose}
+                  startContent={
+                    <Icon
+                      icon="solar:close-circle-linear"
+                      className="w-4 h-4"
+                    />
+                  }
+                >
                   Cancelar
                 </Button>
-                <Button color="primary" onPress={handleSolicitarViagem}>
-                  <span className="text-secondary">Solicitar Viagem</span>
+                <Button
+                  color="primary"
+                  onPress={handleSolicitarViagem}
+                  isLoading={isLoading}
+                  startContent={
+                    !isLoading ? (
+                      <Icon icon="solar:plane-linear" className="w-4 h-4" />
+                    ) : null
+                  }
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold"
+                >
+                  {isLoading ? "Solicitando..." : "Solicitar Viagem"}
                 </Button>
               </ModalFooter>
             </>

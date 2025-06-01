@@ -90,7 +90,7 @@ const TablePassegers = ({
                 <Icon icon="iconoir:plus" height={30} />
               </Button>
               <Spacer x={5} />
-              <div>
+              <div className="flex flex-row gap-2">
                 <FormViagem
                   token={token}
                   isOpen={isModalOpen}
@@ -98,7 +98,6 @@ const TablePassegers = ({
                   passagers={passagers}
                   empresa={empresa}
                 />
-
                 <FormViagemProgramada
                   token={token}
                   isOpen={isModalProgramadaOpen}
