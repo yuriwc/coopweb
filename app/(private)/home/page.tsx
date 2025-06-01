@@ -84,7 +84,7 @@ export default async function Home() {
         {/* Companies Grid */}
         <div className="w-full max-w-4xl">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {empresas.map((empresa: Cooperativa, index: number) => (
+            {empresas.map((empresa: Cooperativa) => (
               <Link
                 className="group block transform transition-all duration-300 hover:scale-105"
                 href={`/${empresa.id}`}

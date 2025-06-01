@@ -459,7 +459,6 @@ export default function ViagemTable({ viagens }: Props) {
     onSearchChange,
     onRowsPerPageChange,
     filteredItems.length,
-    hasSearchFilter,
     onClear,
     rowsPerPage,
   ]);
@@ -506,7 +505,6 @@ export default function ViagemTable({ viagens }: Props) {
     items.length,
     page,
     pages,
-    hasSearchFilter,
     filteredItems.length,
     onNextPage,
     onPreviousPage,
