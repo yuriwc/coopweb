@@ -23,7 +23,7 @@ import {
 } from "@heroui/table";
 import { Icon } from "@iconify/react";
 import { Viagem } from "@/src/model/viagem";
-import { format } from "date-fns";
+import { format, parseISO, isValid } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 // Ícones SVG
@@ -194,22 +194,62 @@ export default function ViagemTable({ viagens }: Props) {
   }, [sortDescriptor, items]);
 
   const formatarData = (dataString: string) => {
-    const data = new Date(dataString);
-    return format(data, "dd/MM/yyyy HH:mm", { locale: ptBR });
+    if (!dataString) return "-";
+
+    try {
+      let data: Date;
+
+      // Tenta primeiro parseISO para datas ISO
+      if (dataString.includes("T") || dataString.includes("Z")) {
+        data = parseISO(dataString);
+      } else {
+        // Para outros formatos, usa new Date
+        data = new Date(dataString);
+      }
+
+      // Verifica se a data é válida
+      if (!isValid(data)) {
+        console.warn("Data inválida:", dataString);
+        return "-";
+      }
+
+      return format(data, "dd/MM/yyyy HH:mm", { locale: ptBR });
+    } catch (error) {
+      console.error("Erro ao formatar data:", error, dataString);
+      return "-";
+    }
   };
 
   const calcularDuracao = (viagem: Viagem) => {
-    const inicio = new Date(viagem.dataInicio);
-    const fim = new Date(viagem.dataFim);
-    const diff = Math.abs(fim.getTime() - inicio.getTime());
-    const minutos = Math.floor(diff / (1000 * 60));
-    const horas = Math.floor(minutos / 60);
-    const mins = minutos % 60;
+    if (!viagem.dataInicio || !viagem.dataFim) return "-";
 
-    if (horas > 0) {
-      return `${horas}h ${mins}min`;
+    try {
+      const inicio = new Date(viagem.dataInicio);
+      const fim = new Date(viagem.dataFim);
+
+      // Verifica se as datas são válidas
+      if (!isValid(inicio) || !isValid(fim)) {
+        console.warn(
+          "Datas inválidas para cálculo de duração:",
+          viagem.dataInicio,
+          viagem.dataFim
+        );
+        return "-";
+      }
+
+      const diff = Math.abs(fim.getTime() - inicio.getTime());
+      const minutos = Math.floor(diff / (1000 * 60));
+      const horas = Math.floor(minutos / 60);
+      const mins = minutos % 60;
+
+      if (horas > 0) {
+        return `${horas}h ${mins}min`;
+      }
+      return `${mins}min`;
+    } catch (error) {
+      console.error("Erro ao calcular duração:", error, viagem);
+      return "-";
     }
-    return `${mins}min`;
   };
 
   const formatarValor = (valor: number) =>
@@ -433,8 +473,8 @@ export default function ViagemTable({ viagens }: Props) {
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total de {filteredItems.length} viagem
-            {filteredItems.length !== 1 ? "s" : ""}
+            Total de {filteredItems.length}
+            {filteredItems.length !== 1 ? " viagens" : " viagem"}
           </span>
           <label className="flex items-center text-default-400 text-small">
             Linhas por página:
@@ -502,7 +542,6 @@ export default function ViagemTable({ viagens }: Props) {
     );
   }, [
     selectedKeys,
-    items.length,
     page,
     pages,
     filteredItems.length,
