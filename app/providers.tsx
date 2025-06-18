@@ -1,8 +1,5 @@
 "use client";
 
-// app/providers.tsx
-import { HeroUIProvider } from "@heroui/system";
-import { ToastProvider } from "@heroui/toast";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { useEffect, useState } from "react";
 
@@ -13,14 +10,18 @@ export function Providers({ children }: { children: React.ReactNode }) {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted) {
+    return <div style={{ visibility: "hidden" }}>{children}</div>;
+  }
 
   return (
-    <HeroUIProvider>
-      <ToastProvider />
-      <NextThemesProvider attribute="class" defaultTheme="light">
-        {children}
-      </NextThemesProvider>
-    </HeroUIProvider>
+    <NextThemesProvider
+      attribute="class"
+      defaultTheme="light"
+      enableSystem={false}
+      storageKey="coopweb-theme"
+    >
+      {children}
+    </NextThemesProvider>
   );
 }

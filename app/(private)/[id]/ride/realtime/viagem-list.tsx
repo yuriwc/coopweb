@@ -126,10 +126,10 @@ export default function ViagemList({ cooperativas }: Props) {
       {cooperativaId && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {viagens.length > 0 ? (
-            viagens.map((viagem) => (
+            viagens.map((viagem, index) => (
               <ViagemCard
                 cooperativaId={cooperativaId}
-                key={viagem.id}
+                key={viagem.id + index}
                 viagem={viagem}
                 motoristaId={viagem.motoristaId}
               />
