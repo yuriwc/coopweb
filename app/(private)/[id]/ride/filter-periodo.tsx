@@ -15,24 +15,30 @@ const periodos = [
   { key: "semana", label: "Por Semana", icon: "solar:calendar-linear" },
 ];
 
-export default function FilterPeriodo({ currentPeriodo, baseUrl }: FilterPeriodoProps) {
+export default function FilterPeriodo({
+  currentPeriodo,
+  baseUrl,
+}: FilterPeriodoProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const handlePeriodoChange = useCallback((periodo: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    
-    if (periodo === "hora") {
-      params.delete("periodo");
-    } else {
-      params.set("periodo", periodo);
-    }
+  const handlePeriodoChange = useCallback(
+    (periodo: string) => {
+      const params = new URLSearchParams(searchParams.toString());
 
-    const queryString = params.toString();
-    const newUrl = queryString ? `${baseUrl}?${queryString}` : baseUrl;
-    
-    router.push(newUrl);
-  }, [router, searchParams, baseUrl]);
+      if (periodo === "hora") {
+        params.delete("periodo");
+      } else {
+        params.set("periodo", periodo);
+      }
+
+      const queryString = params.toString();
+      const newUrl = queryString ? `${baseUrl}?${queryString}` : baseUrl;
+
+      router.push(newUrl);
+    },
+    [router, searchParams, baseUrl]
+  );
 
   return (
     <div className="flex items-center gap-4">
@@ -78,7 +84,7 @@ export default function FilterPeriodo({ currentPeriodo, baseUrl }: FilterPeriodo
             "data-[open=true]:bg-white/60 dark:data-[open=true]:bg-white/20",
             "rounded-xl",
             "shadow-lg",
-            "transition-all duration-300"
+            "transition-all duration-300",
           ],
           value: "text-slate-800 dark:text-slate-200 font-medium",
           selectorIcon: "text-slate-600 dark:text-slate-400",
@@ -87,13 +93,13 @@ export default function FilterPeriodo({ currentPeriodo, baseUrl }: FilterPeriodo
             "bg-white/90 dark:bg-slate-900/90",
             "border-white/50 dark:border-white/20",
             "rounded-xl",
-            "shadow-xl"
+            "shadow-xl",
           ],
           listbox: "p-2",
         }}
         renderValue={(items) => {
           return items.map((item) => {
-            const periodo = periodos.find(p => p.key === item.key);
+            const periodo = periodos.find((p) => p.key === item.key);
             return (
               <div key={item.key} className="flex items-center gap-2">
                 <svg
@@ -106,10 +112,26 @@ export default function FilterPeriodo({ currentPeriodo, baseUrl }: FilterPeriodo
                     <circle cx="12" cy="12" r="10" strokeWidth="2" />
                   )}
                   {periodo?.key === "dia" && (
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" strokeWidth="2" />
+                    <rect
+                      x="3"
+                      y="4"
+                      width="18"
+                      height="18"
+                      rx="2"
+                      ry="2"
+                      strokeWidth="2"
+                    />
                   )}
                   {periodo?.key === "semana" && (
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" strokeWidth="2" />
+                    <rect
+                      x="3"
+                      y="4"
+                      width="18"
+                      height="18"
+                      rx="2"
+                      ry="2"
+                      strokeWidth="2"
+                    />
                   )}
                 </svg>
                 <span>{periodo?.label}</span>
@@ -119,7 +141,7 @@ export default function FilterPeriodo({ currentPeriodo, baseUrl }: FilterPeriodo
         }}
       >
         {periodos.map((periodo) => (
-          <SelectItem 
+          <SelectItem
             key={periodo.key}
             className="data-[selected=true]:bg-blue-100/50 dark:data-[selected=true]:bg-blue-900/30"
           >
@@ -138,7 +160,15 @@ export default function FilterPeriodo({ currentPeriodo, baseUrl }: FilterPeriodo
                 )}
                 {periodo.key === "dia" && (
                   <>
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" strokeWidth="2" />
+                    <rect
+                      x="3"
+                      y="4"
+                      width="18"
+                      height="18"
+                      rx="2"
+                      ry="2"
+                      strokeWidth="2"
+                    />
                     <line x1="16" y1="2" x2="16" y2="6" strokeWidth="2" />
                     <line x1="8" y1="2" x2="8" y2="6" strokeWidth="2" />
                     <line x1="3" y1="10" x2="21" y2="10" strokeWidth="2" />
@@ -146,11 +176,22 @@ export default function FilterPeriodo({ currentPeriodo, baseUrl }: FilterPeriodo
                 )}
                 {periodo.key === "semana" && (
                   <>
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" strokeWidth="2" />
+                    <rect
+                      x="3"
+                      y="4"
+                      width="18"
+                      height="18"
+                      rx="2"
+                      ry="2"
+                      strokeWidth="2"
+                    />
                     <line x1="16" y1="2" x2="16" y2="6" strokeWidth="2" />
                     <line x1="8" y1="2" x2="8" y2="6" strokeWidth="2" />
                     <line x1="3" y1="10" x2="21" y2="10" strokeWidth="2" />
-                    <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01" strokeWidth="2" />
+                    <path
+                      d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"
+                      strokeWidth="2"
+                    />
                   </>
                 )}
               </svg>

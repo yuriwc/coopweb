@@ -4,14 +4,14 @@ import Breadcrumb from "@/src/components/breadcrumb";
 import ViagemTable from "./viagem-table";
 import FilterPeriodo from "./filter-periodo";
 
-const App = async (props: { 
+const App = async (props: {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ periodo?: string }>;
 }) => {
   const params = await props.params;
   const searchParams = await props.searchParams;
   const periodo = searchParams.periodo || "hora";
-  
+
   const url = [
     {
       name: "Início",
@@ -22,7 +22,7 @@ const App = async (props: {
       url: `${params.id}/ride/`,
     },
   ];
-  
+
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/${params.id}/viagens?periodo=${periodo}`,
     {
@@ -108,9 +108,9 @@ const App = async (props: {
             {/* Filter Section */}
             <div className="mb-6">
               <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-xl p-4">
-                <FilterPeriodo 
-                  currentPeriodo={periodo} 
-                  baseUrl={`/${params.id}/ride`} 
+                <FilterPeriodo
+                  currentPeriodo={periodo}
+                  baseUrl={`/${params.id}/ride`}
                 />
               </div>
             </div>
