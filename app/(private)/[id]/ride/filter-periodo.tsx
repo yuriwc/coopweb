@@ -1,8 +1,9 @@
 "use client";
 
 import { Select, SelectItem } from "@heroui/select";
+import { Spinner } from "@heroui/spinner";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useState, useTransition } from "react";
 
 interface FilterPeriodoProps {
   currentPeriodo: string;
@@ -21,21 +22,30 @@ export default function FilterPeriodo({
 }: FilterPeriodoProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handlePeriodoChange = useCallback(
     (periodo: string) => {
-      const params = new URLSearchParams(searchParams.toString());
+      setIsLoading(true);
 
-      if (periodo === "hora") {
-        params.delete("periodo");
-      } else {
-        params.set("periodo", periodo);
-      }
+      startTransition(() => {
+        const params = new URLSearchParams(searchParams.toString());
 
-      const queryString = params.toString();
-      const newUrl = queryString ? `${baseUrl}?${queryString}` : baseUrl;
+        if (periodo === "hora") {
+          params.delete("periodo");
+        } else {
+          params.set("periodo", periodo);
+        }
 
-      router.push(newUrl);
+        const queryString = params.toString();
+        const newUrl = queryString ? `${baseUrl}?${queryString}` : baseUrl;
+
+        router.push(newUrl);
+
+        // Reset loading state after a short delay
+        setTimeout(() => setIsLoading(false), 500);
+      });
     },
     [router, searchParams, baseUrl]
   );
@@ -72,6 +82,10 @@ export default function FilterPeriodo({
         className="w-48"
         variant="bordered"
         size="sm"
+        isDisabled={isLoading || isPending}
+        startContent={
+          isLoading || isPending ? <Spinner size="sm" color="primary" /> : null
+        }
         classNames={{
           base: "backdrop-blur-sm",
           mainWrapper: "backdrop-blur-sm",
@@ -85,6 +99,7 @@ export default function FilterPeriodo({
             "rounded-xl",
             "shadow-lg",
             "transition-all duration-300",
+            isLoading || isPending ? "opacity-70" : "",
           ],
           value: "text-slate-800 dark:text-slate-200 font-medium",
           selectorIcon: "text-slate-600 dark:text-slate-400",

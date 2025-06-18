@@ -3,6 +3,7 @@ import { ViagemResumo } from "@/src/model/viagem";
 import Breadcrumb from "@/src/components/breadcrumb";
 import ViagemTable from "./viagem-table";
 import FilterPeriodo from "./filter-periodo";
+import LoadingOverlay from "./loading-overlay";
 
 const App = async (props: {
   params: Promise<{ id: string }>;
@@ -77,6 +78,9 @@ const App = async (props: {
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-blue-300/30 dark:via-white/10 to-transparent p-[1px]">
             <div className="h-full w-full rounded-2xl bg-transparent" />
           </div>
+
+          {/* Loading Overlay */}
+          <LoadingOverlay />
 
           <div className="relative p-6 rounded-2xl transition-all duration-700 group-hover:backdrop-blur-2xl">
             <div className="flex items-center gap-4 mb-6">
@@ -236,6 +240,9 @@ const App = async (props: {
 
           {/* Crystalline Highlight */}
           <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-blue-300/50 dark:via-white/30 to-transparent" />
+
+          {/* Loading Overlay */}
+          <LoadingOverlay />
 
           <div className="relative p-6 rounded-2xl transition-all duration-500">
             <div className="flex items-center gap-3 mb-6">
