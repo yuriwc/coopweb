@@ -129,7 +129,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
                         {funcionarios.length}
                       </p>
                       <p className="text-xs text-gray-600 dark:text-gray-300 font-medium drop-shadow-lg">
-                        Funcionários
+                        Colaboradores
                       </p>
                     </div>
                   </div>
@@ -226,10 +226,10 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
               <div className="absolute inset-0 bg-white/[0.15] dark:bg-white/[0.02] backdrop-blur-xl rounded-2xl border border-blue-200/25 dark:border-white/5" />
               <div className="relative p-6 rounded-2xl">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2 drop-shadow-lg">
-                  Gestão de Funcionários
+                  Solicitar Viagem
                 </h2>
                 <p className="text-gray-600 dark:text-gray-300 font-medium drop-shadow-lg">
-                  Gerencie os funcionários e suas informações
+                  Peça uma viagem para seus funcionários de forma rápida e fácil
                 </p>
               </div>
             </div>

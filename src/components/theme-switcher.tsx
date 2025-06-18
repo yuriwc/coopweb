@@ -28,12 +28,11 @@ export function ThemeSwitcher() {
     <button
       aria-label="Alternar tema"
       onClick={toggleTheme}
-      className={`transition-colors duration-300 rounded-none px-3 py-2 text-xl flex items-center justify-center relative overflow-hidden`}
+      className="backdrop-blur-md bg-white/30 dark:bg-white/20 border border-white/40 dark:border-white/30 hover:bg-white/40 dark:hover:bg-white/25 transition-all duration-300 rounded-xl p-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center justify-center relative overflow-hidden shadow-lg hover:shadow-xl hover:scale-105"
       style={{
         outline: "none",
-        width: 44,
-        height: 44,
-        borderColor: isDark ? "#fff" : "#000",
+        width: 40,
+        height: 40,
       }}
     >
       <span

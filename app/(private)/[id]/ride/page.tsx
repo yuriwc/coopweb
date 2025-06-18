@@ -2,9 +2,16 @@ import { getToken } from "@/src/utils/token/get-token";
 import { ViagemResumo } from "@/src/model/viagem";
 import Breadcrumb from "@/src/components/breadcrumb";
 import ViagemTable from "./viagem-table";
+import FilterPeriodo from "./filter-periodo";
 
-const App = async (props: { params: Promise<{ id: string }> }) => {
+const App = async (props: { 
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ periodo?: string }>;
+}) => {
   const params = await props.params;
+  const searchParams = await props.searchParams;
+  const periodo = searchParams.periodo || "hora";
+  
   const url = [
     {
       name: "Início",
@@ -15,8 +22,9 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
       url: `${params.id}/ride/`,
     },
   ];
+  
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/${params.id}/viagens`,
+    `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/${params.id}/viagens?periodo=${periodo}`,
     {
       next: {
         tags: ["getViagens"],
@@ -94,6 +102,16 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
                 <p className="text-gray-600 dark:text-gray-300 text-sm font-medium">
                   Histórico completo das suas viagens realizadas
                 </p>
+              </div>
+            </div>
+
+            {/* Filter Section */}
+            <div className="mb-6">
+              <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-xl p-4">
+                <FilterPeriodo 
+                  currentPeriodo={periodo} 
+                  baseUrl={`/${params.id}/ride`} 
+                />
               </div>
             </div>
 
