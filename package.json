@@ -32,6 +32,7 @@
     "@heroui/skeleton": "^2.2.10",
     "@heroui/spacer": "^2.2.12",
     "@heroui/spinner": "^2.2.13",
+    "@heroui/switch": "^2.2.20",
     "@heroui/system": "^2.4.15",
     "@heroui/table": "^2.2.14",
     "@heroui/theme": "^2.4.15",

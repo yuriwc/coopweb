@@ -25,6 +25,9 @@ const Menu = () => {
         <DropdownItem href="/passegers" key="copy">
           Importar
         </DropdownItem>
+        <DropdownItem key="configuracoes" href={`${pathname}/configuracoes`}>
+          Configurações
+        </DropdownItem>
         <DropdownItem key="delete" className="text-danger" color="danger">
           Apagar
         </DropdownItem>
