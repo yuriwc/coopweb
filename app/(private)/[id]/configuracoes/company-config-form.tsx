@@ -34,8 +34,14 @@ async function handleSubmit(
     const updateData: CompanyConfigsUpdateDto = {};
 
     const dataFechamento = formData.get("dataFechamento");
-    const calcularPrecoAutomatico = formData.get("calcularPrecoAutomatico");
     const precoPorKm = formData.get("precoPorKm");
+    const precoBase = formData.get("precoBase");
+
+    // Para o switch, vamos pegar todos os valores e verificar se "true" está presente
+    const calcularPrecoAutomaticoValues = formData.getAll(
+      "calcularPrecoAutomatico"
+    );
+    const switchIsOn = calcularPrecoAutomaticoValues.includes("true");
 
     if (dataFechamento) {
       const day = parseInt(dataFechamento.toString());
@@ -44,14 +50,20 @@ async function handleSubmit(
       }
     }
 
-    if (calcularPrecoAutomatico !== null) {
-      updateData.calcularPrecoAutomatico = calcularPrecoAutomatico === "true";
-    }
+    // Sempre incluir o valor do switch no update
+    updateData.calcularPrecoAutomatico = switchIsOn;
 
     if (precoPorKm) {
       const price = parseFloat(precoPorKm.toString());
       if (price > 0) {
         updateData.precoPorKm = price;
+      }
+    }
+
+    if (precoBase) {
+      const basePrice = parseFloat(precoBase.toString());
+      if (basePrice > 0) {
+        updateData.precoBase = basePrice;
       }
     }
 
@@ -188,6 +200,12 @@ export default function CompanyConfigForm({
               >
                 Ativar cálculo automático por quilômetro
               </Switch>
+              {/* Input hidden para garantir que sempre temos um valor quando o switch está off */}
+              <input
+                type="hidden"
+                name="calcularPrecoAutomatico"
+                value="false"
+              />
               <p className="text-xs text-gray-500">
                 Quando ativo, o preço será calculado automaticamente baseado na
                 distância
@@ -203,6 +221,20 @@ export default function CompanyConfigForm({
               min="0.01"
               defaultValue={currentConfig?.precoPorKm?.toString() || ""}
               description="Valor cobrado por quilômetro rodado"
+              startContent={
+                <span className="text-lg text-default-400">R$</span>
+              }
+            />
+
+            <Input
+              name="precoBase"
+              label="Preço Base da Corrida (R$)"
+              placeholder="5.00"
+              type="number"
+              step="0.01"
+              min="0.01"
+              defaultValue={currentConfig?.precoBase?.toString() || ""}
+              description="Valor fixo base para cada corrida"
               startContent={
                 <span className="text-lg text-default-400">R$</span>
               }
@@ -256,6 +288,12 @@ export default function CompanyConfigForm({
                 <span className="font-medium">Preço por Km:</span>
                 <span className="ml-2">
                   R$ {currentConfig.precoPorKm?.toFixed(2)}
+                </span>
+              </div>
+              <div>
+                <span className="font-medium">Preço Base:</span>
+                <span className="ml-2">
+                  R$ {currentConfig.precoBase?.toFixed(2)}
                 </span>
               </div>
               <div>

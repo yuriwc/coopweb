@@ -32,6 +32,7 @@ Esta nova funcionalidade permite gerenciar as configurações específicas de ca
 1. **Data de Fechamento**: Dia do mês para fechamento (1-31)
 2. **Cálculo Automático**: Ativação/desativação do cálculo por quilômetro (agora com HeroUI Switch)
 3. **Preço por Km**: Valor cobrado por quilômetro rodado
+4. **Preço Base**: Valor fixo base para cada corrida
 
 ### Navegação
 
@@ -54,7 +55,8 @@ Atualiza as configurações da empresa com validação.
 {
   "dataFechamento": 15,
   "calcularPrecoAutomatico": true,
-  "precoPorKm": 2.5
+  "precoPorKm": 2.5,
+  "precoBase": 5.0
 }
 ```
 
@@ -66,6 +68,7 @@ Atualiza as configurações da empresa com validação.
   "dataFechamento": 15,
   "calcularPrecoAutomatico": true,
   "precoPorKm": 2.5,
+  "precoBase": 5.0,
   "empresaId": "uuid-empresa",
   "empresaNome": "Nome da Empresa"
 }
@@ -76,6 +79,7 @@ Atualiza as configurações da empresa com validação.
 - **dataFechamento**: Entre 1 e 31 (opcional)
 - **calcularPrecoAutomatico**: true/false (opcional)
 - **precoPorKm**: Maior que zero (opcional)
+- **precoBase**: Maior que zero (opcional)
 
 Todos os campos são opcionais - você pode enviar apenas os que deseja atualizar.
 
