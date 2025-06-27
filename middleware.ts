@@ -5,6 +5,11 @@ const publicRoutes = [
     path: "/signin",
     whenAuthenticated: "redirect",
   },
+  // Permite acesso público ao docs
+  {
+    path: "/docs/webgo.html",
+    whenAuthenticated: undefined,
+  },
 ];
 
 const REDIRECT_WHEN_NOT_AUTHENTICATED = "/signin";

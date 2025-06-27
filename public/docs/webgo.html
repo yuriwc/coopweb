@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manual WebGo - Sistema de Gestão de Transportes</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.7;
+        color: #2c3e50;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        background: white;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        border-radius: 20px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 50px;
+        padding: 40px 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .header::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          45deg,
+          transparent 30%,
+          rgba(255, 255, 255, 0.1) 50%,
+          transparent 70%
+        );
+        animation: shine 3s infinite;
+      }
+
+      @keyframes shine {
+        0% {
+          transform: translateX(-100%) translateY(-100%) rotate(45deg);
+        }
+        100% {
+          transform: translateX(100%) translateY(100%) rotate(45deg);
+        }
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        font-weight: 300;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero-section {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 40px;
+        text-align: center;
+      }
+
+      .hero-section h2 {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+      }
+
+      .hero-section p {
+        font-size: 1.1rem;
+        opacity: 0.95;
+      }
+
+      h2 {
+        color: #667eea;
+        font-size: 2rem;
+        margin: 50px 0 20px 0;
+        border-left: 6px solid #667eea;
+        padding-left: 20px;
+        position: relative;
+      }
+
+      h2::after {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        left: 20px;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 2px;
+      }
+
+      h3 {
+        color: #4facfe;
+        font-size: 1.4rem;
+        margin: 30px 0 15px 0;
+        font-weight: 600;
+      }
+
+      h4 {
+        color: #2c3e50;
+        font-size: 1.2rem;
+        margin: 20px 0 10px 0;
+        font-weight: 600;
+      }
+
+      .toc {
+        background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .toc h2 {
+        margin-top: 0;
+        color: #2c3e50;
+        text-align: center;
+        border: none;
+        padding: 0;
+      }
+
+      .toc h2::after {
+        display: none;
+      }
+
+      .toc ol {
+        list-style: none;
+        counter-reset: toc-counter;
+        columns: 2;
+        column-gap: 40px;
+      }
+
+      .toc li {
+        counter-increment: toc-counter;
+        margin: 15px 0;
+        break-inside: avoid;
+      }
+
+      .toc li::before {
+        content: counter(toc-counter, decimal-leading-zero);
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        font-weight: bold;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        font-size: 0.9rem;
+      }
+
+      .toc a {
+        color: #2c3e50;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        padding: 5px 10px;
+        border-radius: 8px;
+        display: inline-block;
+      }
+
+      .toc a:hover {
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+        transform: translateX(5px);
+      }
+
+      .section {
+        margin-bottom: 50px;
+        scroll-margin-top: 100px;
+      }
+
+      .image-container {
+        text-align: center;
+        margin: 30px 0;
+        padding: 20px;
+        background: #f8f9ff;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.1);
+        border: 2px solid rgba(102, 126, 234, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .image-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+      }
+
+      .image-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      }
+
+      .feature-card {
+        background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        padding: 25px;
+        border-radius: 15px;
+        margin: 25px 0;
+        box-shadow: 0 10px 30px rgba(252, 182, 159, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(252, 182, 159, 0.4);
+      }
+
+      .feature-card h4 {
+        color: #d63031;
+        margin-bottom: 15px;
+        font-size: 1.3rem;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin: 30px 0;
+      }
+
+      .stat-card {
+        background: linear-gradient(135deg, #74b9ff, #0984e3);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(116, 185, 255, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(116, 185, 255, 0.4);
+      }
+
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .stat-label {
+        font-size: 1rem;
+        opacity: 0.9;
+      }
+
+      .alert {
+        padding: 20px;
+        margin: 25px 0;
+        border-radius: 12px;
+        border-left: 5px solid;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .alert::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0.05;
+        background-size: 30px 30px;
+        background-image: repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 5px,
+          rgba(0, 0, 0, 0.1) 5px,
+          rgba(0, 0, 0, 0.1) 10px
+        );
+      }
+
+      .alert-info {
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        border-left-color: #2196f3;
+        color: #0d47a1;
+      }
+
+      .alert-success {
+        background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+        border-left-color: #4caf50;
+        color: #1b5e20;
+      }
+
+      .alert-warning {
+        background: linear-gradient(135deg, #fff3e0, #ffcc02);
+        border-left-color: #ff9800;
+        color: #e65100;
+      }
+
+      .alert-danger {
+        background: linear-gradient(135deg, #ffebee, #ffcdd2);
+        border-left-color: #f44336;
+        color: #b71c1c;
+      }
+
+      .button-demo {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
+        margin: 5px;
+      }
+
+      .button-demo:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        color: white;
+      }
+
+      .step-list {
+        counter-reset: step-counter;
+        list-style: none;
+        padding: 0;
+      }
+
+      .step-list li {
+        counter-increment: step-counter;
+        margin: 20px 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #f6f9fc, #e9ecef);
+        border-radius: 12px;
+        position: relative;
+        padding-left: 80px;
+        transition: all 0.3s ease;
+      }
+
+      .step-list li:hover {
+        transform: translateX(10px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .step-list li::before {
+        content: counter(step-counter);
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+
+      .config-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin: 30px 0;
+      }
+
+      .config-item {
+        background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(253, 203, 110, 0.3);
+      }
+
+      .contact-section {
+        background: linear-gradient(135deg, #2d3436, #636e72);
+        color: white;
+        padding: 40px;
+        border-radius: 15px;
+        margin-top: 50px;
+      }
+
+      .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        margin-top: 30px;
+      }
+
+      .contact-item {
+        text-align: center;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+      }
+
+      .contact-icon {
+        font-size: 2rem;
+        margin-bottom: 15px;
+        opacity: 0.8;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          margin: 10px;
+          padding: 20px;
+          border-radius: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        .toc ol {
+          columns: 1;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .config-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .contact-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .scroll-to-top {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .scroll-to-top.visible {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .scroll-to-top:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Manual do Usuário</h1>
+        <p class="subtitle">
+          Sistema WebGo - Gestão e Controle de Mobilidade Empresarial
+        </p>
+      </div>
+
+      <div class="hero-section">
+        <h2>🚗 Bem-vindo ao WebGo</h2>
+        <p>
+          A plataforma completa para gestão inteligente de transportes
+          empresariais. Controle total, eficiência máxima.
+        </p>
+      </div>
+
+      <!-- SUMÁRIO APRIMORADO -->
+      <div class="toc">
+        <h2>📋 Índice de Conteúdo</h2>
+        <ol>
+          <li><a href="#login">Acesso ao Sistema e Seleção de Empresa</a></li>
+          <li><a href="#painel">Dashboard Empresarial</a></li>
+          <li><a href="#menu">Navegação e Funcionalidades</a></li>
+          <li><a href="#config">Configurações Avançadas</a></li>
+          <li><a href="#solicitacao">Sistema de Solicitação de Viagens</a></li>
+          <li><a href="#historico">Histórico e Relatórios</a></li>
+          <li><a href="#tempo-real">Monitoramento em Tempo Real</a></li>
+          <li><a href="#analytics">Analytics e Métricas</a></li>
+          <li><a href="#dicas">Melhores Práticas</a></li>
+          <li><a href="#suporte">Suporte e Contato</a></li>
+        </ol>
+      </div>
+
+      <!-- SEÇÃO 1: LOGIN -->
+      <div class="section" id="login">
+        <h2>🔐 1. Acesso ao Sistema e Seleção de Empresa</h2>
+        <div class="image-container">
+          <img src="Slide 1.png" alt="Tela de Login CoopWeb" />
+          <p><em>Interface de seleção de empresa do sistema CoopWeb</em></p>
+        </div>
+
+        <h3>🎯 Como Acessar o Sistema</h3>
+        <p>
+          O WebGo utiliza uma interface intuitiva para seleção de empresas. Na
+          tela inicial, você encontrará todas as empresas disponíveis para
+          acesso.
+        </p>
+
+        <ol class="step-list">
+          <li>
+            <strong>Localize sua empresa</strong> na lista apresentada (ex:
+            "Grupo Beauty")
+          </li>
+          <li>
+            <strong>Clique no cartão da empresa</strong> ou no botão "Acessar"
+          </li>
+          <li><strong>Aguarde o carregamento</strong> do painel de controle</li>
+        </ol>
+
+        <div class="alert alert-info">
+          <strong>💡 Dica Importante:</strong> O sistema exibe o status "Sistema
+          online" no canto superior direito, garantindo que você está conectado
+          à versão mais atual da plataforma.
+        </div>
+
+        <div class="alert alert-warning">
+          <strong>⚠️ Empresa não encontrada?</strong> Entre em contato com o
+          administrador do sistema para verificar as permissões de acesso.
+        </div>
+      </div>
+
+      <!-- SEÇÃO 2: PAINEL -->
+      <div class="section" id="painel">
+        <h2>📊 2. Dashboard Empresarial</h2>
+        <div class="image-container">
+          <img src="Slide 2.png" alt="Dashboard do Grupo Beauty" />
+          <p><em>Painel principal com métricas e controles essenciais</em></p>
+        </div>
+
+        <h3>📈 Métricas Principais</h3>
+        <p>
+          O dashboard apresenta indicadores-chave de performance em tempo real:
+        </p>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number">5</div>
+            <div class="stat-label">Colaboradores</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">12</div>
+            <div class="stat-label">Viagens Ativas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">8</div>
+            <div class="stat-label">Programadas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">98%</div>
+            <div class="stat-label">Eficiência</div>
+          </div>
+        </div>
+
+        <h3>👥 Gestão de Colaboradores</h3>
+        <p>
+          O sistema apresenta uma tabela completa com informações dos
+          colaboradores:
+        </p>
+
+        <div class="feature-card">
+          <h4>🔍 Funcionalidades da Tabela</h4>
+          <ul>
+            <li>
+              <strong>Busca inteligente:</strong> Filtre por nome, telefone ou
+              cidade
+            </li>
+            <li>
+              <strong>Dados completos:</strong> Nome, telefone, cidade e estado
+            </li>
+            <li>
+              <strong>Seleção múltipla:</strong> Checkbox para ações em lote
+            </li>
+            <li>
+              <strong>Ações rápidas:</strong> Botões de viagem imediata e
+              programada
+            </li>
+          </ul>
+        </div>
+
+        <div class="alert alert-success">
+          <strong>✅ Dica Pro:</strong> Use os botões
+          <span class="button-demo">⚡ Viagem Imediata</span> e
+          <span class="button-demo">📅 Programar Viagem</span> para acesso
+          direto às funcionalidades mais utilizadas.
+        </div>
+      </div>
+
+      <!-- SEÇÃO 3: MENU -->
+      <div class="section" id="menu">
+        <h2>🧭 3. Navegação e Funcionalidades</h2>
+        <div class="image-container">
+          <img src="Slide 3.png" alt="Menu de Funcionalidades" />
+          <p><em>Central de funcionalidades com acesso rápido</em></p>
+        </div>
+
+        <h3>🎛️ Módulos Principais</h3>
+        <p>
+          O menu principal oferece acesso direto aos três pilares do sistema:
+        </p>
+
+        <div class="config-grid">
+          <div class="feature-card">
+            <h4>📅 Viagens Programadas</h4>
+            <p>
+              <strong
+                >Gerencie e acompanhe as viagens programadas da sua
+                empresa</strong
+              >
+            </p>
+            <ul>
+              <li>Visualizar agenda de viagens</li>
+              <li>Cancelar ou modificar agendamentos</li>
+              <li>Notificações automáticas</li>
+              <li>Status em tempo real</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <h4>📊 Relatórios</h4>
+            <p>
+              <strong
+                >Acesse relatórios detalhados e análises de performance das
+                viagens</strong
+              >
+            </p>
+            <ul>
+              <li>Relatórios por período</li>
+              <li>Análise de custos</li>
+              <li>Métricas de eficiência</li>
+              <li>Exportação de dados</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <h4>🎯 Monitoramento em Tempo Real</h4>
+            <p>
+              <strong
+                >Acompanhe a localização e status das viagens em
+                andamento</strong
+              >
+            </p>
+            <ul>
+              <li>Tracking GPS em tempo real</li>
+              <li>Status de cada viagem</li>
+              <li>Alertas automáticos</li>
+              <li>Comunicação com motoristas</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEÇÃO 4: CONFIGURAÇÕES -->
+      <div class="section" id="config">
+        <h2>⚙️ 4. Configurações Avançadas</h2>
+        <div class="image-container">
+          <img src="Slide 4.png" alt="Configurações da Empresa" />
+          <p><em>Painel de configurações gerais do sistema</em></p>
+        </div>
+
+        <h3>🔧 Configurações Gerais</h3>
+        <p>
+          Personalize o sistema de acordo com as necessidades da sua empresa:
+        </p>
+
+        <div class="config-grid">
+          <div class="config-item">
+            <h4>📅 Dia do Fechamento Mensal</h4>
+            <p>Define o dia do mês para fechamento das contas (1-31)</p>
+            <p><strong>Configuração atual:</strong> Dia 1</p>
+          </div>
+
+          <div class="config-item">
+            <h4>🔄 Cálculo Automático por Quilômetro</h4>
+            <p>Ative para cálculo automático baseado na distância percorrida</p>
+            <p><strong>Status:</strong> Ativo</p>
+          </div>
+        </div>
+
+        <h3>💰 Configurações de Preço</h3>
+        <div class="config-grid">
+          <div class="config-item">
+            <h4>🛣️ Preço por Quilômetro</h4>
+            <p>Valor cobrado por quilômetro rodado</p>
+            <p><strong>Valor atual:</strong> R$ 2,46</p>
+          </div>
+
+          <div class="config-item">
+            <h4>🚗 Preço Base da Corrida</h4>
+            <p>Valor fixo base para cada corrida</p>
+            <p><strong>Valor atual:</strong> R$ 25,00</p>
+          </div>
+        </div>
+
+        <div class="alert alert-info">
+          <strong>💾 Como Salvar:</strong>
+          <ol class="step-list">
+            <li>Preencha os valores desejados nos campos</li>
+            <li>
+              Clique no botão
+              <span class="button-demo">💾 Salvar Configurações</span>
+            </li>
+            <li>Aguarde a confirmação do sistema</li>
+          </ol>
+        </div>
+
+        <div class="alert alert-warning">
+          <strong>⚠️ Importante:</strong> As alterações de preço impactam apenas
+          nas viagens futuras. Viagens já realizadas mantêm os valores
+          originais.
+        </div>
+      </div>
+
+      <!-- SEÇÃO 5: SOLICITAÇÃO -->
+      <div class="section" id="solicitacao">
+        <h2>🚗 5. Sistema de Solicitação de Viagens</h2>
+        <div class="image-container">
+          <img src="Slide 5.png" alt="Solicitação de Viagem" />
+          <p><em>Formulário de solicitação de viagem</em></p>
+        </div>
+
+        <h3>📝 Processo de Solicitação</h3>
+        <ol class="step-list">
+          <li>
+            <strong>Escolha o Tipo de Viagem</strong><br />Selecione entre
+            viagem imediata ou programada
+          </li>
+          <li>
+            <strong>Selecione a Cooperativa</strong><br />Escolha a cooperativa
+            de sua preferência
+          </li>
+          <li>
+            <strong>Adicione os Passageiros</strong><br />Selecione
+            colaboradores da tabela ou adicione novos
+          </li>
+          <li>
+            <strong>Defina Origem e Destino</strong><br />Informe os endereços
+            de partida e chegada
+          </li>
+          <li>
+            <strong>Configure Detalhes</strong><br />Horário, observações
+            especiais, etc.
+          </li>
+          <li>
+            <strong>Confirme a Solicitação</strong><br />Revise todos os dados
+            antes de confirmar
+          </li>
+        </ol>
+
+        <div class="alert alert-success">
+          <strong>🔄 Viagens Recorrentes:</strong> Para viagens que se repetem
+          regularmente (ex: transporte diário), solicite ao suporte a criação de
+          um modelo automático.
+        </div>
+      </div>
+
+      <!-- SEÇÃO 6: HISTÓRICO -->
+      <div class="section" id="historico">
+        <h2>📋 6. Histórico e Relatórios</h2>
+        <div class="image-container">
+          <img src="Slide 6.png" alt="Histórico de Viagens" />
+          <p><em>Histórico completo de viagens realizadas</em></p>
+        </div>
+
+        <h3>🔍 Filtros Disponíveis</h3>
+        <div class="config-grid">
+          <div class="feature-card">
+            <h4>👤 Por Passageiro</h4>
+            <p>Filtre viagens de colaboradores específicos</p>
+          </div>
+          <div class="feature-card">
+            <h4>🚙 Por Motorista</h4>
+            <p>Visualize viagens por motorista responsável</p>
+          </div>
+          <div class="feature-card">
+            <h4>📍 Por Origem/Destino</h4>
+            <p>Busque viagens com base nos endereços de origem e destino</p>
+          </div>
+          <div class="feature-card">
+            <h4>📅 Por Data</h4>
+            <p>Filtre viagens realizadas em datas específicas</p>
+          </div>
+        </div>
+
+        <h3>📊 Relatórios Personalizados</h3>
+        <p>Gere relatórios detalhados conforme sua necessidade:</p>
+        <div class="alert alert-info">
+          <strong>💡 Dica:</strong> Utilize a exportação para CSV para análises
+          avançadas em planilhas.
+        </div>
+      </div>
+
+      <!-- SEÇÃO 7: TEMPO REAL -->
+      <div class="section" id="tempo-real">
+        <h2>🛰️ 7. Monitoramento em Tempo Real</h2>
+        <div class="image-container">
+          <img src="Slide 7.png" alt="Monitoramento em Tempo Real" />
+          <p><em>Acompanhe viagens em andamento com dados em tempo real</em></p>
+        </div>
+
+        <h3>🌐 Funcionalidades do Monitoramento</h3>
+        <p>O módulo de monitoramento oferece:</p>
+        <ul>
+          <li>Visualização em mapa da rota dos veículos</li>
+          <li>Informações em tempo real sobre a localização</li>
+          <li>Alertas de desvios de rota ou paradas não programadas</li>
+          <li>Comunicação direta com motoristas</li>
+        </ul>
+
+        <div class="alert alert-success">
+          <strong>🚀 Dica Avançada:</strong> Integre com sistemas de terceiros
+          para uma gestão ainda mais completa.
+        </div>
+      </div>
+
+      <!-- SEÇÃO 8: MONITORAMENTO DETALHADO -->
+      <div class="section" id="analytics">
+        <h2>📈 8. Monitoramento Detalhado</h2>
+        <div class="image-container">
+          <img src="Slide_8.png" alt="Monitoramento Detalhado" />
+          <p><em>Indicadores e gráficos de desempenho detalhados</em></p>
+        </div>
+        <h3>Detalhes da viagem em andamento</h3>
+        <p>
+          Esta tela mostra informações precisas sobre uma viagem que está
+          ocorrendo:
+        </p>
+        <h4>Dados da Viagem</h4>
+        <ul>
+          <li><strong>Status:</strong> Situação atual (INICIADA no exemplo)</li>
+          <li>
+            <strong>Velocidade:</strong> Quão rápido o veículo está se movendo
+          </li>
+          <li><strong>Qualidade GPS:</strong> Precisão do rastreamento</li>
+          <li><strong>Tempo Estimado:</strong> Quando o veículo deve chegar</li>
+          <li>
+            <strong>Coordenadas:</strong> Localização exata em
+            latitude/longitude
+          </li>
+        </ul>
+        <h4>Informações Adicionais</h4>
+        <ul>
+          <li>
+            <strong>Passagens:</strong> Pontos de controle durante a viagem
+          </li>
+          <li>
+            <strong>Temperatura:</strong> Condições ambientais (23° no exemplo)
+          </li>
+        </ul>
+        <div class="alert alert-warning">
+          <strong>Atenção:</strong> Em caso de discrepâncias entre o
+          monitoramento e a situação real, entre em contato imediatamente com a
+          cooperativa de transporte.
+        </div>
+        <p>
+          Utilize os relatórios, gráficos e o mapa para acompanhar o desempenho
+          da sua operação, identificar oportunidades de economia, monitorar
+          veículos em tempo real e otimizar rotas e recursos.
+        </p>
+      </div>
+
+      <!-- SEÇÃO 9: DICAS -->
+      <div class="section" id="dicas">
+        <h2>💡 9. Melhores Práticas</h2>
+        <div class="feature-card">
+          <ul>
+            <li>
+              Solicite viagens com antecedência para garantir disponibilidade
+            </li>
+            <li>Mantenha os dados dos colaboradores sempre atualizados</li>
+            <li>
+              Utilize o monitoramento para informar atrasos ou ocorrências
+            </li>
+            <li>
+              Revise periodicamente as configurações de preço e fechamento
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- SEÇÃO 10: SUPORTE -->
+      <div class="section" id="suporte">
+        <h2>🆘 10. Suporte e Contato</h2>
+        <div class="contact-section">
+          <div class="contact-grid">
+            <div class="contact-item">
+              <div class="contact-icon">📧</div>
+              <strong>Email:</strong>
+              <a href="mailto:coopgo@outlook.com.br" style="color: #fff"
+                >coopgo@outlook.com.br</a
+              >
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">📞</div>
+              <strong>Telefone:</strong> (71) 99681-4288
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">⏰</div>
+              <strong>Horário:</strong> Segunda a sexta, das 8h às 18h
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEÇÃO FINALIZAÇÃO -->
+      <div class="section" id="conclusao">
+        <h2>🎉 Conclusão</h2>
+        <div class="feature-card">
+          <p>
+            Parabéns! Agora você está pronto para utilizar o WebGo e aproveitar
+            todos os recursos para uma gestão de transportes eficiente, segura e
+            moderna.
+          </p>
+          <p>
+            Consulte este manual sempre que tiver dúvidas e conte com nosso
+            suporte para o que precisar.
+          </p>
+        </div>
+        <p
+          style="
+            margin-top: 40px;
+            text-align: center;
+            color: #6366f1;
+            font-weight: bold;
+          "
+        >
+          Obrigado por escolher o WebGo!
+        </p>
+      </div>
+
+      <div class="scroll-to-top" id="scrollToTopBtn" title="Voltar ao topo">
+        ↑
+      </div>
+    </div>
+    <script>
+      // Botão de voltar ao topo
+      const scrollBtn = document.getElementById("scrollToTopBtn");
+      window.addEventListener("scroll", function () {
+        if (window.scrollY > 300) {
+          scrollBtn.classList.add("visible");
+        } else {
+          scrollBtn.classList.remove("visible");
+        }
+      });
+      scrollBtn.addEventListener("click", function () {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    </script>
+  </body>
+</html>
