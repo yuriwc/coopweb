@@ -1,5 +1,8 @@
-import { CompanyConfig, CompanyConfigsUpdateDto } from "../model/company-config";
-// import { getToken } from "../utils/token/get-token"; // DEPRECATED: Use company-config-server.ts ou company-config-client.ts
+import {
+  CompanyConfig,
+  CompanyConfigsUpdateDto,
+} from "../model/company-config";
+import { getToken } from "../utils/token/get-token";
 
 /**
  * DEPRECATED: Este arquivo está descontinuado.
@@ -11,16 +14,13 @@ import { CompanyConfig, CompanyConfigsUpdateDto } from "../model/company-config"
 /**
  * Busca as configurações da empresa
  * GET /api/company-configs/empresa/{empresaId}
- * 
+ *
  * @deprecated Use getCompanyConfigsServer ou getCompanyConfigsClient
  */
-export async function getCompanyConfigs(
-  empresaId: string
-): Promise<CompanyConfig | null> {
-  throw new Error("getCompanyConfigs is deprecated. Use getCompanyConfigsServer or getCompanyConfigsClient instead.");
-}
-    return null;
-  }
+export async function getCompanyConfigs(): Promise<CompanyConfig | null> {
+  throw new Error(
+    "getCompanyConfigs is deprecated. Use getCompanyConfigsServer or getCompanyConfigsClient instead."
+  );
 }
 
 /**
@@ -45,7 +45,11 @@ export async function updateCompanyConfigs(
     );
 
     if (!response.ok) {
-      console.error("Erro na requisição:", response.status, response.statusText);
+      console.error(
+        "Erro na requisição:",
+        response.status,
+        response.statusText
+      );
       return null;
     }
 
