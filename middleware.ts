@@ -5,10 +5,11 @@ const publicRoutes = [
     path: "/signin",
     whenAuthenticated: "redirect",
   },
-  // Permite acesso público ao docs
+  // Permite acesso público a todo o diretório docs
   {
-    path: "/docs/webgo.html",
+    path: "/docs",
     whenAuthenticated: undefined,
+    isPrefix: true,
   },
 ];
 
@@ -17,7 +18,9 @@ const REDIRECT_WHEN_AUTHENTICATED = "/home";
 
 export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
-  const publicRoute = publicRoutes.find((route) => route.path === path);
+  const publicRoute = publicRoutes.find((route) =>
+    route.isPrefix ? path.startsWith(route.path) : route.path === path
+  );
   const authTokens = request.cookies.get("token");
 
   if (!publicRoute && !authTokens) {
