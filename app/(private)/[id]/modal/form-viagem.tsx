@@ -5,6 +5,7 @@ import { Funcionario } from "@/src/model/funcionario";
 import TipoViagem from "../tipoViagem";
 import ShowToast from "@/src/components/Toast";
 import SelectCooperativas from "../select/cooperativas";
+import SelectCentrosCusto from "../select/centros-custo";
 import {
   Modal,
   ModalContent,
@@ -36,6 +37,7 @@ export default function TripRequestModal({
 }: Props) {
   const [selectedPlan, setSelectedPlan] = useState<string>("");
   const [cooperativa, setCooperativa] = useState<string>("");
+  const [centroCusto, setCentroCusto] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
 
   // Função de validação
@@ -46,6 +48,14 @@ export default function TripRequestModal({
       ShowToast({
         color: "danger",
         title: "Selecione um plano de viagem",
+      });
+      return false;
+    }
+
+    if (!centroCusto) {
+      ShowToast({
+        color: "danger",
+        title: "Selecione um centro de custo",
       });
       return false;
     }
@@ -69,6 +79,7 @@ export default function TripRequestModal({
       empresaID: empresa,
       tipoViagem: selectedPlan,
       cooperativaID: cooperativa,
+      centroCustoId: centroCusto,
       passageiros: passagersID,
     };
   }
@@ -181,6 +192,35 @@ export default function TripRequestModal({
                   <CardBody className="pt-0">
                     <SelectCooperativas
                       setCooperativa={setCooperativa}
+                      empresa={empresa}
+                      token={token}
+                    />
+                  </CardBody>
+                </Card>
+
+                {/* Seção: Centro de Custo */}
+                <Card className="border border-default-200">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
+                        <Icon
+                          icon="solar:wallet-money-linear"
+                          className="w-5 h-5 text-orange-600 dark:text-orange-400"
+                        />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-semibold text-foreground">
+                          Centro de Custo
+                        </h4>
+                        <p className="text-sm text-foreground-600">
+                          Selecione o centro de custo para a viagem
+                        </p>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardBody className="pt-0">
+                    <SelectCentrosCusto
+                      setCentroCusto={setCentroCusto}
                       empresa={empresa}
                       token={token}
                     />
