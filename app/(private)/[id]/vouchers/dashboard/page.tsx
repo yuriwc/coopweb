@@ -2,12 +2,10 @@ import { getToken } from "@/src/utils/token/get-token";
 import { RelatorioVouchersCompleto } from "@/src/model/relatorio-vouchers";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Chip } from "@heroui/chip";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/table";
 import { Icon } from "@iconify/react";
 import { Button } from "@heroui/button";
-import { Input } from "@heroui/input";
-import { DateInput } from "@heroui/date-input";
 import { Suspense } from "react";
+import VouchersTable from "./vouchers-table";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -17,10 +15,13 @@ interface Props {
 async function DashboardVouchers({ params, searchParams }: Props) {
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
-  
-  const dataInicio = resolvedSearchParams.dataInicio || new Date(new Date().setDate(1)).toISOString().split('T')[0];
-  const dataFim = resolvedSearchParams.dataFim || new Date().toISOString().split('T')[0];
-  
+
+  const dataInicio =
+    resolvedSearchParams.dataInicio ||
+    new Date(new Date().setDate(1)).toISOString().split("T")[0];
+  const dataFim =
+    resolvedSearchParams.dataFim || new Date().toISOString().split("T")[0];
+
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_SERVER}/api/v1/relatorio/empresa/${resolvedParams.id}/vouchers/centro-custo/periodo?dataInicio=${dataInicio}&dataFim=${dataFim}`,
     {
@@ -37,9 +38,16 @@ async function DashboardVouchers({ params, searchParams }: Props) {
       <div className="min-h-screen flex items-center justify-center">
         <Card className="max-w-md">
           <CardBody className="text-center p-8">
-            <Icon icon="solar:danger-triangle-linear" className="w-16 h-16 mx-auto text-danger mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Erro ao carregar dados</h3>
-            <p className="text-gray-600">Não foi possível carregar o relatório de vouchers.</p>
+            <Icon
+              icon="solar:danger-triangle-linear"
+              className="w-16 h-16 mx-auto text-danger mb-4"
+            />
+            <h3 className="text-xl font-semibold mb-2">
+              Erro ao carregar dados
+            </h3>
+            <p className="text-gray-600">
+              Não foi possível carregar o relatório de vouchers.
+            </p>
           </CardBody>
         </Card>
       </div>
@@ -50,22 +58,26 @@ async function DashboardVouchers({ params, searchParams }: Props) {
 
   const getStatusColor = (status: "PAGO" | "PENDENTE" | "APROVADO") => {
     switch (status) {
-      case "PAGO": return "success";
-      case "PENDENTE": return "warning";
-      case "APROVADO": return "primary";
-      default: return "default";
+      case "PAGO":
+        return "success";
+      case "PENDENTE":
+        return "warning";
+      case "APROVADO":
+        return "primary";
+      default:
+        return "default";
     }
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
+    return new Date(dateString).toLocaleDateString("pt-BR");
   };
 
   return (
@@ -85,10 +97,12 @@ async function DashboardVouchers({ params, searchParams }: Props) {
                   Dashboard de Vouchers
                 </h1>
                 <p className="text-gray-600 dark:text-gray-300 mt-1">
-                  Relatório detalhado por centro de custo - {relatorio.empresaNome}
+                  Relatório detalhado por centro de custo -{" "}
+                  {relatorio.empresaNome}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Período: {formatDate(relatorio.dataInicio)} até {formatDate(relatorio.dataFim)}
+                  Período: {formatDate(relatorio.dataInicio)} até{" "}
+                  {formatDate(relatorio.dataFim)}
                 </p>
               </div>
               <Button
@@ -96,7 +110,9 @@ async function DashboardVouchers({ params, searchParams }: Props) {
                 href={`/${resolvedParams.id}/vouchers/resumo`}
                 variant="ghost"
                 color="primary"
-                startContent={<Icon icon="solar:chart-linear" className="w-4 h-4" />}
+                startContent={
+                  <Icon icon="solar:chart-linear" className="w-4 h-4" />
+                }
               >
                 Ver Gráficos
               </Button>
@@ -110,13 +126,18 @@ async function DashboardVouchers({ params, searchParams }: Props) {
             <CardBody className="p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-blue-100/20 dark:bg-blue-900/20 rounded-lg">
-                  <Icon icon="solar:ticket-linear" className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  <Icon
+                    icon="solar:ticket-linear"
+                    className="w-5 h-5 text-blue-600 dark:text-blue-400"
+                  />
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
                     {relatorio.totalVouchersGeral}
                   </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-300">Total Vouchers</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-300">
+                    Total Vouchers
+                  </p>
                 </div>
               </div>
             </CardBody>
@@ -126,13 +147,18 @@ async function DashboardVouchers({ params, searchParams }: Props) {
             <CardBody className="p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-emerald-100/20 dark:bg-emerald-900/20 rounded-lg">
-                  <Icon icon="solar:dollar-linear" className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                  <Icon
+                    icon="solar:dollar-linear"
+                    className="w-5 h-5 text-emerald-600 dark:text-emerald-400"
+                  />
                 </div>
                 <div>
                   <p className="text-lg font-bold text-gray-900 dark:text-white">
                     {formatCurrency(relatorio.valorTotalGeral)}
                   </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-300">Valor Total</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-300">
+                    Valor Total
+                  </p>
                 </div>
               </div>
             </CardBody>
@@ -142,13 +168,18 @@ async function DashboardVouchers({ params, searchParams }: Props) {
             <CardBody className="p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-100/20 dark:bg-green-900/20 rounded-lg">
-                  <Icon icon="solar:check-circle-linear" className="w-5 h-5 text-green-600 dark:text-green-400" />
+                  <Icon
+                    icon="solar:check-circle-linear"
+                    className="w-5 h-5 text-green-600 dark:text-green-400"
+                  />
                 </div>
                 <div>
                   <p className="text-lg font-bold text-gray-900 dark:text-white">
                     {formatCurrency(relatorio.valorPagoGeral)}
                   </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-300">Valor Pago</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-300">
+                    Valor Pago
+                  </p>
                 </div>
               </div>
             </CardBody>
@@ -158,13 +189,18 @@ async function DashboardVouchers({ params, searchParams }: Props) {
             <CardBody className="p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-orange-100/20 dark:bg-orange-900/20 rounded-lg">
-                  <Icon icon="solar:clock-circle-linear" className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                  <Icon
+                    icon="solar:clock-circle-linear"
+                    className="w-5 h-5 text-orange-600 dark:text-orange-400"
+                  />
                 </div>
                 <div>
                   <p className="text-lg font-bold text-gray-900 dark:text-white">
                     {formatCurrency(relatorio.valorPendenteGeral)}
                   </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-300">Valor Pendente</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-300">
+                    Valor Pendente
+                  </p>
                 </div>
               </div>
             </CardBody>
@@ -173,8 +209,11 @@ async function DashboardVouchers({ params, searchParams }: Props) {
 
         {/* Centers List */}
         <section className="space-y-6">
-          {relatorio.centrosCusto.map((centro) => (
-            <Card key={centro.codigoCentroCusto} className="bg-white/[0.20] dark:bg-white/[0.03] backdrop-blur-xl border border-blue-200/40 dark:border-white/10">
+          {relatorio.centrosCusto?.map((centro) => (
+            <Card
+              key={centro.codigoCentroCusto}
+              className="bg-white/[0.20] dark:bg-white/[0.03] backdrop-blur-xl border border-blue-200/40 dark:border-white/10"
+            >
               <CardHeader className="pb-3">
                 <div className="flex justify-between items-start w-full">
                   <div>
@@ -204,55 +243,7 @@ async function DashboardVouchers({ params, searchParams }: Props) {
                 </div>
               </CardHeader>
               <CardBody>
-                <Table aria-label={`Vouchers do centro ${centro.codigoCentroCusto}`}>
-                  <TableHeader>
-                    <TableColumn>VOUCHER</TableColumn>
-                    <TableColumn>DATA</TableColumn>
-                    <TableColumn>MOTORISTA</TableColumn>
-                    <TableColumn>PASSAGEIRO</TableColumn>
-                    <TableColumn>VALOR</TableColumn>
-                    <TableColumn>STATUS</TableColumn>
-                    <TableColumn>TRAJETO</TableColumn>
-                  </TableHeader>
-                  <TableBody>
-                    {centro.vouchers.map((voucher) => (
-                      <TableRow key={voucher.id}>
-                        <TableCell>
-                          <div className="font-mono text-sm">{voucher.numeroVoucher}</div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-sm">
-                            {new Date(voucher.dataEmissao).toLocaleDateString('pt-BR')}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-sm">{voucher.nomeMotorista}</div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-sm">{voucher.nomePassageiro}</div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="font-semibold">{formatCurrency(voucher.valorTotal)}</div>
-                        </TableCell>
-                        <TableCell>
-                          <Chip 
-                            size="sm" 
-                            color={getStatusColor(voucher.status)} 
-                            variant="flat"
-                          >
-                            {voucher.status}
-                          </Chip>
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-xs max-w-xs">
-                            <div className="truncate text-gray-600">De: {voucher.origemViagem}</div>
-                            <div className="truncate text-gray-600">Para: {voucher.destinoViagem}</div>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <VouchersTable vouchers={centro.vouchers || []} />
               </CardBody>
             </Card>
           ))}
@@ -266,14 +257,19 @@ async function DashboardVouchers({ params, searchParams }: Props) {
 
 export default function DashboardPage(props: Props) {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <Icon icon="solar:refresh-linear" className="w-8 h-8 animate-spin mx-auto mb-4" />
-          <p>Carregando dashboard...</p>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <Icon
+              icon="solar:refresh-linear"
+              className="w-8 h-8 animate-spin mx-auto mb-4"
+            />
+            <p>Carregando dashboard...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <DashboardVouchers {...props} />
     </Suspense>
   );

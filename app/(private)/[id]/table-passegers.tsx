@@ -11,7 +11,7 @@ import {
   getKeyValue,
   Selection,
 } from "@heroui/table";
-import React, { useEffect, useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import Menu from "./menu";
 import { Button } from "@heroui/button";
 import { usePathname, useRouter } from "next/navigation";
@@ -21,12 +21,6 @@ import FormViagemProgramada from "./modal/form-viagem-programada";
 import FormViagem from "./modal/form-viagem";
 import CentroCustoModal from "./modal/form-centro-custo";
 import VincularCentroCustoModal from "./modal/form-vincular-centro-custo";
-
-interface TablePassegersProps {
-  funcionarios: Funcionario[];
-  empresa: string;
-  token: string;
-}
 
 const columns = [
   {
@@ -51,6 +45,12 @@ const columns = [
   },
 ];
 
+interface TablePassegersProps {
+  funcionarios: Funcionario[];
+  empresa: string;
+  token: string;
+}
+
 const TablePassegers = ({
   funcionarios,
   empresa,
@@ -58,7 +58,6 @@ const TablePassegers = ({
 }: TablePassegersProps) => {
   const router = useRouter();
   const currentPath = usePathname();
-  const [isClient, setIsClient] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalProgramadaOpen, setIsModalProgramadaOpen] = useState(false);
   const [isCentroCustoModalOpen, setIsCentroCustoModalOpen] = useState(false);
@@ -68,37 +67,33 @@ const TablePassegers = ({
   const [selectedFuncionario, setSelectedFuncionario] =
     useState<Funcionario | null>(null);
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) return null;
-
-  const handleCreate = () => {
+  const handleCreate = useCallback(() => {
     router.push(`${currentPath}/passegers`);
-  };
+  }, [router, currentPath]);
 
-  const handleVincularCentroCusto = (funcionario: Funcionario) => {
+  const handleVincularCentroCusto = useCallback((funcionario: Funcionario) => {
     setSelectedFuncionario(funcionario);
     setIsVincularCentroCustoModalOpen(true);
-  };
+  }, []);
 
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {
     router.refresh();
-  };
+  }, [router]);
+
+  const handleSelectionChange = useCallback((selected: Selection) => {
+    if (selected instanceof Set) {
+      setPassagers(
+        funcionarios.filter((funcionario) => selected.has(funcionario.id))
+      );
+    }
+  }, [funcionarios]);
 
   return (
     <div className="flex flex-col gap-3">
       <Table
         aria-label="Tabela de funciários de uma empresa"
         selectionMode="multiple"
-        onSelectionChange={(selected: Selection) => {
-          if (selected instanceof Set) {
-            setPassagers(
-              funcionarios.filter((funcionario) => selected.has(funcionario.id))
-            );
-          }
-        }}
+        onSelectionChange={handleSelectionChange}
         topContent={
           <div className="flex items-center gap-3 justify-between w-full">
             <div>

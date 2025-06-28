@@ -9,33 +9,37 @@ import { Icon as IconifyIcon } from "@iconify/react";
 const App = async (props: { params: Promise<{ id: string }> }) => {
   const params = await props.params;
 
-  const responseEmpresa = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/${params.id}`,
-    {
-      next: {
-        revalidate: 3600,
-        tags: ["getEmpresa"],
-      },
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/${params.id}/funcionarios`,
-    {
-      next: {
-        tags: ["getFuncionarios"],
-      },
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const token = await getToken();
+  
+  const [responseEmpresa, response] = await Promise.all([
+    fetch(
+      `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/${params.id}`,
+      {
+        next: {
+          revalidate: 3600,
+          tags: ["getEmpresa"],
+        },
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    ),
+    fetch(
+      `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/${params.id}/funcionarios`,
+      {
+        next: {
+          tags: ["getFuncionarios"],
+        },
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
+  ]);
 
   if (!response.ok || !responseEmpresa.ok) {
     console.error("Erro na requisição:", response.status, response.statusText);
@@ -242,7 +246,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
                 <TablePassegers
                   funcionarios={funcionarios}
                   empresa={params.id}
-                  token={await getToken()}
+                  token={token}
                 />
               </div>
             </div>
