@@ -266,7 +266,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
             </div>
 
             {/* Liquid Glass Action Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
               {/* Card 1 - Viagens Programadas */}
               <div className="group relative min-h-[240px]">
                 {/* Multi-layer Glass Effect */}
@@ -307,8 +307,27 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
                 </div>
               </div>
 
-              {/* Card 3 - Monitoramento em Tempo Real */}
-              <div className="group relative min-h-[240px] md:col-span-2 xl:col-span-1">
+              {/* Card 3 - Vouchers */}
+              <div className="group relative min-h-[240px]">
+                <div className="absolute inset-0 bg-white/[0.20] dark:bg-white/[0.05] backdrop-blur-xl rounded-3xl border border-purple-200/40 dark:border-white/10 shadow-2xl shadow-purple-400/20 dark:shadow-purple-500/5" />
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-400/[0.10] via-indigo-400/[0.08] to-pink-400/[0.10] dark:from-purple-400/[0.08] dark:via-indigo-400/[0.06] dark:to-pink-400/[0.08] rounded-3xl" />
+
+                <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-purple-300/60 dark:via-white/40 to-transparent" />
+                <div className="absolute bottom-0 left-1/3 right-1/3 h-[1px] bg-gradient-to-r from-transparent via-purple-300/40 dark:via-white/20 to-transparent" />
+
+                <div className="relative h-full p-8 rounded-3xl transition-all duration-700 hover:backdrop-blur-2xl hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-500/15 cursor-pointer">
+                  <ActionButton
+                    title="Vouchers"
+                    description="Dashboard e relatórios de vouchers por centro de custo"
+                    href={params.id + "/vouchers/dashboard"}
+                    icon="solar:ticket-linear"
+                    variant="primary"
+                  />
+                </div>
+              </div>
+
+              {/* Card 4 - Monitoramento em Tempo Real */}
+              <div className="group relative min-h-[240px]">
                 <div className="absolute inset-0 bg-white/[0.20] dark:bg-white/[0.05] backdrop-blur-xl rounded-3xl border border-teal-200/40 dark:border-white/10 shadow-2xl shadow-teal-400/20 dark:shadow-emerald-500/5" />
                 <div className="absolute inset-0 bg-gradient-to-br from-teal-400/[0.10] via-cyan-400/[0.08] to-blue-400/[0.10] dark:from-emerald-400/[0.08] dark:via-teal-400/[0.06] dark:to-green-400/[0.08] rounded-3xl" />
 
