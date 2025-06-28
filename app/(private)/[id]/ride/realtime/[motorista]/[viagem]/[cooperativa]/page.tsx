@@ -710,7 +710,7 @@ const Page = () => {
                     color="primary"
                     variant="flat"
                     startContent={<Icon icon="solar:refresh-linear" />}
-                    onPress={() => window.location.reload()}
+                    onPress={() => router.refresh()}
                     className="bg-transparent"
                   >
                     Tentar Novamente

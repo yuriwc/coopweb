@@ -6,4 +6,6 @@ export type Funcionario = {
   phone: string;
   cidade: string;
   estado: string;
+  centroCustoCodigo?: string;
+  centroCustoDescricao?: string;
 };

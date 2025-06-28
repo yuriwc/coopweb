@@ -42,6 +42,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
     return null;
   }
   const funcionarios = (await response.json()) as Funcionario[];
+  console.log(funcionarios);
   const empresa = (await responseEmpresa.json()) as Empresa;
 
   return (
