@@ -1,5 +1,6 @@
 "use client";
 
+import { ToastProvider } from "@heroui/toast";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { useEffect, useState } from "react";
 
@@ -22,6 +23,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       storageKey="coopweb-theme"
     >
       {children}
+      <ToastProvider />
     </NextThemesProvider>
   );
 }
