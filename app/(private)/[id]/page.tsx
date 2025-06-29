@@ -10,22 +10,19 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
   const params = await props.params;
 
   const token = await getToken();
-  
+
   const [responseEmpresa, response] = await Promise.all([
-    fetch(
-      `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/${params.id}`,
-      {
-        next: {
-          revalidate: 3600,
-          tags: ["getEmpresa"],
-        },
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    ),
+    fetch(`${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/${params.id}`, {
+      next: {
+        revalidate: 3600,
+        tags: ["getEmpresa"],
+      },
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }),
     fetch(
       `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/${params.id}/funcionarios`,
       {
@@ -38,7 +35,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
           "Content-Type": "application/json",
         },
       }
-    )
+    ),
   ]);
 
   if (!response.ok || !responseEmpresa.ok) {
@@ -302,8 +299,8 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
 
                 <div className="relative h-full p-8 rounded-3xl transition-all duration-700 hover:backdrop-blur-2xl hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-500/15 cursor-pointer">
                   <ActionButton
-                    title="Relatórios"
-                    description="Acesse relatórios detalhados e análises de performance das viagens"
+                    title="Minhas Viagens"
+                    description="Visualize e gerencie suas ultimas viagens"
                     href={params.id + "/ride"}
                     icon="solar:chart-square-linear"
                     variant="secondary"
@@ -321,8 +318,8 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
 
                 <div className="relative h-full p-8 rounded-3xl transition-all duration-700 hover:backdrop-blur-2xl hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-500/15 cursor-pointer">
                   <ActionButton
-                    title="Vouchers"
-                    description="Dashboard e relatórios de vouchers por centro de custo"
+                    title="Faturas e Vouchers"
+                    description="Faturas e vouchers da sua empresa. Dashboard de gastos por área"
                     href={params.id + "/vouchers/dashboard"}
                     icon="solar:ticket-linear"
                     variant="primary"
