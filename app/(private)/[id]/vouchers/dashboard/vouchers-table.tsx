@@ -21,7 +21,17 @@ const columns = [
 ];
 
 interface VouchersTableProps {
-  vouchers: any[];
+  vouchers: {
+    id?: string;
+    numeroVoucher?: string;
+    dataEmissao?: string;
+    nomeMotorista?: string;
+    nomePassageiro?: string;
+    valorTotal?: number;
+    status?: "PAGO" | "PENDENTE" | "APROVADO";
+    origemViagem?: string;
+    destinoViagem?: string;
+  }[];
 }
 
 export default function VouchersTable({ vouchers }: VouchersTableProps) {

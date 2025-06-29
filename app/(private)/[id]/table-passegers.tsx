@@ -11,7 +11,7 @@ import {
   getKeyValue,
   Selection,
 } from "@heroui/table";
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import Menu from "./menu";
 import { Button } from "@heroui/button";
 import { usePathname, useRouter } from "next/navigation";
@@ -80,13 +80,16 @@ const TablePassegers = ({
     router.refresh();
   }, [router]);
 
-  const handleSelectionChange = useCallback((selected: Selection) => {
-    if (selected instanceof Set) {
-      setPassagers(
-        funcionarios.filter((funcionario) => selected.has(funcionario.id))
-      );
-    }
-  }, [funcionarios]);
+  const handleSelectionChange = useCallback(
+    (selected: Selection) => {
+      if (selected instanceof Set) {
+        setPassagers(
+          funcionarios.filter((funcionario) => selected.has(funcionario.id))
+        );
+      }
+    },
+    [funcionarios]
+  );
 
   return (
     <div className="flex flex-col gap-3">

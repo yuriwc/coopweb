@@ -27,15 +27,15 @@ export async function vincularCentroCusto(
       return { success: true };
     } else {
       const errorData = await response.json();
-      return { 
-        success: false, 
-        error: errorData.message || "Erro ao vincular funcionário" 
+      return {
+        success: false,
+        error: errorData.message || "Erro ao vincular funcionário",
       };
     }
-  } catch (error) {
-    return { 
-      success: false, 
-      error: "Erro ao vincular funcionário. Tente novamente." 
+  } catch (_) {
+    return {
+      success: false,
+      error: "Erro ao vincular funcionário. Tente novamente.",
     };
   }
 }

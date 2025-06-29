@@ -4,13 +4,13 @@ import { CentroCustoResumo } from "@/src/model/relatorio-vouchers";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Icon } from "@iconify/react";
 import {
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
   ResponsiveContainer,
   PieChart,
   Pie,
@@ -18,44 +18,55 @@ import {
   LineChart,
   Line,
   Area,
-  AreaChart
+  AreaChart,
 } from "recharts";
 
 interface Props {
   data: CentroCustoResumo[];
 }
 
+interface TooltipPayload {
+  name: string;
+  value: number;
+  color: string;
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: TooltipPayload[];
+  label?: string;
+}
+
 const COLORS = [
-  '#3b82f6', // blue-500
-  '#10b981', // emerald-500  
-  '#f59e0b', // amber-500
-  '#ef4444', // red-500
-  '#8b5cf6', // violet-500
-  '#06b6d4', // cyan-500
-  '#84cc16', // lime-500
-  '#f97316', // orange-500
+  "#3b82f6", // blue-500
+  "#10b981", // emerald-500
+  "#f59e0b", // amber-500
+  "#ef4444", // red-500
+  "#8b5cf6", // violet-500
+  "#06b6d4", // cyan-500
+  "#84cc16", // lime-500
+  "#f97316", // orange-500
 ];
 
 export default function VouchersCharts({ data }: Props) {
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm p-3 rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg">
           <p className="font-semibold text-gray-900 dark:text-white">{label}</p>
-          {payload.map((entry: any, index: number) => (
+          {payload.map((entry: TooltipPayload, index: number) => (
             <p key={index} style={{ color: entry.color }} className="text-sm">
-              {entry.name}: {
-                entry.name.includes('Valor') || entry.name.includes('Total') 
-                  ? formatCurrency(entry.value)
-                  : entry.value
-              }
+              {entry.name}:{" "}
+              {entry.name.includes("Valor") || entry.name.includes("Total")
+                ? formatCurrency(entry.value)
+                : entry.value}
             </p>
           ))}
         </div>
@@ -65,26 +76,27 @@ export default function VouchersCharts({ data }: Props) {
   };
 
   // Preparar dados para gráficos
-  const barChartData = data.map(centro => ({
+  const barChartData = data.map((centro) => ({
     nome: centro.codigoCentroCusto,
     descricao: centro.descricaoCentroCusto,
-    'Total Vouchers': centro.totalVouchers,
-    'Valor Total': centro.valorTotal,
-    'Valor Pago': centro.valorPago,
-    'Valor Pendente': centro.valorPendente,
-    'Taxa Pagamento': centro.valorTotal > 0 ? (centro.valorPago / centro.valorTotal) * 100 : 0
+    "Total Vouchers": centro.totalVouchers,
+    "Valor Total": centro.valorTotal,
+    "Valor Pago": centro.valorPago,
+    "Valor Pendente": centro.valorPendente,
+    "Taxa Pagamento":
+      centro.valorTotal > 0 ? (centro.valorPago / centro.valorTotal) * 100 : 0,
   }));
 
   const pieChartData = data.map((centro, index) => ({
     name: centro.codigoCentroCusto,
     value: centro.valorTotal,
-    color: COLORS[index % COLORS.length]
+    color: COLORS[index % COLORS.length],
   }));
 
-  const statusData = data.map(centro => ({
+  const statusData = data.map((centro) => ({
     centro: centro.codigoCentroCusto,
     pago: centro.valorPago,
-    pendente: centro.valorPendente
+    pendente: centro.valorPendente,
   }));
 
   return (
@@ -95,7 +107,10 @@ export default function VouchersCharts({ data }: Props) {
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-blue-100/20 dark:bg-blue-900/20 rounded-lg">
-                <Icon icon="solar:chart-linear" className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <Icon
+                  icon="solar:chart-linear"
+                  className="w-5 h-5 text-blue-600 dark:text-blue-400"
+                />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -112,16 +127,12 @@ export default function VouchersCharts({ data }: Props) {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={barChartData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                  <XAxis 
-                    dataKey="nome" 
-                    stroke="#64748b"
-                    fontSize={12}
-                  />
+                  <XAxis dataKey="nome" stroke="#64748b" fontSize={12} />
                   <YAxis stroke="#64748b" fontSize={12} />
                   <Tooltip content={<CustomTooltip />} />
-                  <Bar 
-                    dataKey="Total Vouchers" 
-                    fill="#3b82f6" 
+                  <Bar
+                    dataKey="Total Vouchers"
+                    fill="#3b82f6"
                     radius={[4, 4, 0, 0]}
                   />
                 </BarChart>
@@ -134,7 +145,10 @@ export default function VouchersCharts({ data }: Props) {
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-emerald-100/20 dark:bg-emerald-900/20 rounded-lg">
-                <Icon icon="solar:pie-chart-linear" className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                <Icon
+                  icon="solar:pie-chart-linear"
+                  className="w-5 h-5 text-emerald-600 dark:text-emerald-400"
+                />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -155,20 +169,25 @@ export default function VouchersCharts({ data }: Props) {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent }) =>
+                      `${name} ${(percent * 100).toFixed(0)}%`
+                    }
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
                   >
                     {pieChartData.map((entry, index) => (
-                      <Cell 
-                        key={`cell-${index}`} 
-                        fill={COLORS[index % COLORS.length]} 
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
                       />
                     ))}
                   </Pie>
-                  <Tooltip 
-                    formatter={(value: number) => [formatCurrency(value), 'Valor']}
+                  <Tooltip
+                    formatter={(value: number) => [
+                      formatCurrency(value),
+                      "Valor",
+                    ]}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -183,7 +202,10 @@ export default function VouchersCharts({ data }: Props) {
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-purple-100/20 dark:bg-purple-900/20 rounded-lg">
-                <Icon icon="solar:chart-2-linear" className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                <Icon
+                  icon="solar:chart-2-linear"
+                  className="w-5 h-5 text-purple-600 dark:text-purple-400"
+                />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -200,13 +222,9 @@ export default function VouchersCharts({ data }: Props) {
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={statusData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                  <XAxis 
-                    dataKey="centro" 
+                  <XAxis dataKey="centro" stroke="#64748b" fontSize={12} />
+                  <YAxis
                     stroke="#64748b"
-                    fontSize={12}
-                  />
-                  <YAxis 
-                    stroke="#64748b" 
                     fontSize={12}
                     tickFormatter={(value) => formatCurrency(value)}
                   />
@@ -243,7 +261,10 @@ export default function VouchersCharts({ data }: Props) {
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-cyan-100/20 dark:bg-cyan-900/20 rounded-lg">
-                <Icon icon="solar:graph-linear" className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+                <Icon
+                  icon="solar:graph-linear"
+                  className="w-5 h-5 text-cyan-600 dark:text-cyan-400"
+                />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -260,27 +281,26 @@ export default function VouchersCharts({ data }: Props) {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={barChartData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                  <XAxis 
-                    dataKey="nome" 
+                  <XAxis dataKey="nome" stroke="#64748b" fontSize={12} />
+                  <YAxis
                     stroke="#64748b"
-                    fontSize={12}
-                  />
-                  <YAxis 
-                    stroke="#64748b" 
                     fontSize={12}
                     tickFormatter={(value) => `${value}%`}
                     domain={[0, 100]}
                   />
-                  <Tooltip 
-                    formatter={(value: number) => [`${value.toFixed(1)}%`, 'Taxa de Pagamento']}
+                  <Tooltip
+                    formatter={(value: number) => [
+                      `${value.toFixed(1)}%`,
+                      "Taxa de Pagamento",
+                    ]}
                   />
-                  <Line 
-                    type="monotone" 
-                    dataKey="Taxa Pagamento" 
-                    stroke="#06b6d4" 
+                  <Line
+                    type="monotone"
+                    dataKey="Taxa Pagamento"
+                    stroke="#06b6d4"
                     strokeWidth={3}
-                    dot={{ fill: '#06b6d4', strokeWidth: 2, r: 6 }}
-                    activeDot={{ r: 8, stroke: '#06b6d4', strokeWidth: 2 }}
+                    dot={{ fill: "#06b6d4", strokeWidth: 2, r: 6 }}
+                    activeDot={{ r: 8, stroke: "#06b6d4", strokeWidth: 2 }}
                   />
                 </LineChart>
               </ResponsiveContainer>

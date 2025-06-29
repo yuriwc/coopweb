@@ -56,19 +56,6 @@ async function DashboardVouchers({ params, searchParams }: Props) {
 
   const relatorio: RelatorioVouchersCompleto = await response.json();
 
-  const getStatusColor = (status: "PAGO" | "PENDENTE" | "APROVADO") => {
-    switch (status) {
-      case "PAGO":
-        return "success";
-      case "PENDENTE":
-        return "warning";
-      case "APROVADO":
-        return "primary";
-      default:
-        return "default";
-    }
-  };
-
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",

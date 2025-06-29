@@ -1,9 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
-import { Select, SelectItem } from "@heroui/select";
 import { Icon } from "@iconify/react";
 import {
   Modal,
@@ -18,6 +16,7 @@ import ShowToast from "@/src/components/Toast";
 import { Funcionario } from "@/src/model/funcionario";
 import SelectCentrosCusto from "../select/centros-custo";
 import { vincularCentroCusto } from "../actions/centro-custo";
+import { useState } from "react";
 
 interface Props {
   isOpen: boolean;
@@ -38,10 +37,6 @@ export default function VincularCentroCustoModal({
 }: Props) {
   const [selectedCentroCusto, setSelectedCentroCusto] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const handleCentroCustoChange = (value: string) => {
-    setSelectedCentroCusto(value);
-  };
 
   const validate = () => {
     if (!selectedCentroCusto) {
@@ -108,7 +103,7 @@ export default function VincularCentroCustoModal({
       }}
     >
       <ModalContent>
-        {(onClose) => (
+        {(_) => (
           <>
             <ModalHeader className="flex flex-col gap-1 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-950/50 dark:to-indigo-950/50">
               <div className="flex items-center gap-3">

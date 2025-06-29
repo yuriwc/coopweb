@@ -95,7 +95,7 @@ export default function CentroCustoModal({
           title: errorData.message || "Erro ao cadastrar centro de custo",
         });
       }
-    } catch (error) {
+    } catch (_) {
       ShowToast({
         color: "danger",
         title: "Erro ao cadastrar centro de custo. Tente novamente.",
@@ -134,7 +134,7 @@ export default function CentroCustoModal({
         }}
       >
         <ModalContent>
-          {(onClose) => (
+          {(_) => (
             <>
               <ModalHeader className="flex flex-col gap-1 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/50 dark:to-green-950/50">
                 <div className="flex items-center gap-3">
