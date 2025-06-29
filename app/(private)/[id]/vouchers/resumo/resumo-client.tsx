@@ -15,13 +15,19 @@ interface ResumoClientProps {
   dataFim?: string;
 }
 
-export default function ResumoClient({ empresaId, token, dataInicio, dataFim }: ResumoClientProps) {
+export default function ResumoClient({
+  empresaId,
+  token,
+  dataInicio,
+  dataFim,
+}: ResumoClientProps) {
   const [resumo, setResumo] = useState<CentroCustoResumo[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<string>("current");
 
-  const defaultDataInicio = dataInicio || new Date(new Date().setDate(1)).toISOString().split("T")[0];
+  const defaultDataInicio =
+    dataInicio || new Date(new Date().setDate(1)).toISOString().split("T")[0];
   const defaultDataFim = dataFim || new Date().toISOString().split("T")[0];
 
   // Get last 3 months data
@@ -33,7 +39,8 @@ export default function ResumoClient({ empresaId, token, dataInicio, dataFim }: 
       const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const monthNumber = date.getMonth() + 1;
       const monthName = date.toLocaleString("pt-BR", { month: "long" });
-      const monthNameCapitalized = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+      const monthNameCapitalized =
+        monthName.charAt(0).toUpperCase() + monthName.slice(1);
 
       months.push({
         key: i === 0 ? "current" : `month-${monthNumber}`,
@@ -53,7 +60,7 @@ export default function ResumoClient({ empresaId, token, dataInicio, dataFim }: 
     try {
       setLoading(true);
       setError(false);
-      
+
       console.log("🔍 Resumo - fetchData called with month:", month);
 
       let startDate: string;
@@ -66,11 +73,21 @@ export default function ResumoClient({ empresaId, token, dataInicio, dataFim }: 
 
         startDate = start.toISOString().split("T")[0];
         endDate = end.toISOString().split("T")[0];
-        console.log("📊 Resumo - Month filter - Start:", startDate, "End:", endDate);
+        console.log(
+          "📊 Resumo - Month filter - Start:",
+          startDate,
+          "End:",
+          endDate
+        );
       } else {
         startDate = defaultDataInicio;
         endDate = defaultDataFim;
-        console.log("📅 Resumo - Default filter - Start:", startDate, "End:", endDate);
+        console.log(
+          "📅 Resumo - Default filter - Start:",
+          startDate,
+          "End:",
+          endDate
+        );
       }
 
       const url = month
@@ -78,7 +95,7 @@ export default function ResumoClient({ empresaId, token, dataInicio, dataFim }: 
         : `${process.env.NEXT_PUBLIC_SERVER}/api/v1/relatorio/empresa/${empresaId}/vouchers/centro-custo/resumo?dataInicio=${startDate}&dataFim=${endDate}`;
 
       console.log("🌐 Resumo - API URL:", url);
-      
+
       const response = await fetch(url, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -93,7 +110,7 @@ export default function ResumoClient({ empresaId, token, dataInicio, dataFim }: 
 
       const data: CentroCustoResumo[] = await response.json();
       setResumo(data);
-    } catch (err) {
+    } catch {
       setError(true);
     } finally {
       setLoading(false);
@@ -117,7 +134,10 @@ export default function ResumoClient({ empresaId, token, dataInicio, dataFim }: 
       const monthData = monthsData.find((m) => m.key === month);
       console.log("📊 Resumo - Found month data:", monthData);
       if (monthData) {
-        console.log("🚀 Resumo - Calling fetchData with month number:", monthData.monthNumber);
+        console.log(
+          "🚀 Resumo - Calling fetchData with month number:",
+          monthData.monthNumber
+        );
         fetchData(monthData.monthNumber);
       }
     }
@@ -212,7 +232,8 @@ export default function ResumoClient({ empresaId, token, dataInicio, dataFim }: 
                     Análise gráfica por centro de custo
                   </p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Período: {formatDate(defaultDataInicio)} até {formatDate(defaultDataFim)}
+                    Período: {formatDate(defaultDataInicio)} até{" "}
+                    {formatDate(defaultDataFim)}
                   </p>
                 </div>
                 <Button

@@ -91,7 +91,7 @@ export default function DashboardClient({ empresaId, token, dataInicio, dataFim 
 
       const data: RelatorioVouchersCompleto = await response.json();
       setRelatorio(data);
-    } catch (err) {
+    } catch {
       setError(true);
     } finally {
       setLoading(false);
