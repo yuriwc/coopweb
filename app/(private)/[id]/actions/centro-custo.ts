@@ -32,7 +32,7 @@ export async function vincularCentroCusto(
         error: errorData.message || "Erro ao vincular funcionário",
       };
     }
-  } catch (_) {
+  } catch {
     return {
       success: false,
       error: "Erro ao vincular funcionário. Tente novamente.",

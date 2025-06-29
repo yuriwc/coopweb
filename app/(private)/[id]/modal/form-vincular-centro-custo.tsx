@@ -87,11 +87,6 @@ export default function VincularCentroCustoModal({
     }
   };
 
-  const handleClose = () => {
-    setSelectedCentroCusto("");
-    onOpen(false);
-  };
-
   return (
     <Modal
       isOpen={isOpen}
@@ -103,7 +98,7 @@ export default function VincularCentroCustoModal({
       }}
     >
       <ModalContent>
-        {(_) => (
+        {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-950/50 dark:to-indigo-950/50">
               <div className="flex items-center gap-3">
@@ -229,7 +224,10 @@ export default function VincularCentroCustoModal({
             <ModalFooter className="bg-default-50 dark:bg-default-100/50">
               <Button
                 variant="light"
-                onPress={handleClose}
+                onPress={() => {
+                  setSelectedCentroCusto("");
+                  onClose();
+                }}
                 startContent={
                   <Icon icon="solar:close-circle-linear" className="w-4 h-4" />
                 }

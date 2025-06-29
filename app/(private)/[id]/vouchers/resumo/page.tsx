@@ -1,6 +1,6 @@
 import { getToken } from "@/src/utils/token/get-token";
 import { CentroCustoResumo } from "@/src/model/relatorio-vouchers";
-import { Card, CardBody, CardHeader } from "@heroui/card";
+import { Card, CardBody } from "@heroui/card";
 import { Icon } from "@iconify/react";
 import { Button } from "@heroui/button";
 import { Suspense } from "react";
@@ -14,10 +14,13 @@ interface Props {
 async function ResumoVouchers({ params, searchParams }: Props) {
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
-  
-  const dataInicio = resolvedSearchParams.dataInicio || new Date(new Date().setDate(1)).toISOString().split('T')[0];
-  const dataFim = resolvedSearchParams.dataFim || new Date().toISOString().split('T')[0];
-  
+
+  const dataInicio =
+    resolvedSearchParams.dataInicio ||
+    new Date(new Date().setDate(1)).toISOString().split("T")[0];
+  const dataFim =
+    resolvedSearchParams.dataFim || new Date().toISOString().split("T")[0];
+
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_SERVER}/api/v1/relatorio/empresa/${resolvedParams.id}/vouchers/centro-custo/resumo?dataInicio=${dataInicio}&dataFim=${dataFim}`,
     {
@@ -34,9 +37,16 @@ async function ResumoVouchers({ params, searchParams }: Props) {
       <div className="min-h-screen flex items-center justify-center">
         <Card className="max-w-md">
           <CardBody className="text-center p-8">
-            <Icon icon="solar:danger-triangle-linear" className="w-16 h-16 mx-auto text-danger mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Erro ao carregar dados</h3>
-            <p className="text-gray-600">Não foi possível carregar o resumo de vouchers.</p>
+            <Icon
+              icon="solar:danger-triangle-linear"
+              className="w-16 h-16 mx-auto text-danger mb-4"
+            />
+            <h3 className="text-xl font-semibold mb-2">
+              Erro ao carregar dados
+            </h3>
+            <p className="text-gray-600">
+              Não foi possível carregar o resumo de vouchers.
+            </p>
           </CardBody>
         </Card>
       </div>
@@ -45,22 +55,25 @@ async function ResumoVouchers({ params, searchParams }: Props) {
 
   const resumo: CentroCustoResumo[] = await response.json();
 
-  const totals = resumo.reduce((acc, centro) => ({
-    totalVouchers: acc.totalVouchers + centro.totalVouchers,
-    valorTotal: acc.valorTotal + centro.valorTotal,
-    valorPago: acc.valorPago + centro.valorPago,
-    valorPendente: acc.valorPendente + centro.valorPendente,
-  }), { totalVouchers: 0, valorTotal: 0, valorPago: 0, valorPendente: 0 });
+  const totals = resumo.reduce(
+    (acc, centro) => ({
+      totalVouchers: acc.totalVouchers + centro.totalVouchers,
+      valorTotal: acc.valorTotal + centro.valorTotal,
+      valorPago: acc.valorPago + centro.valorPago,
+      valorPendente: acc.valorPendente + centro.valorPendente,
+    }),
+    { totalVouchers: 0, valorTotal: 0, valorPago: 0, valorPendente: 0 }
+  );
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
+    return new Date(dateString).toLocaleDateString("pt-BR");
   };
 
   return (
@@ -91,7 +104,9 @@ async function ResumoVouchers({ params, searchParams }: Props) {
                 href={`/${resolvedParams.id}/vouchers/dashboard`}
                 variant="ghost"
                 color="primary"
-                startContent={<Icon icon="solar:list-linear" className="w-4 h-4" />}
+                startContent={
+                  <Icon icon="solar:list-linear" className="w-4 h-4" />
+                }
               >
                 Ver Detalhes
               </Button>
@@ -105,13 +120,18 @@ async function ResumoVouchers({ params, searchParams }: Props) {
             <CardBody className="p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-blue-100/20 dark:bg-blue-900/20 rounded-lg">
-                  <Icon icon="solar:ticket-linear" className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  <Icon
+                    icon="solar:ticket-linear"
+                    className="w-5 h-5 text-blue-600 dark:text-blue-400"
+                  />
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
                     {totals.totalVouchers}
                   </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-300">Total Vouchers</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-300">
+                    Total Vouchers
+                  </p>
                 </div>
               </div>
             </CardBody>
@@ -121,13 +141,18 @@ async function ResumoVouchers({ params, searchParams }: Props) {
             <CardBody className="p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-emerald-100/20 dark:bg-emerald-900/20 rounded-lg">
-                  <Icon icon="solar:dollar-linear" className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                  <Icon
+                    icon="solar:dollar-linear"
+                    className="w-5 h-5 text-emerald-600 dark:text-emerald-400"
+                  />
                 </div>
                 <div>
                   <p className="text-lg font-bold text-gray-900 dark:text-white">
                     {formatCurrency(totals.valorTotal)}
                   </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-300">Valor Total</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-300">
+                    Valor Total
+                  </p>
                 </div>
               </div>
             </CardBody>
@@ -137,13 +162,18 @@ async function ResumoVouchers({ params, searchParams }: Props) {
             <CardBody className="p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-100/20 dark:bg-green-900/20 rounded-lg">
-                  <Icon icon="solar:check-circle-linear" className="w-5 h-5 text-green-600 dark:text-green-400" />
+                  <Icon
+                    icon="solar:check-circle-linear"
+                    className="w-5 h-5 text-green-600 dark:text-green-400"
+                  />
                 </div>
                 <div>
                   <p className="text-lg font-bold text-gray-900 dark:text-white">
                     {formatCurrency(totals.valorPago)}
                   </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-300">Valor Pago</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-300">
+                    Valor Pago
+                  </p>
                 </div>
               </div>
             </CardBody>
@@ -153,13 +183,18 @@ async function ResumoVouchers({ params, searchParams }: Props) {
             <CardBody className="p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-orange-100/20 dark:bg-orange-900/20 rounded-lg">
-                  <Icon icon="solar:clock-circle-linear" className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                  <Icon
+                    icon="solar:clock-circle-linear"
+                    className="w-5 h-5 text-orange-600 dark:text-orange-400"
+                  />
                 </div>
                 <div>
                   <p className="text-lg font-bold text-gray-900 dark:text-white">
                     {formatCurrency(totals.valorPendente)}
                   </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-300">Valor Pendente</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-300">
+                    Valor Pendente
+                  </p>
                 </div>
               </div>
             </CardBody>
@@ -177,14 +212,19 @@ async function ResumoVouchers({ params, searchParams }: Props) {
 
 export default function ResumoPage(props: Props) {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <Icon icon="solar:refresh-linear" className="w-8 h-8 animate-spin mx-auto mb-4" />
-          <p>Carregando resumo...</p>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <Icon
+              icon="solar:refresh-linear"
+              className="w-8 h-8 animate-spin mx-auto mb-4"
+            />
+            <p>Carregando resumo...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <ResumoVouchers {...props} />
     </Suspense>
   );
