@@ -5,7 +5,7 @@ import { Card, CardBody } from "@heroui/card";
 import { Icon } from "@iconify/react";
 import { Button } from "@heroui/button";
 import { Tabs, Tab } from "@heroui/tabs";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
 
 const VouchersCharts = dynamic(() => import("./charts"), {
@@ -15,20 +15,26 @@ const VouchersCharts = dynamic(() => import("./charts"), {
         <div className="bg-white/[0.20] dark:bg-white/[0.03] backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 h-96 flex items-center justify-center">
           <div className="text-center">
             <div className="w-8 h-8 animate-spin mx-auto mb-4 border-4 border-blue-500 border-t-transparent rounded-full" />
-            <p className="text-sm text-gray-600 dark:text-gray-300">Carregando gráficos...</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Carregando gráficos...
+            </p>
           </div>
         </div>
         <div className="bg-white/[0.20] dark:bg-white/[0.03] backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 h-96 flex items-center justify-center">
           <div className="text-center">
             <div className="w-8 h-8 animate-spin mx-auto mb-4 border-4 border-blue-500 border-t-transparent rounded-full" />
-            <p className="text-sm text-gray-600 dark:text-gray-300">Carregando gráficos...</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Carregando gráficos...
+            </p>
           </div>
         </div>
       </div>
       <div className="bg-white/[0.20] dark:bg-white/[0.03] backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 h-96 flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 animate-spin mx-auto mb-4 border-4 border-blue-500 border-t-transparent rounded-full" />
-          <p className="text-sm text-gray-600 dark:text-gray-300">Carregando gráficos...</p>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            Carregando gráficos...
+          </p>
         </div>
       </div>
     </div>
@@ -54,9 +60,16 @@ export default function ResumoClient({
   const [error, setError] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<string>("current");
 
-  const defaultDataInicio =
-    dataInicio || new Date(new Date().setDate(1)).toISOString().split("T")[0];
-  const defaultDataFim = dataFim || new Date().toISOString().split("T")[0];
+  const defaultDataInicio = useMemo(
+    () =>
+      dataInicio || new Date(new Date().setDate(1)).toISOString().split("T")[0],
+    [dataInicio]
+  );
+
+  const defaultDataFim = useMemo(
+    () => dataFim || new Date().toISOString().split("T")[0],
+    [dataFim]
+  );
 
   // Get last 3 months data
   const getMonthsData = () => {
@@ -85,6 +98,7 @@ export default function ResumoClient({
 
   const fetchData = useCallback(
     async (month?: number) => {
+      console.log("🔍 [fetchData] Iniciando - month:", month);
       try {
         setLoading(true);
         setError(false);
@@ -116,16 +130,20 @@ export default function ResumoClient({
         });
 
         if (!response.ok) {
+          console.error("❌ [fetchData] API error:", response.status);
           setError(true);
           return;
         }
 
         const data: CentroCustoResumo[] = await response.json();
+        console.log("✅ [fetchData] Success - data length:", data.length);
         setResumo(data);
-      } catch {
+      } catch (error) {
+        console.error("💥 [fetchData] Exception:", error);
         setError(true);
       } finally {
         setLoading(false);
+        console.log("🏁 [fetchData] Finalizado");
       }
     },
     [token, empresaId, defaultDataInicio, defaultDataFim]
@@ -133,11 +151,15 @@ export default function ResumoClient({
 
   useEffect(() => {
     if (token) {
+      console.log("🚀 [useEffect] Calling fetchData...");
       fetchData();
+    } else {
+      console.log("⏸️ [useEffect] No token, skipping fetchData");
     }
   }, [token, empresaId, fetchData]);
 
   const handleMonthChange = (month: string) => {
+    console.log("📅 [handleMonthChange] Month selected:", month);
     setSelectedMonth(month);
 
     if (month === "current") {

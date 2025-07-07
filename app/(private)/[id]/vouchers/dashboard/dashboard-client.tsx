@@ -6,7 +6,7 @@ import { Chip } from "@heroui/chip";
 import { Icon } from "@iconify/react";
 import { Button } from "@heroui/button";
 import { Tabs, Tab } from "@heroui/tabs";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import VouchersTable from "./vouchers-table";
 
 interface DashboardClientProps {
@@ -28,6 +28,18 @@ export default function DashboardClient({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<string>("current");
+
+  // Memoize default dates to prevent infinite loops
+  const defaultDataInicio = useMemo(
+    () =>
+      dataInicio || new Date(new Date().setDate(1)).toISOString().split("T")[0],
+    [dataInicio]
+  );
+
+  const defaultDataFim = useMemo(
+    () => dataFim || new Date().toISOString().split("T")[0],
+    [dataFim]
+  );
 
   // Get last 3 months data
   const getMonthsData = () => {
@@ -54,8 +66,22 @@ export default function DashboardClient({
 
   const monthsData = getMonthsData();
 
+  console.log("🔧 [Dashboard useCallback] Dependencies check:", {
+    token: !!token,
+    empresaId,
+    dataInicio,
+    dataFim,
+    timestamp: new Date().toISOString(),
+  });
+
   const fetchData = useCallback(
     async (month?: number) => {
+      console.log(
+        "🔍 [Dashboard fetchData] Iniciando fetch - month:",
+        month,
+        "timestamp:",
+        new Date().toISOString()
+      );
       try {
         setLoading(true);
         setError(false);
@@ -70,16 +96,25 @@ export default function DashboardClient({
 
           startDate = start.toISOString().split("T")[0];
           endDate = end.toISOString().split("T")[0];
+          console.log("📊 [Dashboard fetchData] Month filter:", {
+            startDate,
+            endDate,
+            month,
+          });
         } else {
-          startDate =
-            dataInicio ||
-            new Date(new Date().setDate(1)).toISOString().split("T")[0];
-          endDate = dataFim || new Date().toISOString().split("T")[0];
+          startDate = defaultDataInicio;
+          endDate = defaultDataFim;
+          console.log("📅 [Dashboard fetchData] Default filter:", {
+            startDate,
+            endDate,
+          });
         }
 
         const url = month
           ? `${process.env.NEXT_PUBLIC_SERVER}/api/v1/relatorio/empresa/${empresaId}/vouchers/centro-custo/periodo?mes=${month}`
           : `${process.env.NEXT_PUBLIC_SERVER}/api/v1/relatorio/empresa/${empresaId}/vouchers/centro-custo/periodo?dataInicio=${startDate}&dataFim=${endDate}`;
+
+        console.log("🌐 [Dashboard fetchData] API call to:", url);
 
         const response = await fetch(url, {
           headers: {
@@ -89,35 +124,73 @@ export default function DashboardClient({
         });
 
         if (!response.ok) {
+          console.error(
+            "❌ [Dashboard fetchData] API error:",
+            response.status,
+            response.statusText
+          );
           setError(true);
           return;
         }
 
         const data: RelatorioVouchersCompleto = await response.json();
+        console.log("✅ [Dashboard fetchData] Success - data loaded");
         setRelatorio(data);
-      } catch {
+      } catch (error) {
+        console.error("💥 [Dashboard fetchData] Exception:", error);
         setError(true);
       } finally {
         setLoading(false);
+        console.log(
+          "🏁 [Dashboard fetchData] Finalizado - timestamp:",
+          new Date().toISOString()
+        );
       }
     },
-    [token, empresaId, dataInicio, dataFim]
+    [token, empresaId, defaultDataInicio, defaultDataFim]
   );
 
   useEffect(() => {
+    console.log("🔄 [Dashboard useEffect] Triggered - dependencies changed:", {
+      token: !!token,
+      empresaId,
+      fetchDataRef: typeof fetchData,
+      timestamp: new Date().toISOString(),
+    });
+
     if (token) {
+      console.log("🚀 [Dashboard useEffect] Calling fetchData...");
       fetchData();
+    } else {
+      console.log("⏸️ [Dashboard useEffect] No token, skipping fetchData");
     }
   }, [token, empresaId, fetchData]);
 
   const handleMonthChange = (month: string) => {
+    console.log(
+      "📅 [Dashboard handleMonthChange] Month selected:",
+      month,
+      "timestamp:",
+      new Date().toISOString()
+    );
     setSelectedMonth(month);
 
     if (month === "current") {
+      console.log(
+        "🔄 [Dashboard handleMonthChange] Loading current month data"
+      );
       fetchData();
     } else {
       const monthData = monthsData.find((m) => m.key === month);
+      console.log(
+        "🔍 [Dashboard handleMonthChange] Found month data:",
+        monthData
+      );
       if (monthData) {
+        console.log(
+          "📊 [Dashboard handleMonthChange] Calling fetchData with month:",
+          monthData.monthNumber
+        );
         fetchData(monthData.monthNumber);
       }
     }
