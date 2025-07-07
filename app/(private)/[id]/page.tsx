@@ -1,10 +1,15 @@
-import { ActionButton } from "@/src/components/ActionButton";
+import dynamic from "next/dynamic";
 import TablePassegers from "./table-passegers";
 import { Funcionario } from "@/src/model/funcionario";
 import { Spacer } from "@heroui/spacer";
 import { getToken } from "@/src/utils/token/get-token";
 import { Empresa } from "@/src/model/empresa";
 import { Icon as IconifyIcon } from "@iconify/react";
+import styles from './styles.module.css';
+
+const ActionButton = dynamic(() => import("@/src/components/ActionButton").then(mod => ({ default: mod.ActionButton })), {
+  loading: () => <div className="min-h-[240px] bg-white/[0.18] dark:bg-white/[0.05] backdrop-blur-xl rounded-3xl border animate-pulse" />,
+});
 
 const App = async (props: { params: Promise<{ id: string }> }) => {
   const params = await props.params;
@@ -48,40 +53,32 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
   return (
     <div className="min-h-screen relative overflow-hidden bg-blue-50/50 dark:bg-gray-900">
       {/* Liquid Glass Background */}
-      <div className="fixed inset-0 bg-gradient-to-br from-blue-100/40 via-cyan-50/30 to-sky-100/40 dark:from-blue-950/40 dark:via-purple-950/40 dark:to-emerald-950/40" />
-      <div className="fixed inset-0 backdrop-blur-[2px]" />
+      <div className={`${styles.liquidGlassBackground} ${styles.darkLiquidGlassBackground}`} />
+      <div className={styles.liquidGlassBackdrop} />
 
       {/* Dynamic Background Particles */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-10 left-10 w-32 h-32 bg-blue-200/20 dark:bg-blue-400/10 rounded-full blur-xl animate-pulse" />
-        <div className="absolute top-32 right-20 w-24 h-24 bg-cyan-200/20 dark:bg-purple-400/10 rounded-full blur-xl animate-pulse delay-700" />
-        <div className="absolute bottom-20 left-1/3 w-40 h-40 bg-sky-200/20 dark:bg-emerald-400/10 rounded-full blur-xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 right-1/3 w-20 h-20 bg-blue-300/15 dark:bg-blue-500/8 rounded-full blur-2xl animate-pulse delay-500" />
-        <div className="absolute bottom-1/3 left-1/4 w-28 h-28 bg-cyan-300/15 dark:bg-cyan-500/8 rounded-full blur-2xl animate-pulse delay-1200" />
+      <div className={styles.backgroundParticles}>
+        <div className={`${styles.particle1} dark:${styles.darkParticle1}`} />
+        <div className={`${styles.particle2} dark:${styles.darkParticle2}`} />
+        <div className={`${styles.particle3} dark:${styles.darkParticle3}`} />
+        <div className={`${styles.particle4} dark:${styles.darkParticle4}`} />
+        <div className={`${styles.particle5} dark:${styles.darkParticle5}`} />
       </div>
 
       <div className="relative z-10 container mx-auto p-4 sm:p-8 max-w-7xl">
         {/* Liquid Glass Header */}
         <header className="pb-2 mb-4 relative group">
           {/* Glass Effect Background */}
-          <div className="absolute inset-0 bg-white/[0.20] dark:bg-white/[0.05] backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 shadow-2xl shadow-blue-500/15 dark:shadow-black/20" />
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-400/[0.08] via-cyan-400/[0.08] to-sky-400/[0.08] dark:from-blue-500/[0.03] dark:via-purple-500/[0.03] dark:to-emerald-500/[0.03] rounded-xl" />
-
-          {/* Crystalline Border Effect */}
-          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-blue-300/30 dark:via-white/10 to-transparent p-[1px]">
-            <div className="h-full w-full rounded-xl bg-transparent" />
-          </div>
+          <div className={`${styles.glassCardHeader} dark:${styles.glassCardHeaderDark}`} />
+          <div className={`${styles.crystallineBorder} dark:${styles.crystallineBorderDark}`} />
 
           {/* Content */}
-          <div className="relative p-4 rounded-xl transition-all duration-700 group-hover:backdrop-blur-2xl">
+          <div className={`${styles.glassHover} dark:${styles.glassHoverDark} relative p-4 rounded-xl`}>
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
               <div className="relative">
                 {/* Glass Text Effect */}
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold relative">
-                  <span className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 bg-clip-text text-transparent blur-sm opacity-50" />
-                  <span className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 bg-clip-text text-transparent drop-shadow-lg">
-                    {empresa.nome}
-                  </span>
+                <h1 className={`${styles.gradientText} text-xl sm:text-2xl lg:text-3xl font-bold relative`}>
+                  {empresa.nome}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-300 mt-0.5 text-sm backdrop-blur-sm font-medium drop-shadow-lg">
                   Painel de controle da empresa
@@ -90,8 +87,8 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
 
               {/* Status Indicator with Liquid Glass Effect */}
               <div className="flex items-center gap-2 text-xs">
-                <div className="flex items-center gap-1.5 px-2.5 py-1 bg-white/10 dark:bg-white/5 backdrop-blur-xl rounded-full border border-white/20 dark:border-white/10">
-                  <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse shadow-lg shadow-emerald-400/50" />
+                <div className={`${styles.statusIndicator} dark:${styles.statusIndicatorDark}`}>
+                  <div className={styles.statusDot} />
                   <span className="text-gray-600 dark:text-gray-300 font-medium drop-shadow-lg">
                     Sistema online
                   </span>

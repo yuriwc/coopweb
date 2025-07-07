@@ -6,7 +6,35 @@ import { Icon } from "@iconify/react";
 import { Button } from "@heroui/button";
 import { Tabs, Tab } from "@heroui/tabs";
 import { useState, useEffect, useCallback } from "react";
-import VouchersCharts from "./charts";
+import dynamic from "next/dynamic";
+
+const VouchersCharts = dynamic(() => import("./charts"), {
+  loading: () => (
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white/[0.20] dark:bg-white/[0.03] backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 h-96 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-8 h-8 animate-spin mx-auto mb-4 border-4 border-blue-500 border-t-transparent rounded-full" />
+            <p className="text-sm text-gray-600 dark:text-gray-300">Carregando gráficos...</p>
+          </div>
+        </div>
+        <div className="bg-white/[0.20] dark:bg-white/[0.03] backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 h-96 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-8 h-8 animate-spin mx-auto mb-4 border-4 border-blue-500 border-t-transparent rounded-full" />
+            <p className="text-sm text-gray-600 dark:text-gray-300">Carregando gráficos...</p>
+          </div>
+        </div>
+      </div>
+      <div className="bg-white/[0.20] dark:bg-white/[0.03] backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 h-96 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 animate-spin mx-auto mb-4 border-4 border-blue-500 border-t-transparent rounded-full" />
+          <p className="text-sm text-gray-600 dark:text-gray-300">Carregando gráficos...</p>
+        </div>
+      </div>
+    </div>
+  ),
+  ssr: false,
+});
 
 interface ResumoClientProps {
   empresaId: string;
