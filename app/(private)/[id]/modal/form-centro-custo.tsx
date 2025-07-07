@@ -113,15 +113,16 @@ export default function CentroCustoModal({
   return (
     <>
       <Button
-        variant="solid"
+        variant="light"
         color="success"
         onPress={() => onOpen(true)}
         startContent={
           <Icon icon="solar:buildings-3-linear" className="w-4 h-4" />
         }
-        className="bg-gradient-to-r from-emerald-600 to-green-600 text-white font-semibold"
+        className="backdrop-blur-sm bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-200/30 dark:border-emerald-800/30 text-emerald-700 dark:text-emerald-300 font-medium transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-emerald-500/25"
+        size="sm"
       >
-        Novo Centro de Custo
+        Centro de Custo
       </Button>
 
       <Modal

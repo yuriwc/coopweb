@@ -8,15 +8,25 @@ interface Props {
   empresa: string;
   token: string;
   setCentroCusto: Dispatch<SetStateAction<string>>;
+  initialCentroCusto?: string;
 }
 
 export default function SelectCentrosCusto({
   empresa,
   token,
   setCentroCusto,
+  initialCentroCusto,
 }: Props) {
   const [centrosCusto, setCentrosCusto] = useState<ISelect[]>([]);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(initialCentroCusto || "");
+
+  // Atualiza o valor quando initialCentroCusto muda
+  useEffect(() => {
+    if (initialCentroCusto && initialCentroCusto !== value) {
+      setValue(initialCentroCusto);
+      setCentroCusto(initialCentroCusto);
+    }
+  }, [initialCentroCusto, setCentroCusto, value]);
 
   useEffect(() => {
     const fetchCentrosCusto = async () => {
@@ -42,11 +52,11 @@ export default function SelectCentrosCusto({
         }
 
         const data: ISelect[] = await response.json();
-        console.log("Centros de custo:", data);
         setCentrosCusto(data);
 
-        if (data.length === 1) {
-          const selected = data[0].value;
+        // Auto-selecionar se houver apenas um centro de custo e não há valor inicial
+        if (!initialCentroCusto && data.length === 1) {
+          const selected = data[0].value.toString();
           setValue(selected);
           setCentroCusto(selected);
         }
@@ -56,7 +66,7 @@ export default function SelectCentrosCusto({
     };
 
     fetchCentrosCusto();
-  }, [empresa, token, setCentroCusto]);
+  }, [empresa, token, setCentroCusto, initialCentroCusto]);
 
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setValue(e.target.value);
@@ -72,7 +82,7 @@ export default function SelectCentrosCusto({
       onChange={handleSelectionChange}
     >
       {centrosCusto.map((centro) => (
-        <SelectItem key={centro.value}>{centro.label}</SelectItem>
+        <SelectItem key={centro.value.toString()}>{centro.label}</SelectItem>
       ))}
     </Select>
   );

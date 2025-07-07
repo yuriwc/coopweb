@@ -5,7 +5,7 @@ import { Card, CardBody } from "@heroui/card";
 import { Icon } from "@iconify/react";
 import { Button } from "@heroui/button";
 import { Tabs, Tab } from "@heroui/tabs";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import VouchersCharts from "./charts";
 
 interface ResumoClientProps {
@@ -54,90 +54,69 @@ export default function ResumoClient({
   };
 
   const monthsData = getMonthsData();
-  console.log("📋 Resumo - Available months:", monthsData);
 
-  const fetchData = async (month?: number) => {
-    try {
-      setLoading(true);
-      setError(false);
+  const fetchData = useCallback(
+    async (month?: number) => {
+      try {
+        setLoading(true);
+        setError(false);
 
-      console.log("🔍 Resumo - fetchData called with month:", month);
+        let startDate: string;
+        let endDate: string;
 
-      let startDate: string;
-      let endDate: string;
+        if (month) {
+          const now = new Date();
+          const start = new Date(now.getFullYear(), month - 1, 1);
+          const end = new Date(now.getFullYear(), month, 0);
 
-      if (month) {
-        const now = new Date();
-        const start = new Date(now.getFullYear(), month - 1, 1);
-        const end = new Date(now.getFullYear(), month, 0);
+          startDate = start.toISOString().split("T")[0];
+          endDate = end.toISOString().split("T")[0];
+        } else {
+          startDate = defaultDataInicio;
+          endDate = defaultDataFim;
+        }
 
-        startDate = start.toISOString().split("T")[0];
-        endDate = end.toISOString().split("T")[0];
-        console.log(
-          "📊 Resumo - Month filter - Start:",
-          startDate,
-          "End:",
-          endDate
-        );
-      } else {
-        startDate = defaultDataInicio;
-        endDate = defaultDataFim;
-        console.log(
-          "📅 Resumo - Default filter - Start:",
-          startDate,
-          "End:",
-          endDate
-        );
-      }
+        const url = month
+          ? `${process.env.NEXT_PUBLIC_SERVER}/api/v1/relatorio/empresa/${empresaId}/vouchers/centro-custo/resumo?mes=${month}`
+          : `${process.env.NEXT_PUBLIC_SERVER}/api/v1/relatorio/empresa/${empresaId}/vouchers/centro-custo/resumo?dataInicio=${startDate}&dataFim=${endDate}`;
 
-      const url = month
-        ? `${process.env.NEXT_PUBLIC_SERVER}/api/v1/relatorio/empresa/${empresaId}/vouchers/centro-custo/resumo?mes=${month}`
-        : `${process.env.NEXT_PUBLIC_SERVER}/api/v1/relatorio/empresa/${empresaId}/vouchers/centro-custo/resumo?dataInicio=${startDate}&dataFim=${endDate}`;
+        const response = await fetch(url, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
 
-      console.log("🌐 Resumo - API URL:", url);
+        if (!response.ok) {
+          setError(true);
+          return;
+        }
 
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
+        const data: CentroCustoResumo[] = await response.json();
+        setResumo(data);
+      } catch {
         setError(true);
-        return;
+      } finally {
+        setLoading(false);
       }
-
-      const data: CentroCustoResumo[] = await response.json();
-      setResumo(data);
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [token, empresaId, defaultDataInicio, defaultDataFim]
+  );
 
   useEffect(() => {
     if (token) {
       fetchData();
     }
-  }, [token, empresaId]);
+  }, [token, empresaId, fetchData]);
 
   const handleMonthChange = (month: string) => {
-    console.log("🔄 Resumo - Month changed to:", month);
     setSelectedMonth(month);
 
     if (month === "current") {
-      console.log("📅 Resumo - Loading current month data");
       fetchData();
     } else {
       const monthData = monthsData.find((m) => m.key === month);
-      console.log("📊 Resumo - Found month data:", monthData);
       if (monthData) {
-        console.log(
-          "🚀 Resumo - Calling fetchData with month number:",
-          monthData.monthNumber
-        );
         fetchData(monthData.monthNumber);
       }
     }

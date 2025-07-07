@@ -6,7 +6,7 @@ import { Chip } from "@heroui/chip";
 import { Icon } from "@iconify/react";
 import { Button } from "@heroui/button";
 import { Tabs, Tab } from "@heroui/tabs";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import VouchersTable from "./vouchers-table";
 
 interface DashboardClientProps {
@@ -16,8 +16,15 @@ interface DashboardClientProps {
   dataFim?: string;
 }
 
-export default function DashboardClient({ empresaId, token, dataInicio, dataFim }: DashboardClientProps) {
-  const [relatorio, setRelatorio] = useState<RelatorioVouchersCompleto | null>(null);
+export default function DashboardClient({
+  empresaId,
+  token,
+  dataInicio,
+  dataFim,
+}: DashboardClientProps) {
+  const [relatorio, setRelatorio] = useState<RelatorioVouchersCompleto | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<string>("current");
@@ -31,7 +38,8 @@ export default function DashboardClient({ empresaId, token, dataInicio, dataFim 
       const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const monthNumber = date.getMonth() + 1;
       const monthName = date.toLocaleString("pt-BR", { month: "long" });
-      const monthNameCapitalized = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+      const monthNameCapitalized =
+        monthName.charAt(0).toUpperCase() + monthName.slice(1);
 
       months.push({
         key: i === 0 ? "current" : `month-${monthNumber}`,
@@ -45,77 +53,71 @@ export default function DashboardClient({ empresaId, token, dataInicio, dataFim 
   };
 
   const monthsData = getMonthsData();
-  console.log("📋 Available months:", monthsData);
 
-  const fetchData = async (month?: number) => {
-    try {
-      setLoading(true);
-      setError(false);
+  const fetchData = useCallback(
+    async (month?: number) => {
+      try {
+        setLoading(true);
+        setError(false);
 
-      console.log("🔍 fetchData called with month:", month);
+        let startDate: string;
+        let endDate: string;
 
-      let startDate: string;
-      let endDate: string;
+        if (month) {
+          const now = new Date();
+          const start = new Date(now.getFullYear(), month - 1, 1);
+          const end = new Date(now.getFullYear(), month, 0);
 
-      if (month) {
-        const now = new Date();
-        const start = new Date(now.getFullYear(), month - 1, 1);
-        const end = new Date(now.getFullYear(), month, 0);
+          startDate = start.toISOString().split("T")[0];
+          endDate = end.toISOString().split("T")[0];
+        } else {
+          startDate =
+            dataInicio ||
+            new Date(new Date().setDate(1)).toISOString().split("T")[0];
+          endDate = dataFim || new Date().toISOString().split("T")[0];
+        }
 
-        startDate = start.toISOString().split("T")[0];
-        endDate = end.toISOString().split("T")[0];
-        console.log("📊 Month filter - Start:", startDate, "End:", endDate);
-      } else {
-        startDate = dataInicio || new Date(new Date().setDate(1)).toISOString().split("T")[0];
-        endDate = dataFim || new Date().toISOString().split("T")[0];
-        console.log("📅 Default filter - Start:", startDate, "End:", endDate);
-      }
+        const url = month
+          ? `${process.env.NEXT_PUBLIC_SERVER}/api/v1/relatorio/empresa/${empresaId}/vouchers/centro-custo/periodo?mes=${month}`
+          : `${process.env.NEXT_PUBLIC_SERVER}/api/v1/relatorio/empresa/${empresaId}/vouchers/centro-custo/periodo?dataInicio=${startDate}&dataFim=${endDate}`;
 
-      const url = month
-        ? `${process.env.NEXT_PUBLIC_SERVER}/api/v1/relatorio/empresa/${empresaId}/vouchers/centro-custo/periodo?mes=${month}`
-        : `${process.env.NEXT_PUBLIC_SERVER}/api/v1/relatorio/empresa/${empresaId}/vouchers/centro-custo/periodo?dataInicio=${startDate}&dataFim=${endDate}`;
+        const response = await fetch(url, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
 
-      console.log("🌐 API URL:", url);
+        if (!response.ok) {
+          setError(true);
+          return;
+        }
 
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
+        const data: RelatorioVouchersCompleto = await response.json();
+        setRelatorio(data);
+      } catch {
         setError(true);
-        return;
+      } finally {
+        setLoading(false);
       }
-
-      const data: RelatorioVouchersCompleto = await response.json();
-      setRelatorio(data);
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [token, empresaId, dataInicio, dataFim]
+  );
 
   useEffect(() => {
     if (token) {
       fetchData();
     }
-  }, [token, empresaId]);
+  }, [token, empresaId, fetchData]);
 
   const handleMonthChange = (month: string) => {
-    console.log("🔄 Month changed to:", month);
     setSelectedMonth(month);
 
     if (month === "current") {
-      console.log("📅 Loading current month data");
       fetchData();
     } else {
       const monthData = monthsData.find((m) => m.key === month);
-      console.log("📊 Found month data:", monthData);
       if (monthData) {
-        console.log("🚀 Calling fetchData with month number:", monthData.monthNumber);
         fetchData(monthData.monthNumber);
       }
     }

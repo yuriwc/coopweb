@@ -43,7 +43,6 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
     return null;
   }
   const funcionarios = (await response.json()) as Funcionario[];
-  console.log(funcionarios);
   const empresa = (await responseEmpresa.json()) as Empresa;
 
   return (
@@ -155,7 +154,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
                     </div>
                     <div>
                       <p className="text-2xl font-bold text-gray-900 dark:text-white drop-shadow-lg">
-                        12
+                        -
                       </p>
                       <p className="text-xs text-gray-600 dark:text-gray-300 font-medium drop-shadow-lg">
                         Viagens Ativas
@@ -182,7 +181,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
                     </div>
                     <div>
                       <p className="text-2xl font-bold text-gray-900 dark:text-white drop-shadow-lg">
-                        8
+                        -
                       </p>
                       <p className="text-xs text-gray-600 dark:text-gray-300 font-medium drop-shadow-lg">
                         Programadas
@@ -209,7 +208,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
                     </div>
                     <div>
                       <p className="text-2xl font-bold text-gray-900 dark:text-white drop-shadow-lg">
-                        98%
+                        -
                       </p>
                       <p className="text-xs text-gray-600 dark:text-gray-300 font-medium drop-shadow-lg">
                         Eficiência
@@ -267,29 +266,8 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
             </div>
 
             {/* Liquid Glass Action Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
-              {/* Card 1 - Viagens Programadas */}
-              <div className="group relative min-h-[240px]">
-                {/* Multi-layer Glass Effect */}
-                <div className="absolute inset-0 bg-white/[0.20] dark:bg-white/[0.05] backdrop-blur-xl rounded-3xl border border-blue-200/40 dark:border-white/10 shadow-2xl shadow-blue-400/20 dark:shadow-violet-500/5" />
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-400/[0.10] via-indigo-400/[0.08] to-violet-400/[0.10] dark:from-violet-400/[0.08] dark:via-purple-400/[0.06] dark:to-indigo-400/[0.08] rounded-3xl" />
-
-                {/* Crystalline Highlights */}
-                <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-blue-300/60 dark:via-white/40 to-transparent" />
-                <div className="absolute bottom-0 left-1/3 right-1/3 h-[1px] bg-gradient-to-r from-transparent via-blue-300/40 dark:via-white/20 to-transparent" />
-
-                <div className="relative h-full p-8 rounded-3xl transition-all duration-700 hover:backdrop-blur-2xl hover:scale-[1.02] hover:shadow-2xl hover:shadow-violet-500/15 cursor-pointer">
-                  <ActionButton
-                    title="Viagens Programadas"
-                    description="Gerencie e acompanhe as viagens programadas da sua empresa"
-                    href="#"
-                    icon="solar:calendar-linear"
-                    variant="primary"
-                  />
-                </div>
-              </div>
-
-              {/* Card 2 - Relatórios */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+              {/* Card 1 - Relatórios */}
               <div className="group relative min-h-[240px]">
                 <div className="absolute inset-0 bg-white/[0.20] dark:bg-white/[0.05] backdrop-blur-xl rounded-3xl border border-cyan-200/40 dark:border-white/10 shadow-2xl shadow-cyan-400/20 dark:shadow-blue-500/5" />
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/[0.10] via-blue-400/[0.08] to-sky-400/[0.10] dark:from-blue-400/[0.08] dark:via-cyan-400/[0.06] dark:to-sky-400/[0.08] rounded-3xl" />
@@ -308,7 +286,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
                 </div>
               </div>
 
-              {/* Card 3 - Vouchers */}
+              {/* Card 2 - Vouchers */}
               <div className="group relative min-h-[240px]">
                 <div className="absolute inset-0 bg-white/[0.20] dark:bg-white/[0.05] backdrop-blur-xl rounded-3xl border border-purple-200/40 dark:border-white/10 shadow-2xl shadow-purple-400/20 dark:shadow-purple-500/5" />
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-400/[0.10] via-indigo-400/[0.08] to-pink-400/[0.10] dark:from-purple-400/[0.08] dark:via-indigo-400/[0.06] dark:to-pink-400/[0.08] rounded-3xl" />

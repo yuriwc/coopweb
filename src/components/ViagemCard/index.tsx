@@ -95,7 +95,6 @@ export default function ViagemCard({
 
   const statusInfo = getStatusInfo();
   const temLocalizacao = viagem.latitudeMotorista && viagem.longitudeMotorista;
-  console.log(viagem);
 
   return (
     <Card className="border border-transparent dark:border-default-100 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">

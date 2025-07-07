@@ -10,7 +10,6 @@ interface TravelCardProps {
 }
 
 export function TravelCard({ viagem }: TravelCardProps) {
-  console.log(viagem);
   const formatarData = (dataString: string) => {
     const data = new Date(dataString);
     return format(data, "dd MMM yyyy, HH:mm", { locale: ptBR });

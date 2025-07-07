@@ -16,7 +16,6 @@ import Menu from "./menu";
 import { Button } from "@heroui/button";
 import { usePathname, useRouter } from "next/navigation";
 import Icon from "@/src/components/icon";
-import { Spacer } from "@heroui/spacer";
 import FormViagemProgramada from "./modal/form-viagem-programada";
 import FormViagem from "./modal/form-viagem";
 import CentroCustoModal from "./modal/form-centro-custo";
@@ -103,19 +102,9 @@ const TablePassegers = ({
               <Menu />
               <span className="text-lg">Tabela de Colaboradores</span>
             </div>
-            <div className="flex flex-row items-center">
-              <Button onPress={handleCreate} variant="ghost">
-                <Icon icon="iconoir:plus" height={30} />
-              </Button>
-              <Spacer x={5} />
+            <div className="flex flex-row items-center gap-4">
+              {/* Opções Principais - Viagens */}
               <div className="flex flex-row gap-2">
-                <CentroCustoModal
-                  isOpen={isCentroCustoModalOpen}
-                  onOpen={setIsCentroCustoModalOpen}
-                  empresa={empresa}
-                  token={token}
-                  onSuccess={handleRefresh}
-                />
                 <FormViagem
                   token={token}
                   isOpen={isModalOpen}
@@ -130,6 +119,29 @@ const TablePassegers = ({
                   passagers={passagers}
                   empresa={empresa}
                 />
+              </div>
+
+              {/* Separador visual */}
+              <div className="h-8 w-px bg-gradient-to-b from-transparent via-gray-300/50 dark:via-gray-600/50 to-transparent" />
+
+              {/* Opções Secundárias - Gestão */}
+              <div className="flex flex-row items-center gap-2">
+                <CentroCustoModal
+                  isOpen={isCentroCustoModalOpen}
+                  onOpen={setIsCentroCustoModalOpen}
+                  empresa={empresa}
+                  token={token}
+                  onSuccess={handleRefresh}
+                />
+                <Button
+                  onPress={handleCreate}
+                  variant="light"
+                  size="sm"
+                  startContent={<Icon icon="iconoir:plus" height={16} />}
+                  className="backdrop-blur-sm bg-gray-500/10 hover:bg-gray-500/20 border border-gray-200/30 dark:border-gray-700/30 text-gray-700 dark:text-gray-300 font-medium transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-gray-500/25"
+                >
+                  Colaborador
+                </Button>
               </div>
             </div>
           </div>

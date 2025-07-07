@@ -167,11 +167,11 @@ export default function ScheduledTripModal({
   return (
     <>
       <Button
-        variant="ghost"
+        variant="flat"
         color="secondary"
         onPress={() => onOpen(true)}
         startContent={<Icon icon="solar:calendar-linear" className="w-4 h-4" />}
-        className="bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold"
+        className="backdrop-blur-sm bg-purple-500/10 hover:bg-purple-500/20 border border-purple-200/30 dark:border-purple-800/30 text-purple-700 dark:text-purple-300 font-medium transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/25"
       >
         Programar Viagem
       </Button>
