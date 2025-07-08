@@ -15,8 +15,7 @@ interface IProgramadaComMotorista {
   motoristaMatricula: string;
 }
 
-const App = async (props: { params: Promise<{ cooperativa: string }> }) => {
-  const params = await props.params;
+const App = async () => {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value || "";
 
@@ -33,11 +32,16 @@ const App = async (props: { params: Promise<{ cooperativa: string }> }) => {
   );
 
   if (!programadasRequest.ok) {
-    console.error("Erro na requisição:", programadasRequest.status, programadasRequest.statusText);
+    console.error(
+      "Erro na requisição:",
+      programadasRequest.status,
+      programadasRequest.statusText
+    );
     return null;
   }
-  
-  const programadas = (await programadasRequest.json()) as IProgramadaComMotorista[];
+
+  const programadas =
+    (await programadasRequest.json()) as IProgramadaComMotorista[];
 
   const getTipoViagemLabel = (tipo: string) => {
     switch (tipo) {
@@ -107,7 +111,11 @@ const App = async (props: { params: Promise<{ cooperativa: string }> }) => {
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
                       #{viagem.id.slice(0, 8).toUpperCase()}
                     </p>
-                    <div className={`px-3 py-1 rounded-full text-xs font-medium ${getTipoViagemColor(viagem.tipoViagem)}`}>
+                    <div
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${getTipoViagemColor(
+                        viagem.tipoViagem
+                      )}`}
+                    >
                       {getTipoViagemLabel(viagem.tipoViagem)}
                     </div>
                   </div>

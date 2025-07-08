@@ -11,16 +11,23 @@ interface EncerrarButtonProps {
   token: string;
 }
 
-export default function EncerrarButton({ idProgramacao, token }: EncerrarButtonProps) {
+export default function EncerrarButton({
+  idProgramacao,
+  token,
+}: EncerrarButtonProps) {
   const [loading, setLoading] = useState(false);
 
   const handleEncerrar = async () => {
-    if (!confirm("Tem certeza que deseja encerrar esta programação? Esta ação não pode ser desfeita.")) {
+    if (
+      !confirm(
+        "Tem certeza que deseja encerrar esta programação? Esta ação não pode ser desfeita."
+      )
+    ) {
       return;
     }
 
     setLoading(true);
-    
+
     try {
       const result = await encerrarProgramacao({
         idProgramacao,
@@ -39,7 +46,7 @@ export default function EncerrarButton({ idProgramacao, token }: EncerrarButtonP
           description: result.message,
         });
       }
-    } catch (error) {
+    } catch {
       ShowToast({
         color: "danger",
         title: "Erro inesperado",
