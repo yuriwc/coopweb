@@ -3,6 +3,7 @@ import { Card, CardBody, CardFooter } from "@heroui/card";
 import { Chip } from "@heroui/chip";
 import { Button } from "@heroui/button";
 import { Icon } from "@iconify/react";
+import { usePathname } from "next/navigation";
 
 interface Passageiro {
   nome?: string;
@@ -47,6 +48,7 @@ export default function ViagemCard({
   cooperativaId: string;
   motoristaId: string;
 }) {
+  const pathname = usePathname();
   // Concatena nomes dos passageiros
   const nomesPassageiros = viagem.passageiros
     .map((p) => (p.nome ? `${p.nome} ${p.sobrenome ?? ""}`.trim() : ""))
@@ -95,6 +97,17 @@ export default function ViagemCard({
 
   const statusInfo = getStatusInfo();
   const temLocalizacao = viagem.latitudeMotorista && viagem.longitudeMotorista;
+  
+  // Determinar o link baseado no contexto atual
+  const getMonitoramentoLink = () => {
+    if (pathname.includes('/cooperativa/')) {
+      // Contexto de cooperativa - usar a nova estrutura com cooperativaId
+      return `./realtime/${motoristaId}/${cooperativaId}`;
+    } else {
+      // Contexto de empresa - usar a estrutura antiga
+      return `./realtime/${motoristaId}/1/${cooperativaId}`;
+    }
+  };
 
   return (
     <Card className="border border-transparent dark:border-default-100 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
@@ -258,7 +271,7 @@ export default function ViagemCard({
       <CardFooter className="px-6 py-4 bg-default-50 dark:bg-default-100/50">
         <Button
           as={Link}
-          href={`./realtime/${motoristaId}/1/${cooperativaId}`}
+          href={getMonitoramentoLink()}
           color="primary"
           variant="solid"
           fullWidth

@@ -23,21 +23,37 @@ export const CoopGoLogo = () => {
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [empresaId, setEmpresaId] = useState<string | null>(null);
+  const [cooperativaId, setCooperativaId] = useState<string | null>(null);
+  const [isCooperativaRoute, setIsCooperativaRoute] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const pathname = usePathname();
 
-  // Extrair o ID da empresa da URL atual - só no cliente para evitar hydration mismatch
+  // Extrair IDs da URL atual - só no cliente para evitar hydration mismatch
   useEffect(() => {
     const segments = pathname.split("/");
-    // Se está em uma rota privada, o ID da empresa está na posição 1
-    if (
+    
+    // Verificar se é uma rota de cooperativa (/cooperativa/[id]/...)
+    if (segments[1] === "cooperativa" && segments[2]) {
+      setIsCooperativaRoute(true);
+      setCooperativaId(segments[2]);
+      setEmpresaId(null);
+    }
+    // Se está em uma rota privada de empresa, o ID da empresa está na posição 1
+    else if (
       segments.length > 1 &&
       segments[1] !== "home" &&
       segments[1] !== "signin" &&
-      segments[1] !== "signup"
+      segments[1] !== "signup" &&
+      segments[1] !== "cooperativa"
     ) {
+      setIsCooperativaRoute(false);
       setEmpresaId(segments[1]);
+      setCooperativaId(null);
+    } else {
+      setIsCooperativaRoute(false);
+      setEmpresaId(null);
+      setCooperativaId(null);
     }
   }, [pathname]);
 
@@ -89,27 +105,54 @@ export default function App() {
       </NavbarBrand>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem>
-          <Link color="foreground" href={empresaId ? `/${empresaId}` : "/home"}>
-            Dashboard
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link
-            color="foreground"
-            href={empresaId ? `/${empresaId}/ride` : "/ride"}
-          >
-            Viagens
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link
-            color="foreground"
-            href={empresaId ? `/${empresaId}/vouchers/dashboard` : "/vouchers"}
-          >
-            Relatórios
-          </Link>
-        </NavbarItem>
+        {isCooperativaRoute ? (
+          <>
+            <NavbarItem>
+              <Link color="foreground" href={`/cooperativa/${cooperativaId}`}>
+                Dashboard
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link color="foreground" href={`/cooperativa/${cooperativaId}/programadas`}>
+                Programações
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link color="foreground" href={`/cooperativa/${cooperativaId}/faturas`}>
+                Faturas
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link color="foreground" href={`/cooperativa/${cooperativaId}/ride/realtime`}>
+                Viagens
+              </Link>
+            </NavbarItem>
+          </>
+        ) : (
+          <>
+            <NavbarItem>
+              <Link color="foreground" href={empresaId ? `/${empresaId}` : "/home"}>
+                Dashboard
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link
+                color="foreground"
+                href={empresaId ? `/${empresaId}/ride` : "/ride"}
+              >
+                Viagens
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link
+                color="foreground"
+                href={empresaId ? `/${empresaId}/vouchers/dashboard` : "/vouchers"}
+              >
+                Relatórios
+              </Link>
+            </NavbarItem>
+          </>
+        )}
         <NavbarItem>
           <Link color="foreground" href="/docs/webgo.html">
             Manual

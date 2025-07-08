@@ -54,3 +54,37 @@ export interface CentroCustoResumo {
   valorPago: number;
   valorPendente: number;
 }
+
+export interface VoucherCooperativa {
+  id: string;
+  numeroVoucher: string;
+  dataEmissao: string;
+  dataVencimento: string;
+  nomeEmpresa: string;
+  nomeMotorista: string;
+  nomePassageiro: string;
+  valorTotal: number;
+  status: "PAGO" | "PENDENTE" | "APROVADO";
+  formaPagamento: string | null;
+  origemViagem: string;
+  destinoViagem: string;
+  observacao: string;
+}
+
+export interface RelatorioCooperativaMes {
+  cooperativaId: string;
+  total: number;
+  ano: number;
+  empresaId: string | null;
+  periodo: {
+    inicio: string;
+    fim: string;
+  };
+  mes: number;
+  vouchers: VoucherCooperativa[];
+}
+
+export interface EmpresaLabelValue {
+  label: string;
+  value: string;
+}

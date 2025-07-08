@@ -1,6 +1,6 @@
 "use client";
 
-import { Select, SelectItem } from "@heroui/select";
+import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
 import { Dispatch, SetStateAction } from "react";
 
 interface IMotorista {
@@ -20,23 +20,25 @@ interface IResponse {
 
 export default function App({ motoristas, setMotorista }: Props) {
   return (
-    <Select
-      onSelectionChange={(keys) => {
-        const id = Array.from(keys)[0];
-        const motorista = motoristas.find((m) => m.id === id);
-        console.log(motorista);
-        setMotorista(motorista || null);
+    <Autocomplete
+      onSelectionChange={(key) => {
+        if (key) {
+          const motorista = motoristas.find((m) => m.id === key);
+          console.log(motorista);
+          setMotorista(motorista || null);
+        }
       }}
       variant="underlined"
       className="max-w-xs"
-      items={motoristas}
+      defaultItems={motoristas}
       label="Motorista"
+      placeholder="Buscar motorista"
     >
       {(motorista) => (
-        <SelectItem key={motorista.id} textValue={motorista.nome}>
+        <AutocompleteItem key={motorista.id} textValue={motorista.nome}>
           {motorista.nome}
-        </SelectItem>
+        </AutocompleteItem>
       )}
-    </Select>
+    </Autocomplete>
   );
 }

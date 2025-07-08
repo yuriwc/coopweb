@@ -2,9 +2,10 @@ export async function login(
   username: string,
   password: string
 ): Promise<{ token: string } | null> {
-  console.log(process.env.NEXT_PUBLIC_SERVER);
+  const serverUrl = process.env.SERVER_URL || process.env.NEXT_PUBLIC_SERVER;
+  console.log('Server URL:', serverUrl);
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER}/api/v1/auth/authenticate`,
+    `${serverUrl}/api/v1/auth/authenticate`,
     {
       method: "POST",
       headers: {

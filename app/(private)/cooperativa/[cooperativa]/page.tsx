@@ -47,8 +47,8 @@ const App = async (props: { params: Promise<{ cooperativa: string }> }) => {
             <div className="w-full h-[180px]">
               <ActionButton
                 title="Faturas"
-                description="Acesse relatórios detalhados da viagens da cooperativa"
-                href={params.cooperativa + "/ride"}
+                description="Acesse relatórios detalhados de vouchers e pagamentos"
+                href={"./" + params.cooperativa + "/faturas"}
                 variant="secondary"
               />
             </div>

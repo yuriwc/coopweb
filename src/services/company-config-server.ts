@@ -17,8 +17,9 @@ export async function getCompanyConfigsServer(
   token: string
 ): Promise<CompanyConfig | null> {
   try {
+    const serverUrl = process.env.SERVER_URL || process.env.NEXT_PUBLIC_SERVER;
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER}/api/company-configs/empresa/${empresaId}`,
+      `${serverUrl}/api/company-configs/empresa/${empresaId}`,
       {
         method: "GET",
         headers: {
@@ -54,8 +55,9 @@ export async function updateCompanyConfigsServer(
   token: string
 ): Promise<CompanyConfig | null> {
   try {
+    const serverUrl = process.env.SERVER_URL || process.env.NEXT_PUBLIC_SERVER;
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER}/api/company-configs/empresa/${empresaId}`,
+      `${serverUrl}/api/company-configs/empresa/${empresaId}`,
       {
         method: "PUT",
         headers: {
