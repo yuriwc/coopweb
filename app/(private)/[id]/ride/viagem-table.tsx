@@ -23,8 +23,8 @@ import {
 } from "@heroui/table";
 import { Icon } from "@iconify/react";
 import { Viagem } from "@/src/model/viagem";
-import { format, parseISO, isValid } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { formatDateBR } from "@/src/utils/date";
+import { isValid } from "date-fns";
 import TripDetailsModal from "./trip-details-modal";
 
 // Ícones SVG
@@ -196,32 +196,7 @@ export default function ViagemTable({ viagens }: Props) {
     });
   }, [sortDescriptor, items]);
 
-  const formatarData = (dataString: string) => {
-    if (!dataString) return "-";
-
-    try {
-      let data: Date;
-
-      // Tenta primeiro parseISO para datas ISO
-      if (dataString.includes("T") || dataString.includes("Z")) {
-        data = parseISO(dataString);
-      } else {
-        // Para outros formatos, usa new Date
-        data = new Date(dataString);
-      }
-
-      // Verifica se a data é válida
-      if (!isValid(data)) {
-        console.warn("Data inválida:", dataString);
-        return "-";
-      }
-
-      return format(data, "dd/MM/yyyy HH:mm", { locale: ptBR });
-    } catch (error) {
-      console.error("Erro ao formatar data:", error, dataString);
-      return "-";
-    }
-  };
+  // Função removida - agora usa o utilitário centralizado formatDateBR
 
   const calcularDuracao = (viagem: Viagem) => {
     if (!viagem.dataInicio || !viagem.dataFim) return "-";
@@ -304,7 +279,7 @@ export default function ViagemTable({ viagens }: Props) {
           return (
             <div className="flex flex-col">
               <p className="text-bold text-sm">
-                {formatarData(viagem.dataInicio)}
+                {formatDateBR(viagem.dataInicio)}
               </p>
             </div>
           );

@@ -12,8 +12,8 @@ import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
 import { Icon } from "@iconify/react";
 import { Viagem } from "@/src/model/viagem";
-import { format, parseISO, isValid, differenceInMinutes } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { parseISO, isValid, differenceInMinutes } from "date-fns";
+import { formatDateTimeBR } from "@/src/utils/date";
 
 interface Props {
   viagem: Viagem | null;
@@ -33,15 +33,7 @@ export default function TripDetailsModal({ viagem, isOpen, onClose }: Props) {
   if (!viagem) return null;
 
   const formatarData = (dataString: string | null) => {
-    if (!dataString) return "-";
-
-    try {
-      const data = parseISO(dataString);
-      if (!isValid(data)) return "-";
-      return format(data, "dd/MM/yyyy HH:mm:ss", { locale: ptBR });
-    } catch {
-      return "-";
-    }
+    return formatDateTimeBR(dataString);
   };
 
   const calcularTempo = (inicio: string | null, fim: string | null) => {

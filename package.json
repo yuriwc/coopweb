@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
+    "dev:turbo": "next dev --turbopack",
     "build": "next build",
     "build:analyze": "ANALYZE=true next build",
     "start": "next start",
@@ -43,6 +44,7 @@
     "@heroui/tooltip": "^2.2.16",
     "@heroui/user": "^2.2.11",
     "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
     "firebase": "^11.7.3",
     "framer-motion": "^12.23.0",
     "leaflet": "^1.9.4",

@@ -2,8 +2,7 @@ import { Viagem } from "@/src/model/viagem";
 import { Card, CardBody, CardFooter } from "@heroui/card";
 import { Chip } from "@heroui/chip";
 import { Divider } from "@heroui/divider";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { formatDateLongBR } from "@/src/utils/date";
 
 interface TravelCardProps {
   viagem: Viagem;
@@ -11,9 +10,7 @@ interface TravelCardProps {
 
 export function TravelCard({ viagem }: TravelCardProps) {
   const formatarData = (dataString: string | null) => {
-    if (!dataString) return "-";
-    const data = new Date(dataString);
-    return format(data, "dd MMM yyyy, HH:mm", { locale: ptBR });
+    return formatDateLongBR(dataString);
   };
 
   const calcularDuracao = () => {
