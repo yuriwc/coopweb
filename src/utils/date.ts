@@ -1,9 +1,5 @@
 import { format, parseISO, isValid } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { toZonedTime } from 'date-fns-tz';
-
-// Timezone do Brasil
-const BRAZIL_TIMEZONE = 'America/Sao_Paulo';
 
 /**
  * Formata uma data string para o timezone brasileiro
@@ -18,14 +14,21 @@ export const formatDateBR = (
   if (!dateString) return '-';
   
   try {
+    let cleanDateString = dateString;
+    
+    // Remove timezone annotation like [America/Sao_Paulo] if present
+    if (cleanDateString.includes('[') && cleanDateString.includes(']')) {
+      cleanDateString = cleanDateString.split('[')[0];
+    }
+    
     let date: Date;
     
     // Tenta primeiro parseISO para datas ISO (2025-07-10T15:34:25.232-03:00)
-    if (dateString.includes('T') || dateString.includes('Z')) {
-      date = parseISO(dateString);
+    if (cleanDateString.includes('T') || cleanDateString.includes('Z')) {
+      date = parseISO(cleanDateString);
     } else {
       // Para outros formatos, usa new Date
-      date = new Date(dateString);
+      date = new Date(cleanDateString);
     }
     
     // Verifica se a data é válida
@@ -34,19 +37,9 @@ export const formatDateBR = (
       return '-';
     }
     
-    // Se a data já tem timezone info, converte para Brazil timezone
-    // Se não tem, assume que já está no timezone correto
-    let zonedDate: Date;
-    
-    if (dateString.includes('T') && (dateString.includes('-') || dateString.includes('+'))) {
-      // Data com timezone info - converte para Brazil timezone
-      zonedDate = toZonedTime(date, BRAZIL_TIMEZONE);
-    } else {
-      // Data sem timezone info - assume que já está no timezone local/correto
-      zonedDate = date;
-    }
-    
-    return format(zonedDate, formatStr, { locale: ptBR });
+    // Como a data já vem com timezone do Brasil (-03:00), 
+    // não precisamos converter - apenas formatamos
+    return format(date, formatStr, { locale: ptBR });
   } catch (error) {
     console.error('Erro ao formatar data:', error, dateString);
     return '-';
