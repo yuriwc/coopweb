@@ -1,12 +1,19 @@
 export interface Viagem {
   passageiros: string[];
   motorista: string;
+  solicitante: string;
   dataInicio: string;
-  dataFim: string;
+  dataFim: string | null;
   origem: string;
   destino: string;
   status: string;
   preco: number;
+  horaSolicitacao: string;
+  horaProgramacao: string | null;
+  horaSaida: string;
+  horaChegadaOrigem: string | null;
+  horaInicioPercurso: string | null;
+  horaChegada: string | null;
 }
 
 export interface ViagemResumo {

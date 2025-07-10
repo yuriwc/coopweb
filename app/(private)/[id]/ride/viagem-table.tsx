@@ -25,6 +25,7 @@ import { Icon } from "@iconify/react";
 import { Viagem } from "@/src/model/viagem";
 import { format, parseISO, isValid } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import TripDetailsModal from "./trip-details-modal";
 
 // Ícones SVG
 interface IconProps extends React.SVGProps<SVGSVGElement> {
@@ -127,6 +128,8 @@ export default function ViagemTable({ viagens }: Props) {
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set([])
   );
+  const [selectedTrip, setSelectedTrip] = React.useState<Viagem | null>(null);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
@@ -331,6 +334,18 @@ export default function ViagemTable({ viagens }: Props) {
         case "actions":
           return (
             <div className="relative flex justify-end items-center gap-2">
+              <Button
+                size="sm"
+                variant="flat"
+                color="primary"
+                startContent={<Icon icon="solar:eye-linear" />}
+                onPress={() => {
+                  setSelectedTrip(viagem);
+                  setIsModalOpen(true);
+                }}
+              >
+                Detalhes
+              </Button>
               <Dropdown>
                 <DropdownTrigger>
                   <Button isIconOnly size="sm" variant="light">
@@ -341,12 +356,6 @@ export default function ViagemTable({ viagens }: Props) {
                   </Button>
                 </DropdownTrigger>
                 <DropdownMenu>
-                  <DropdownItem
-                    key={`visualizar`}
-                    startContent={<Icon icon="solar:eye-linear" />}
-                  >
-                    Visualizar
-                  </DropdownItem>
                   <DropdownItem
                     key={`editar`}
                     startContent={<Icon icon="solar:map-point-linear" />}
@@ -550,7 +559,16 @@ export default function ViagemTable({ viagens }: Props) {
   ]);
 
   return (
-    <Table
+    <>
+      <TripDetailsModal
+        viagem={selectedTrip}
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedTrip(null);
+        }}
+      />
+      <Table
       isHeaderSticky
       aria-label="Tabela de viagens com paginação e filtros"
       bottomContent={bottomContent}
@@ -587,5 +605,6 @@ export default function ViagemTable({ viagens }: Props) {
         )}
       </TableBody>
     </Table>
+    </>
   );
 }
