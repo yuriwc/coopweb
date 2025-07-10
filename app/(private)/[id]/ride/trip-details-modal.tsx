@@ -21,7 +21,7 @@ interface Props {
   onClose: () => void;
 }
 
-const statusColorMap: Record<string, any> = {
+const statusColorMap: Record<string, "success" | "primary" | "danger" | "warning" | "default"> = {
   Finalizada: "success",
   "Em Andamento": "primary",
   Iniciada: "primary",
@@ -39,7 +39,7 @@ export default function TripDetailsModal({ viagem, isOpen, onClose }: Props) {
       const data = parseISO(dataString);
       if (!isValid(data)) return "-";
       return format(data, "dd/MM/yyyy HH:mm:ss", { locale: ptBR });
-    } catch (error) {
+    } catch {
       return "-";
     }
   };
@@ -61,7 +61,7 @@ export default function TripDetailsModal({ viagem, isOpen, onClose }: Props) {
       const horas = Math.floor(minutos / 60);
       const mins = minutos % 60;
       return `${horas}h ${mins}min`;
-    } catch (error) {
+    } catch {
       return "-";
     }
   };
