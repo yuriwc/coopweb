@@ -10,12 +10,15 @@ interface TravelCardProps {
 }
 
 export function TravelCard({ viagem }: TravelCardProps) {
-  const formatarData = (dataString: string) => {
+  const formatarData = (dataString: string | null) => {
+    if (!dataString) return "-";
     const data = new Date(dataString);
     return format(data, "dd MMM yyyy, HH:mm", { locale: ptBR });
   };
 
   const calcularDuracao = () => {
+    if (!viagem.dataFim) return "Em andamento";
+    
     const inicio = new Date(viagem.dataInicio);
     const fim = new Date(viagem.dataFim);
     const diff = Math.abs(fim.getTime() - inicio.getTime());
