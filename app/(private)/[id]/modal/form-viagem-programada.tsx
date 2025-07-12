@@ -76,6 +76,16 @@ export default function ScheduledTripModal({
       return false;
     }
 
+    if (!horaViagem) {
+      ShowToast({
+        color: "danger",
+        title: selectedPlan === "RETORNO" 
+          ? "Informe a hora do retorno!" 
+          : "Informe a hora da viagem!",
+      });
+      return false;
+    }
+
     if (selectedPlan === "APANHA_E_RETORNO" && !horaRetorno) {
       ShowToast({
         color: "danger",
@@ -99,8 +109,7 @@ export default function ScheduledTripModal({
       dataInicial: value?.start,
       dataFinal: value?.end,
       horaViagem,
-      horaRetorno:
-        selectedPlan === "APANHA_E_RETORNO" ? horaRetorno : undefined,
+      horaRetorno: selectedPlan === "APANHA_E_RETORNO" ? horaRetorno : undefined,
     };
   }
 
@@ -430,11 +439,18 @@ export default function ScheduledTripModal({
                   </CardHeader>
                   <CardBody className="pt-0 pb-3">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Campo sempre visível - muda o label baseado no tipo */}
                       <TimeInput
                         variant="bordered"
                         hourCycle={24}
                         isRequired
-                        label="Hora da viagem"
+                        label={
+                          selectedPlan === "RETORNO" 
+                            ? "Hora do retorno" 
+                            : selectedPlan === "APANHA_E_RETORNO"
+                            ? "Hora da apanha"
+                            : "Hora da viagem"
+                        }
                         onChange={setHoraViagem}
                         value={horaViagem}
                         startContent={
@@ -444,6 +460,7 @@ export default function ScheduledTripModal({
                           />
                         }
                       />
+                      {/* Campo do retorno - só aparece em APANHA_E_RETORNO */}
                       {selectedPlan === "APANHA_E_RETORNO" && (
                         <TimeInput
                           variant="bordered"
