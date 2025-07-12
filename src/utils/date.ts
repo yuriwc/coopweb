@@ -66,3 +66,26 @@ export const formatDateOnlyBR = (dateString: string | null | undefined): string 
 export const formatDateLongBR = (dateString: string | null | undefined): string => {
   return formatDateBR(dateString, 'dd MMM yyyy, HH:mm');
 };
+
+/**
+ * Converte timestamp em milliseconds para horário brasileiro (apenas HH:mm)
+ * @param timestamp - Timestamp em milliseconds
+ * @returns Horário formatado (HH:mm)
+ */
+export const formatTimestampToTime = (timestamp: number): string => {
+  if (!timestamp) return '-';
+  
+  try {
+    const date = new Date(timestamp);
+    
+    if (!isValid(date)) {
+      console.warn('Timestamp inválido:', timestamp);
+      return '-';
+    }
+    
+    return format(date, 'HH:mm', { locale: ptBR });
+  } catch (error) {
+    console.error('Erro ao formatar timestamp:', error, timestamp);
+    return '-';
+  }
+};
