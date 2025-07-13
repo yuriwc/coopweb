@@ -18,6 +18,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Icon from "@/src/components/icon";
 import FormViagemProgramada from "./modal/form-viagem-programada";
 import FormViagem from "./modal/form-viagem";
+import FormViagemPersonalizada from "./modal/form-viagem-personalizada";
 import CentroCustoModal from "./modal/form-centro-custo";
 import VincularCentroCustoModal from "./modal/form-vincular-centro-custo";
 
@@ -59,6 +60,7 @@ const TablePassegers = ({
   const currentPath = usePathname();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalProgramadaOpen, setIsModalProgramadaOpen] = useState(false);
+  const [isModalPersonalizadaOpen, setIsModalPersonalizadaOpen] = useState(false);
   const [isCentroCustoModalOpen, setIsCentroCustoModalOpen] = useState(false);
   const [isVincularCentroCustoModalOpen, setIsVincularCentroCustoModalOpen] =
     useState(false);
@@ -116,6 +118,13 @@ const TablePassegers = ({
                   token={token}
                   isOpen={isModalProgramadaOpen}
                   onOpen={setIsModalProgramadaOpen}
+                  passagers={passagers}
+                  empresa={empresa}
+                />
+                <FormViagemPersonalizada
+                  token={token}
+                  isOpen={isModalPersonalizadaOpen}
+                  onOpen={setIsModalPersonalizadaOpen}
                   passagers={passagers}
                   empresa={empresa}
                 />
