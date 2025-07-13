@@ -18,7 +18,6 @@ import { Button } from "@heroui/button";
 import { Icon } from "@iconify/react";
 import { Avatar } from "@heroui/avatar";
 import { Card, CardBody, CardHeader } from "@heroui/card";
-import { Chip } from "@heroui/chip";
 import { Select, SelectItem } from "@heroui/select";
 
 interface PlaceDetails {
@@ -31,6 +30,12 @@ interface PlaceDetails {
   };
   name: string;
   place_id: string;
+}
+
+interface LocationData {
+  tipo: string;
+  placeId?: string;
+  nome?: string;
 }
 
 interface Props {
@@ -201,7 +206,7 @@ export default function CustomTripModal({
       passageiroID: passager.id
     }));
 
-    const origemData: any = { 
+    const origemData: LocationData = { 
       tipo: origemTipo
     };
     if (origemTipo === "ALTERNATIVO" && origemPersonalizada) {
@@ -209,7 +214,7 @@ export default function CustomTripModal({
       origemData.nome = origemPersonalizada.name;
     }
 
-    const destinoData: any = { 
+    const destinoData: LocationData = { 
       tipo: destinoTipo
     };
     if (destinoTipo === "ALTERNATIVO" && destinoPersonalizado) {
