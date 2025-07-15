@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
 import { Icon } from "@iconify/react";
+import useGoogleMaps from "@/src/hooks/useGoogleMaps";
 
 interface PlaceResult {
   place_id: string;
@@ -23,6 +24,11 @@ interface PlaceDetails {
   };
   name: string;
   place_id: string;
+  address_components?: {
+    long_name: string;
+    short_name: string;
+    types: string[];
+  }[];
 }
 
 interface Props {
@@ -45,41 +51,18 @@ export default function PlacesAutocomplete({
   const [inputValue, setInputValue] = useState(value);
   const [suggestions, setSuggestions] = useState<PlaceResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoaded, setIsGoogleLoaded] = useState(false);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  
+  // Use o hook personalizado para carregar Google Maps
+  const { isLoaded: isGoogleLoaded, error: googleMapsError } = useGoogleMaps();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const autocompleteService = useRef<google.maps.places.AutocompleteService | null>(null);
-  const placesService = useRef<google.maps.places.PlacesService | null>(null);
 
-  // Carrega Google Maps API
-  useEffect(() => {
-    const loadGoogleMapsAPI = () => {
-      if (window.google && window.google.maps) {
-        setIsGoogleLoaded(true);
-        return;
-      }
-
-      const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`;
-      script.async = true;
-      script.onload = () => {
-        setIsGoogleLoaded(true);
-      };
-      document.head.appendChild(script);
-    };
-
-    loadGoogleMapsAPI();
-  }, []);
 
   // Inicializa serviços do Google Maps
   useEffect(() => {
     if (isGoogleLoaded && window.google) {
       autocompleteService.current = new google.maps.places.AutocompleteService();
-      
-      // Cria um div invisível para o PlacesService
-      const mapDiv = document.createElement("div");
-      const map = new google.maps.Map(mapDiv);
-      placesService.current = new google.maps.places.PlacesService(map);
     }
   }, [isGoogleLoaded]);
 
@@ -87,6 +70,7 @@ export default function PlacesAutocomplete({
   const searchPlaces = (query: string) => {
     if (!autocompleteService.current || query.length < 3) {
       setSuggestions([]);
+      setIsLoading(false);
       return;
     }
 
@@ -98,19 +82,30 @@ export default function PlacesAutocomplete({
       types: ["establishment", "geocode"], // Estabelecimentos e endereços
     };
 
-    autocompleteService.current.getPlacePredictions(request, (predictions, status) => {
+    try {
+      autocompleteService.current.getPlacePredictions(request, (predictions, status) => {
+        setIsLoading(false);
+        
+        if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
+          setSuggestions(predictions);
+        } else {
+          setSuggestions([]);
+          console.warn('Google Places API status:', status);
+        }
+      });
+    } catch (error) {
+      console.error('Erro ao buscar lugares:', error);
       setIsLoading(false);
-      
-      if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
-        setSuggestions(predictions);
-      } else {
-        setSuggestions([]);
-      }
-    });
+      setSuggestions([]);
+    }
   };
 
   // Debounce para busca
   useEffect(() => {
+    if (!isGoogleLoaded || !autocompleteService.current) {
+      return;
+    }
+
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -124,37 +119,64 @@ export default function PlacesAutocomplete({
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [inputValue]);
+  }, [inputValue, isGoogleLoaded]);
 
-  // Busca detalhes do lugar selecionado
-  const getPlaceDetails = (placeId: string) => {
-    if (!placesService.current) return;
-
-    const request = {
-      placeId,
-      fields: ["formatted_address", "geometry", "name", "place_id"],
-    };
-
-    placesService.current.getDetails(request, (place, status) => {
+  // Busca detalhes do lugar selecionado usando nova API
+  const getPlaceDetails = async (placeId: string) => {
+    if (!window.google || !window.google.maps || !window.google.maps.places) {
       setIsLoading(false);
-      if (status === google.maps.places.PlacesServiceStatus.OK && place) {
+      return;
+    }
+
+    try {
+      // Nova API: google.maps.places.Place
+      const { Place } = google.maps.places;
+      
+      const place = new Place({
+        id: placeId,
+        requestedLanguage: "pt-BR", // Define idioma português
+      });
+
+      // Busca os dados necessários incluindo componentes de endereço
+      await place.fetchFields({
+        fields: ["displayName", "formattedAddress", "location", "id", "addressComponents"],
+      });
+
+      setIsLoading(false);
+
+      if (place.displayName && place.formattedAddress && place.location) {
+        // Mapeia os componentes de endereço para o formato esperado
+        const addressComponents = place.addressComponents?.map(component => ({
+          long_name: component.longText || "",
+          short_name: component.shortText || "",
+          types: component.types,
+        }));
+
         const placeDetails: PlaceDetails = {
-          formatted_address: place.formatted_address || "",
+          formatted_address: place.formattedAddress,
           geometry: {
             location: {
-              lat: place.geometry?.location?.lat() || 0,
-              lng: place.geometry?.location?.lng() || 0,
+              lat: place.location.lat(),
+              lng: place.location.lng(),
             },
           },
-          name: place.name || "",
-          place_id: place.place_id || "",
+          name: place.displayName,
+          place_id: place.id || placeId,
+          address_components: addressComponents,
         };
         onPlaceSelect(placeDetails);
+      } else {
+        console.warn('Dados do lugar incompletos');
+        onPlaceSelect(null);
       }
-    });
+    } catch (error) {
+      console.error('Erro ao buscar detalhes do lugar:', error);
+      setIsLoading(false);
+      onPlaceSelect(null);
+    }
   };
 
-  const handleSelectionChange = (key: React.Key | null) => {
+  const handleSelectionChange = async (key: React.Key | null) => {
     if (key) {
       const selectedPlace = suggestions.find(place => place.place_id === key);
       if (selectedPlace) {
@@ -162,7 +184,7 @@ export default function PlacesAutocomplete({
         setInputValue(selectedPlace.description);
         setSuggestions([]);
         setIsLoading(true);
-        getPlaceDetails(selectedPlace.place_id);
+        await getPlaceDetails(selectedPlace.place_id);
       }
     } else {
       setSelectedKey(null);
@@ -178,6 +200,23 @@ export default function PlacesAutocomplete({
       setSuggestions([]);
     }
   };
+
+  if (googleMapsError) {
+    return (
+      <Autocomplete
+        label={label}
+        placeholder={googleMapsError.includes("não configurada") ? "API Key não configurada" : "Erro ao carregar mapas"}
+        isDisabled={true}
+        isInvalid={true}
+        errorMessage={googleMapsError}
+        startContent={<Icon icon="solar:danger-triangle-linear" className="w-4 h-4 text-danger" />}
+      >
+        <AutocompleteItem key="error">
+          {googleMapsError.includes("não configurada") ? "Configure NEXT_PUBLIC_GOOGLE_MAPS_API_KEY" : "Erro no Google Maps"}
+        </AutocompleteItem>
+      </Autocomplete>
+    );
+  }
 
   if (!isGoogleLoaded) {
     return (

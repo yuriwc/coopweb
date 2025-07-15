@@ -78,7 +78,7 @@ export default function SelectCentrosCusto({
       variant="underlined"
       className="max-w-xs"
       label="Centro de Custo"
-      selectedKeys={[value]}
+      selectedKeys={new Set([value])}
       onChange={handleSelectionChange}
     >
       {centrosCusto.map((centro) => (

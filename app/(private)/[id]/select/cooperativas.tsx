@@ -67,7 +67,7 @@ export default function SelectCooperativas({
       variant="underlined"
       className="max-w-xs"
       label="Cooperativa"
-      selectedKeys={[value]}
+      selectedKeys={new Set([value])}
       onChange={handleSelectionChange}
     >
       {cooperativas.map((coop) => (

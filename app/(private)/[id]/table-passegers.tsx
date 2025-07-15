@@ -18,8 +18,6 @@ import { usePathname, useRouter } from "next/navigation";
 import Icon from "@/src/components/icon";
 import FormViagemProgramada from "./modal/form-viagem-programada";
 import FormViagem from "./modal/form-viagem";
-import FormViagemPersonalizada from "./modal/form-viagem-personalizada";
-import CentroCustoModal from "./modal/form-centro-custo";
 import VincularCentroCustoModal from "./modal/form-vincular-centro-custo";
 
 const columns = [
@@ -60,8 +58,6 @@ const TablePassegers = ({
   const currentPath = usePathname();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalProgramadaOpen, setIsModalProgramadaOpen] = useState(false);
-  const [isModalPersonalizadaOpen, setIsModalPersonalizadaOpen] = useState(false);
-  const [isCentroCustoModalOpen, setIsCentroCustoModalOpen] = useState(false);
   const [isVincularCentroCustoModalOpen, setIsVincularCentroCustoModalOpen] =
     useState(false);
   const [passagers, setPassagers] = useState<Funcionario[]>([]);
@@ -105,43 +101,37 @@ const TablePassegers = ({
               <span className="text-lg">Tabela de Colaboradores</span>
             </div>
             <div className="flex flex-row items-center gap-4">
-              {/* Opções Principais - Viagens */}
+              {/* Ações de Viagem */}
               <div className="flex flex-row gap-2">
-                <FormViagem
-                  token={token}
-                  isOpen={isModalOpen}
-                  onOpen={setIsModalOpen}
-                  passagers={passagers}
-                  empresa={empresa}
-                />
-                <FormViagemProgramada
-                  token={token}
-                  isOpen={isModalProgramadaOpen}
-                  onOpen={setIsModalProgramadaOpen}
-                  passagers={passagers}
-                  empresa={empresa}
-                />
-                <FormViagemPersonalizada
-                  token={token}
-                  isOpen={isModalPersonalizadaOpen}
-                  onOpen={setIsModalPersonalizadaOpen}
-                  passagers={passagers}
-                  empresa={empresa}
-                />
+                <Button
+                  onPress={() => setIsModalOpen(true)}
+                  variant="solid"
+                  color="primary"
+                  size="sm"
+                  startContent={<Icon icon="solar:car-linear" height={16} />}
+                  className="font-medium transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+                  isDisabled={passagers.length === 0}
+                >
+                  Solicitar Viagem
+                </Button>
+                <Button
+                  onPress={() => setIsModalProgramadaOpen(true)}
+                  variant="bordered"
+                  color="primary"
+                  size="sm"
+                  startContent={<Icon icon="solar:calendar-linear" height={16} />}
+                  className="font-medium transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+                  isDisabled={passagers.length === 0}
+                >
+                  Programar Viagem
+                </Button>
               </div>
 
               {/* Separador visual */}
               <div className="h-8 w-px bg-gradient-to-b from-transparent via-gray-300/50 dark:via-gray-600/50 to-transparent" />
 
-              {/* Opções Secundárias - Gestão */}
+              {/* Gestão de Colaboradores */}
               <div className="flex flex-row items-center gap-2">
-                <CentroCustoModal
-                  isOpen={isCentroCustoModalOpen}
-                  onOpen={setIsCentroCustoModalOpen}
-                  empresa={empresa}
-                  token={token}
-                  onSuccess={handleRefresh}
-                />
                 <Button
                   onPress={handleCreate}
                   variant="light"
@@ -149,9 +139,25 @@ const TablePassegers = ({
                   startContent={<Icon icon="iconoir:plus" height={16} />}
                   className="backdrop-blur-sm bg-gray-500/10 hover:bg-gray-500/20 border border-gray-200/30 dark:border-gray-700/30 text-gray-700 dark:text-gray-300 font-medium transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-gray-500/25"
                 >
-                  Colaborador
+                  Novo Colaborador
                 </Button>
               </div>
+              
+              {/* Modais (renderizados fora da estrutura visual) */}
+              <FormViagem
+                token={token}
+                isOpen={isModalOpen}
+                onOpen={setIsModalOpen}
+                passagers={passagers}
+                empresa={empresa}
+              />
+              <FormViagemProgramada
+                token={token}
+                isOpen={isModalProgramadaOpen}
+                onOpen={setIsModalProgramadaOpen}
+                passagers={passagers}
+                empresa={empresa}
+              />
             </div>
           </div>
         }
