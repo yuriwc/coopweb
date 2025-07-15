@@ -20,12 +20,44 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@heroui/modal";
-import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Chip } from "@heroui/chip";
 import { Icon } from "@iconify/react";
 import { Avatar } from "@heroui/avatar";
-import { Badge } from "@heroui/badge";
+import { Select, SelectItem } from "@heroui/select";
 import ShowToast from "@/src/components/Toast";
+import PlacesAutocomplete from "../components/places-autocomplete";
+
+interface PlaceDetails {
+  formatted_address: string;
+  geometry: {
+    location: {
+      lat: number;
+      lng: number;
+    };
+  };
+  name: string;
+  place_id: string;
+  address_components?: {
+    long_name: string;
+    short_name: string;
+    types: string[];
+  }[];
+}
+
+interface LocalDTO {
+  tipo: "PASSAGEIRO" | "EMPRESA" | "ALTERNATIVO";
+  empresaId?: string;
+  placeId?: string;
+  nome?: string;
+  rua?: string;
+  numero?: string;
+  bairro?: string;
+  cidade?: string;
+  estado?: string;
+  cep?: string;
+  latitude?: number;
+  longitude?: number;
+}
 
 interface Props {
   isOpen: boolean;
@@ -34,6 +66,12 @@ interface Props {
   empresa: string;
   token: string;
 }
+
+const LOCATION_OPTIONS = [
+  { key: "EMPRESA", label: "Empresa", icon: "solar:buildings-3-linear" },
+  { key: "PASSAGEIRO", label: "Casa do Passageiro", icon: "solar:home-linear" },
+  { key: "ALTERNATIVO", label: "Local Personalizado", icon: "solar:location-linear" },
+];
 
 export default function ScheduledTripModal({
   isOpen,
@@ -54,6 +92,84 @@ export default function ScheduledTripModal({
     start: today(getLocalTimeZone()),
     end: today(getLocalTimeZone()).add({ weeks: 4 }),
   });
+  
+  // Estados para locais personalizados
+  const [isFlexibleTrip, setIsFlexibleTrip] = useState(false);
+  const [origemTipo, setOrigemTipo] = useState<string>("PASSAGEIRO");
+  const [destinoTipo, setDestinoTipo] = useState<string>("EMPRESA");
+  const [origemCustom, setOrigemCustom] = useState<PlaceDetails | null>(null);
+  const [destinoCustom, setDestinoCustom] = useState<PlaceDetails | null>(null);
+
+  const createLocalDTO = (tipo: string, customPlace?: PlaceDetails | null): LocalDTO => {
+    const local: LocalDTO = { tipo: tipo as LocalDTO["tipo"] };
+
+    if (tipo === "EMPRESA") {
+      local.empresaId = empresa;
+    } else if (tipo === "ALTERNATIVO" && customPlace) {
+      local.placeId = customPlace.place_id;
+      local.nome = customPlace.name;
+      local.latitude = customPlace.geometry.location.lat;
+      local.longitude = customPlace.geometry.location.lng;
+
+      // Usa componentes de endereço estruturados se disponíveis
+      if (customPlace.address_components) {
+        const getAddressComponent = (types: string[]) => {
+          const component = customPlace.address_components?.find(comp =>
+            types.some(type => comp.types.includes(type))
+          );
+          return component?.long_name || "";
+        };
+
+        const getShortAddressComponent = (types: string[]) => {
+          const component = customPlace.address_components?.find(comp =>
+            types.some(type => comp.types.includes(type))
+          );
+          return component?.short_name || "";
+        };
+
+        // Mapeia os componentes corretamente
+        local.rua = getAddressComponent(['route']) || getAddressComponent(['street_address']);
+        local.numero = getAddressComponent(['street_number']);
+        local.bairro = getAddressComponent(['sublocality', 'sublocality_level_1']);
+        local.cidade = getAddressComponent(['locality', 'administrative_area_level_2']);
+        local.estado = getShortAddressComponent(['administrative_area_level_1']);
+        local.cep = getAddressComponent(['postal_code']);
+      } else {
+        // Fallback para parsing manual se não houver componentes estruturados
+        const addressParts = customPlace.formatted_address.split(", ");
+        if (addressParts.length >= 1) {
+          local.rua = addressParts[0];
+          if (addressParts.length >= 3) {
+            local.cidade = addressParts[addressParts.length - 3] || "";
+            local.estado = addressParts[addressParts.length - 2]?.split(" ")[0] || "";
+            local.cep = addressParts[addressParts.length - 1] || "";
+          }
+        }
+      }
+    }
+
+    return local;
+  };
+
+  const isProgramacaoFlexivel = (): boolean => {
+    return isFlexibleTrip;
+  };
+
+  const validateFlexibleTrip = (): boolean => {
+    if (!isProgramacaoFlexivel()) return true;
+
+    if (origemTipo === "ALTERNATIVO" && !origemCustom) {
+      ShowToast({ color: "danger", title: "Selecione o local de origem personalizado" });
+      return false;
+    }
+
+    if (destinoTipo === "ALTERNATIVO" && !destinoCustom) {
+      ShowToast({ color: "danger", title: "Selecione o local de destino personalizado" });
+      return false;
+    }
+
+    return true;
+  };
 
   // Função de validação
   function validate() {
@@ -64,7 +180,6 @@ export default function ScheduledTripModal({
         color: "danger",
         title: "Selecione um plano de viagem!",
       });
-
       return false;
     }
 
@@ -73,6 +188,10 @@ export default function ScheduledTripModal({
         color: "danger",
         title: "Todos os passageiros devem ser da mesma cidade!",
       });
+      return false;
+    }
+
+    if (!validateFlexibleTrip()) {
       return false;
     }
 
@@ -101,7 +220,18 @@ export default function ScheduledTripModal({
   function generateDataToRequest() {
     const passagersID = passagers.map((passager) => passager.id);
 
-    return {
+    const requestData: {
+      empresaID: string;
+      tipoViagem: string;
+      cooperativaID: string;
+      passageiros: string[];
+      dataInicial: DateValue | undefined;
+      dataFinal: DateValue | undefined;
+      horaViagem: TimeInputValue | null;
+      horaRetorno?: TimeInputValue | null;
+      origens?: LocalDTO[];
+      destinos?: LocalDTO[];
+    } = {
       empresaID: empresa,
       tipoViagem: selectedPlan,
       cooperativaID: cooperativa,
@@ -111,12 +241,48 @@ export default function ScheduledTripModal({
       horaViagem,
       horaRetorno: selectedPlan === "APANHA_E_RETORNO" ? horaRetorno : undefined,
     };
+
+    // Adiciona locais personalizados se for programação flexível
+    if (isProgramacaoFlexivel()) {
+      // Origens
+      const origens = [];
+      if (origemTipo === "EMPRESA") {
+        origens.push(createLocalDTO("EMPRESA"));
+      } else if (origemTipo === "ALTERNATIVO" && origemCustom) {
+        origens.push(createLocalDTO("ALTERNATIVO", origemCustom));
+      } else if (origemTipo === "PASSAGEIRO") {
+        // Para passageiros múltiplos, criamos uma origem para cada um
+        passagers.forEach(() => {
+          origens.push(createLocalDTO("PASSAGEIRO"));
+        });
+      }
+
+      // Destinos  
+      const destinos = [];
+      if (destinoTipo === "EMPRESA") {
+        destinos.push(createLocalDTO("EMPRESA"));
+      } else if (destinoTipo === "ALTERNATIVO" && destinoCustom) {
+        destinos.push(createLocalDTO("ALTERNATIVO", destinoCustom));
+      } else if (destinoTipo === "PASSAGEIRO") {
+        // Para passageiros múltiplos, criamos um destino para cada um
+        passagers.forEach(() => {
+          destinos.push(createLocalDTO("PASSAGEIRO"));
+        });
+      }
+
+      requestData.origens = origens;
+      requestData.destinos = destinos;
+    }
+
+    return requestData;
   }
 
   // Função para realizar a solicitação da viagem
   async function requestViagem() {
     setIsLoading(true);
     const data = generateDataToRequest();
+    
+    console.log("JSON enviado para programação:", JSON.stringify(data, null, 2));
 
     try {
       const response = await fetch(
@@ -174,272 +340,235 @@ export default function ScheduledTripModal({
   }
 
   return (
-    <>
-      <Button
-        variant="flat"
-        color="secondary"
-        onPress={() => onOpen(true)}
-        startContent={<Icon icon="solar:calendar-linear" className="w-4 h-4" />}
-        className="backdrop-blur-sm bg-purple-500/10 hover:bg-purple-500/20 border border-purple-200/30 dark:border-purple-800/30 text-purple-700 dark:text-purple-300 font-medium transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/25"
-      >
-        Programar Viagem
-      </Button>
-
-      <Modal
+    <Modal
         isOpen={isOpen}
         onOpenChange={onOpen}
-        size="5xl"
+        size="4xl"
         scrollBehavior="inside"
         classNames={{
-          backdrop:
-            "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
+          backdrop: "bg-black/50",
           wrapper: "items-center justify-center",
-          base: "max-h-[90vh] my-6",
-          body: "p-0",
+          base: "max-h-[90vh] my-4",
+          body: "p-6",
         }}
       >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/50 dark:to-pink-950/50 py-3">
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                    <Icon
-                      icon="solar:calendar-date-linear"
-                      className="w-4 h-4 text-purple-600 dark:text-purple-400"
-                    />
-                  </div>
+              <ModalHeader className="flex flex-col gap-1 pb-4">
+                <div className="flex items-center gap-3">
+                  <Icon
+                    icon="solar:calendar-date-linear"
+                    className="w-6 h-6 text-primary"
+                  />
                   <div>
-                    <h3 className="text-base font-semibold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                    <h3 className="text-lg font-semibold">
                       Programar Viagem
                     </h3>
-                    <p className="text-xs text-foreground-600">
+                    <p className="text-sm text-default-500">
                       Configure uma viagem programada
                     </p>
                   </div>
                 </div>
               </ModalHeader>
 
-              <ModalBody className="px-6 py-4 space-y-4 overflow-y-auto max-h-[calc(90vh-140px)]">
-                {/* Seção: Cooperativa */}
-                <Card className="border border-default-200 min-h-[160px] flex flex-col">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
-                        <Icon
-                          icon="solar:buildings-3-linear"
-                          className="w-4 h-4 text-emerald-600 dark:text-emerald-400"
-                        />
-                      </div>
-                      <div>
-                        <h4 className="text-base font-semibold text-foreground">
-                          Cooperativa
-                        </h4>
-                        <p className="text-sm text-foreground-600">
-                          Selecione a cooperativa responsável
-                        </p>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardBody className="pt-0 pb-3 flex-1 flex items-center">
-                    <div className="w-full">
-                      <SelectCooperativas
-                        setCooperativa={setCooperativa}
-                        empresa={empresa}
-                        token={token}
-                      />
-                    </div>
-                  </CardBody>
-                </Card>
+              <ModalBody className="space-y-6 overflow-y-auto max-h-[calc(90vh-180px)]">
+                {/* Informações básicas */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Cooperativa */}
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      <Icon icon="solar:buildings-3-linear" className="w-4 h-4 inline mr-2" />
+                      Cooperativa
+                    </label>
+                    <SelectCooperativas
+                      setCooperativa={setCooperativa}
+                      empresa={empresa}
+                      token={token}
+                    />
+                  </div>
 
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                  {/* Seção: Passageiros */}
-                  <Card className="border border-default-200 min-h-[320px] flex flex-col">
-                    <CardHeader className="pb-2">
-                      <div className="flex items-center gap-2 w-full justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className="p-1.5 bg-violet-100 dark:bg-violet-900/30 rounded-lg">
-                            <Icon
-                              icon="solar:users-group-two-rounded-linear"
-                              className="w-4 h-4 text-violet-600 dark:text-violet-400"
-                            />
-                          </div>
-                          <div>
-                            <h4 className="text-base font-semibold text-foreground">
-                              Passageiros
-                            </h4>
-                            <p className="text-sm text-foreground-600">
-                              Lista de colaboradores
-                            </p>
-                          </div>
-                        </div>
-                        <Badge
-                          content={passagers.length}
-                          color="primary"
-                          shape="circle"
-                        >
-                          <Chip variant="flat" color="primary" size="sm">
-                            {passagers.length} selecionado
-                            {passagers.length !== 1 ? "s" : ""}
-                          </Chip>
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardBody className="pt-0 pb-3 flex-1">
-                      <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
-                        {passagers.map((passager, index) => (
-                          <div
-                            key={passager.id}
-                            className="flex items-center gap-3 p-3 bg-default-50 dark:bg-default-100/50 rounded-lg border border-default-200"
-                          >
-                            <Avatar
-                              size="sm"
-                              name={passager.name?.charAt(0).toUpperCase()}
-                              classNames={{
-                                base: "bg-gradient-to-r from-violet-600 to-blue-600",
-                                name: "text-white font-semibold",
-                              }}
-                            />
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-semibold text-foreground truncate">
-                                {passager.name}
-                              </p>
-                              <div className="flex items-center gap-2 mt-1">
-                                <Icon
-                                  icon="solar:phone-linear"
-                                  className="w-3 h-3 text-default-400 flex-shrink-0"
-                                />
-                                <p className="text-xs text-foreground-600 truncate">
-                                  {passager.phone}
-                                </p>
-                              </div>
-                            </div>
-                            <Chip variant="flat" size="sm" color="secondary">
-                              #{index + 1}
-                            </Chip>
-                          </div>
-                        ))}
-                      </div>
-                    </CardBody>
-                  </Card>
-
-                  {/* Seção: Tipo de Viagem */}
-                  <Card className="border border-default-200 min-h-[320px] flex flex-col">
-                    <CardHeader className="pb-2">
-                      <div className="flex items-center gap-2">
-                        <div className="p-1.5 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
-                          <Icon
-                            icon="solar:route-linear"
-                            className="w-4 h-4 text-amber-600 dark:text-amber-400"
-                          />
-                        </div>
-                        <div>
-                          <h4 className="text-base font-semibold text-foreground">
-                            Tipo de Viagem
-                          </h4>
-                          <p className="text-sm text-foreground-600">
-                            Escolha o tipo de serviço
-                          </p>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardBody className="pt-0 pb-3 flex-1 flex items-center">
-                      <div className="w-full">
-                        <TipoViagem setSelectedPlan={setSelectedPlan} />
-                      </div>
-                    </CardBody>
-                  </Card>
+                  {/* Tipo de Viagem */}
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      <Icon icon="solar:route-linear" className="w-4 h-4 inline mr-2" />
+                      Tipo de Viagem
+                    </label>
+                    <TipoViagem setSelectedPlan={setSelectedPlan} />
+                  </div>
                 </div>
 
-                {/* Seção: Período da Viagem */}
-                <Card className="border border-default-200">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                        <Icon
-                          icon="solar:calendar-mark-linear"
-                          className="w-4 h-4 text-blue-600 dark:text-blue-400"
-                        />
-                      </div>
-                      <div>
-                        <h4 className="text-base font-semibold text-foreground">
-                          Período da Viagem
-                        </h4>
-                        <p className="text-sm text-foreground-600">
-                          Selecione as datas e configure restrições
-                        </p>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardBody className="pt-0 pb-3">
-                    <div className="flex flex-col lg:flex-row gap-6">
-                      <div className="flex-1">
-                        <RangeCalendar
-                          aria-label="Data da Viagem"
-                          value={value}
-                          onChange={setValue}
-                          classNames={{
-                            content: "w-full",
-                            base: "w-full",
-                          }}
-                          isDateUnavailable={(date) =>
-                            (evitarFinsDeSemana && isWeekend(date, locale)) ||
-                            (evitarDomingos && getDayOfWeek(date, locale) === 0)
-                          }
-                        />
-                      </div>
-                      <div className="lg:w-64">
-                        <h5 className="text-sm font-semibold text-foreground mb-3">
-                          Restrições de Data
-                        </h5>
-                        <div className="space-y-3">
-                          <Checkbox
-                            onChange={() =>
-                              setEvitarFinsDeSemana(!evitarFinsDeSemana)
-                            }
-                            isSelected={evitarFinsDeSemana}
+                {/* Passageiros */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    <Icon icon="solar:users-group-two-rounded-linear" className="w-4 h-4 inline mr-2" />
+                    Passageiros ({passagers.length})
+                  </label>
+                  <div className="flex flex-wrap gap-2 p-3 bg-default-50 rounded-lg border">
+                    {passagers.map((passager) => (
+                      <Chip
+                        key={passager.id}
+                        avatar={
+                          <Avatar
                             size="sm"
-                          >
-                            <span className="text-sm">
-                              Evitar fins de semana
-                            </span>
-                          </Checkbox>
-                          <Checkbox
-                            onChange={() => setEvitarDomingos(!evitarDomingos)}
-                            isSelected={evitarDomingos}
-                            size="sm"
-                          >
-                            <span className="text-sm">Evitar domingos</span>
-                          </Checkbox>
-                        </div>
-                      </div>
-                    </div>
-                  </CardBody>
-                </Card>
+                            name={passager.name?.charAt(0).toUpperCase()}
+                            className="bg-primary text-white"
+                          />
+                        }
+                        variant="flat"
+                        color="primary"
+                        size="sm"
+                      >
+                        {passager.name}
+                      </Chip>
+                    ))}
+                  </div>
+                </div>
 
-                {/* Seção: Horários */}
-                <Card className="border border-default-200 min-h-[160px] flex flex-col">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="p-1.5 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg">
-                        <Icon
-                          icon="solar:clock-circle-linear"
-                          className="w-4 h-4 text-cyan-600 dark:text-cyan-400"
-                        />
-                      </div>
+                {/* Programação Personalizada */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-sm font-medium">
+                      <Icon icon="solar:settings-linear" className="w-4 h-4 inline mr-2" />
+                      Programação Personalizada
+                    </label>
+                    <Button
+                      size="sm"
+                      variant={isFlexibleTrip ? "solid" : "bordered"}
+                      color={isFlexibleTrip ? "primary" : "default"}
+                      onPress={() => setIsFlexibleTrip(!isFlexibleTrip)}
+                    >
+                      {isFlexibleTrip ? "Ativado" : "Desativado"}
+                    </Button>
+                  </div>
+
+                  {isFlexibleTrip && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-default-50 rounded-lg border">
+                      {/* Origem */}
                       <div>
-                        <h4 className="text-base font-semibold text-foreground">
-                          Horários
-                        </h4>
-                        <p className="text-sm text-foreground-600">
-                          Configure os horários da viagem
-                        </p>
+                        <Select
+                          label="Origem"
+                          placeholder="Selecione o tipo de origem"
+                          selectedKeys={new Set([origemTipo])}
+                          onSelectionChange={(keys) => {
+                            const selected = Array.from(keys)[0] as string;
+                            setOrigemTipo(selected);
+                            if (selected !== "ALTERNATIVO") {
+                              setOrigemCustom(null);
+                            }
+                          }}
+                          size="sm"
+                          variant="bordered"
+                        >
+                          {LOCATION_OPTIONS.map((option) => (
+                            <SelectItem key={option.key} textValue={option.label}>
+                              <div className="flex items-center gap-2">
+                                <Icon icon={option.icon} className="text-sm" />
+                                <span className="text-sm">{option.label}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </Select>
+                        
+                        {origemTipo === "ALTERNATIVO" && (
+                          <div className="mt-2">
+                            <PlacesAutocomplete
+                              label="Local de origem"
+                              onPlaceSelect={setOrigemCustom}
+                              placeholder="Buscar local de origem..."
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Destino */}
+                      <div>
+                        <Select
+                          label="Destino"
+                          placeholder="Selecione o tipo de destino"
+                          selectedKeys={new Set([destinoTipo])}
+                          onSelectionChange={(keys) => {
+                            const selected = Array.from(keys)[0] as string;
+                            setDestinoTipo(selected);
+                            if (selected !== "ALTERNATIVO") {
+                              setDestinoCustom(null);
+                            }
+                          }}
+                          size="sm"
+                          variant="bordered"
+                        >
+                          {LOCATION_OPTIONS.map((option) => (
+                            <SelectItem key={option.key} textValue={option.label}>
+                              <div className="flex items-center gap-2">
+                                <Icon icon={option.icon} className="text-sm" />
+                                <span className="text-sm">{option.label}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </Select>
+                        
+                        {destinoTipo === "ALTERNATIVO" && (
+                          <div className="mt-2">
+                            <PlacesAutocomplete
+                              label="Local de destino"
+                              onPlaceSelect={setDestinoCustom}
+                              placeholder="Buscar local de destino..."
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
-                  </CardHeader>
-                  <CardBody className="pt-0 pb-3">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Campo sempre visível - muda o label baseado no tipo */}
+                  )}
+                </div>
+
+                {/* Período e Horários */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Período */}
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      <Icon icon="solar:calendar-mark-linear" className="w-4 h-4 inline mr-2" />
+                      Período da Viagem
+                    </label>
+                    <div className="space-y-4">
+                      <RangeCalendar
+                        aria-label="Data da Viagem"
+                        value={value}
+                        onChange={setValue}
+                        isDateUnavailable={(date) =>
+                          (evitarFinsDeSemana && isWeekend(date, locale)) ||
+                          (evitarDomingos && getDayOfWeek(date, locale) === 0)
+                        }
+                        classNames={{
+                          content: "w-full",
+                          base: "w-full",
+                        }}
+                      />
+                      <div className="space-y-2">
+                        <Checkbox
+                          onChange={() => setEvitarFinsDeSemana(!evitarFinsDeSemana)}
+                          isSelected={evitarFinsDeSemana}
+                          size="sm"
+                        >
+                          <span className="text-sm">Evitar fins de semana</span>
+                        </Checkbox>
+                        <Checkbox
+                          onChange={() => setEvitarDomingos(!evitarDomingos)}
+                          isSelected={evitarDomingos}
+                          size="sm"
+                        >
+                          <span className="text-sm">Evitar domingos</span>
+                        </Checkbox>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Horários */}
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      <Icon icon="solar:clock-circle-linear" className="w-4 h-4 inline mr-2" />
+                      Horários
+                    </label>
+                    <div className="space-y-4">
                       <TimeInput
                         variant="bordered"
                         hourCycle={24}
@@ -460,7 +589,6 @@ export default function ScheduledTripModal({
                           />
                         }
                       />
-                      {/* Campo do retorno - só aparece em APANHA_E_RETORNO */}
                       {selectedPlan === "APANHA_E_RETORNO" && (
                         <TimeInput
                           variant="bordered"
@@ -478,8 +606,8 @@ export default function ScheduledTripModal({
                         />
                       )}
                     </div>
-                  </CardBody>
-                </Card>
+                  </div>
+                </div>
               </ModalBody>
 
               <ModalFooter className="bg-default-50 dark:bg-default-100/50 py-3 px-6">
@@ -516,6 +644,5 @@ export default function ScheduledTripModal({
           )}
         </ModalContent>
       </Modal>
-    </>
   );
 }
