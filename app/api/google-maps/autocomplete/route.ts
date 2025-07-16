@@ -10,8 +10,11 @@ export async function GET(request: NextRequest) {
 
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
   if (!apiKey) {
+    console.error('GOOGLE_MAPS_API_KEY not found in environment variables');
     return NextResponse.json({ error: 'Google Maps API key not configured' }, { status: 500 });
   }
+  
+  console.log('API Key found, making request to Google Maps API');
 
   try {
     const url = new URL('https://maps.googleapis.com/maps/api/place/autocomplete/json');
@@ -31,6 +34,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error fetching Google Maps data:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 });
   }
 }
