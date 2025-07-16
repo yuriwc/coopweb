@@ -212,7 +212,7 @@ export default function PlacesAutocomplete({
         startContent={<Icon icon="solar:danger-triangle-linear" className="w-4 h-4 text-danger" />}
       >
         <AutocompleteItem key="error">
-          {googleMapsError.includes("não configurada") ? "Configure NEXT_PUBLIC_GOOGLE_MAPS_API_KEY" : "Erro no Google Maps"}
+          {googleMapsError.includes("não configurada") ? "Configure GOOGLE_MAPS_API_KEY" : "Erro no Google Maps"}
         </AutocompleteItem>
       </Autocomplete>
     );

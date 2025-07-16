@@ -55,7 +55,7 @@ const useGoogleMaps = () => {
 
     const loadGoogleMapsAPI = () => {
       // Verifica se a chave da API está configurada
-      if (!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
+      if (!process.env.GOOGLE_MAPS_API_KEY) {
         googleMapsError = "Chave da API do Google Maps não configurada";
         isGoogleMapsLoading = false;
         loadCallbacks.forEach(cb => cb(false, googleMapsError || undefined));
@@ -96,7 +96,7 @@ const useGoogleMaps = () => {
 
       // Cria novo script
       const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_MAPS_API_KEY}&libraries=places`;
       script.async = true;
       
       script.onload = () => {
