@@ -52,57 +52,50 @@ export default function PlacesAutocomplete({
   const [suggestions, setSuggestions] = useState<PlaceResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
   
-  // Use o hook personalizado para carregar Google Maps
   const { isLoaded: isGoogleLoaded, error: googleMapsError } = useGoogleMaps();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const autocompleteService = useRef<google.maps.places.AutocompleteService | null>(null);
 
-
-  // Inicializa serviços do Google Maps
-  useEffect(() => {
-    if (isGoogleLoaded && window.google) {
-      autocompleteService.current = new google.maps.places.AutocompleteService();
-    }
-  }, [isGoogleLoaded]);
-
-  // Busca sugestões de lugares
-  const searchPlaces = (query: string) => {
-    if (!autocompleteService.current || query.length < 3) {
+  // Busca sugestões de lugares usando nossa API
+  const searchPlaces = async (query: string) => {
+    if (query.length < 3) {
       setSuggestions([]);
       setIsLoading(false);
       return;
     }
 
     setIsLoading(true);
-
-    const request = {
-      input: query,
-      componentRestrictions: { country: "br" }, // Restringir ao Brasil
-      types: ["establishment", "geocode"], // Estabelecimentos e endereços
-    };
+    setApiError(null);
 
     try {
-      autocompleteService.current.getPlacePredictions(request, (predictions, status) => {
-        setIsLoading(false);
-        
-        if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
-          setSuggestions(predictions);
-        } else {
-          setSuggestions([]);
-          console.warn('Google Places API status:', status);
+      const response = await fetch(`/api/google-maps/autocomplete?input=${encodeURIComponent(query)}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro na API');
+      }
+
+      if (data.status === 'OK' && data.predictions) {
+        setSuggestions(data.predictions);
+      } else {
+        setSuggestions([]);
+        if (data.status !== 'ZERO_RESULTS') {
+          console.warn('Google Places API status:', data.status);
         }
-      });
+      }
     } catch (error) {
       console.error('Erro ao buscar lugares:', error);
-      setIsLoading(false);
+      setApiError('Erro ao buscar lugares');
       setSuggestions([]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   // Debounce para busca
   useEffect(() => {
-    if (!isGoogleLoaded || !autocompleteService.current) {
+    if (!isGoogleLoaded) {
       return;
     }
 
@@ -121,58 +114,48 @@ export default function PlacesAutocomplete({
     };
   }, [inputValue, isGoogleLoaded]);
 
-  // Busca detalhes do lugar selecionado usando nova API
+  // Busca detalhes do lugar selecionado usando nossa API
   const getPlaceDetails = async (placeId: string) => {
-    if (!window.google || !window.google.maps || !window.google.maps.places) {
-      setIsLoading(false);
-      return;
-    }
+    setIsLoading(true);
+    setApiError(null);
 
     try {
-      // Nova API: google.maps.places.Place
-      const { Place } = google.maps.places;
-      
-      const place = new Place({
-        id: placeId,
-        requestedLanguage: "pt-BR", // Define idioma português
-      });
+      const response = await fetch(`/api/google-maps/place-details?place_id=${encodeURIComponent(placeId)}`);
+      const data = await response.json();
 
-      // Busca os dados necessários incluindo componentes de endereço
-      await place.fetchFields({
-        fields: ["displayName", "formattedAddress", "location", "id", "addressComponents"],
-      });
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro na API');
+      }
 
-      setIsLoading(false);
-
-      if (place.displayName && place.formattedAddress && place.location) {
-        // Mapeia os componentes de endereço para o formato esperado
-        const addressComponents = place.addressComponents?.map(component => ({
-          long_name: component.longText || "",
-          short_name: component.shortText || "",
-          types: component.types,
-        }));
-
+      if (data.status === 'OK' && data.result) {
+        const place = data.result;
         const placeDetails: PlaceDetails = {
-          formatted_address: place.formattedAddress,
+          formatted_address: place.formatted_address,
           geometry: {
             location: {
-              lat: place.location.lat(),
-              lng: place.location.lng(),
+              lat: place.geometry.location.lat,
+              lng: place.geometry.location.lng,
             },
           },
-          name: place.displayName,
-          place_id: place.id || placeId,
-          address_components: addressComponents,
+          name: place.name,
+          place_id: place.place_id,
+          address_components: place.address_components?.map((component: any) => ({
+            long_name: component.long_name,
+            short_name: component.short_name,
+            types: component.types,
+          })),
         };
         onPlaceSelect(placeDetails);
       } else {
-        console.warn('Dados do lugar incompletos');
+        console.warn('Dados do lugar incompletos ou status:', data.status);
         onPlaceSelect(null);
       }
     } catch (error) {
       console.error('Erro ao buscar detalhes do lugar:', error);
-      setIsLoading(false);
+      setApiError('Erro ao buscar detalhes do lugar');
       onPlaceSelect(null);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -183,7 +166,6 @@ export default function PlacesAutocomplete({
         setSelectedKey(key as string);
         setInputValue(selectedPlace.description);
         setSuggestions([]);
-        setIsLoading(true);
         await getPlaceDetails(selectedPlace.place_id);
       }
     } else {
@@ -195,24 +177,28 @@ export default function PlacesAutocomplete({
   const handleInputChange = (value: string) => {
     setInputValue(value);
     setSelectedKey(null);
+    setApiError(null);
     if (value === "") {
       onPlaceSelect(null);
       setSuggestions([]);
     }
   };
 
-  if (googleMapsError) {
+  const currentError = googleMapsError || apiError;
+  const isDisabled = !!currentError;
+
+  if (currentError) {
     return (
       <Autocomplete
         label={label}
-        placeholder={googleMapsError.includes("não configurada") ? "API Key não configurada" : "Erro ao carregar mapas"}
+        placeholder={currentError.includes("não configurada") ? "API Key não configurada" : "Erro ao carregar"}
         isDisabled={true}
         isInvalid={true}
-        errorMessage={googleMapsError}
+        errorMessage={currentError}
         startContent={<Icon icon="solar:danger-triangle-linear" className="w-4 h-4 text-danger" />}
       >
         <AutocompleteItem key="error">
-          {googleMapsError.includes("não configurada") ? "Configure GOOGLE_MAPS_API_KEY" : "Erro no Google Maps"}
+          {currentError.includes("não configurada") ? "Configure GOOGLE_MAPS_API_KEY" : "Erro no serviço"}
         </AutocompleteItem>
       </Autocomplete>
     );
@@ -222,7 +208,7 @@ export default function PlacesAutocomplete({
     return (
       <Autocomplete
         label={label}
-        placeholder="Carregando Google Maps..."
+        placeholder="Carregando..."
         isDisabled={true}
         startContent={<Icon icon="solar:location-linear" className="w-4 h-4 text-default-400" />}
       >
