@@ -139,7 +139,11 @@ export default function PlacesAutocomplete({
           },
           name: place.name,
           place_id: place.place_id,
-          address_components: place.address_components?.map((component: any) => ({
+          address_components: place.address_components?.map((component: {
+            long_name: string;
+            short_name: string;
+            types: string[];
+          }) => ({
             long_name: component.long_name,
             short_name: component.short_name,
             types: component.types,
@@ -185,7 +189,6 @@ export default function PlacesAutocomplete({
   };
 
   const currentError = googleMapsError || apiError;
-  const isDisabled = !!currentError;
 
   if (currentError) {
     return (
