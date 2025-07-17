@@ -19,6 +19,7 @@ import Icon from "@/src/components/icon";
 import FormViagemProgramada from "./modal/form-viagem-programada";
 import FormViagem from "./modal/form-viagem";
 import VincularCentroCustoModal from "./modal/form-vincular-centro-custo";
+import CentroCustoModal from "./modal/form-centro-custo";
 
 const columns = [
   {
@@ -60,6 +61,7 @@ const TablePassegers = ({
   const [isModalProgramadaOpen, setIsModalProgramadaOpen] = useState(false);
   const [isVincularCentroCustoModalOpen, setIsVincularCentroCustoModalOpen] =
     useState(false);
+  const [isCentroCustoModalOpen, setIsCentroCustoModalOpen] = useState(false);
   const [passagers, setPassagers] = useState<Funcionario[]>([]);
   const [selectedFuncionario, setSelectedFuncionario] =
     useState<Funcionario | null>(null);
@@ -141,6 +143,14 @@ const TablePassegers = ({
                 >
                   Novo Colaborador
                 </Button>
+                
+                <CentroCustoModal
+                  isOpen={isCentroCustoModalOpen}
+                  onOpen={setIsCentroCustoModalOpen}
+                  empresa={empresa}
+                  token={token}
+                  onSuccess={handleRefresh}
+                />
               </div>
               
               {/* Modais (renderizados fora da estrutura visual) */}
