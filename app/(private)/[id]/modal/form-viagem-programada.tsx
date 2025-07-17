@@ -282,11 +282,13 @@ export default function ScheduledTripModal({
     setIsLoading(true);
     const data = generateDataToRequest();
     
-    console.log("JSON enviado para programação:", JSON.stringify(data, null, 2));
+    console.log("[Programação] JSON enviado:", JSON.stringify(data, null, 2));
 
     try {
+      const url = `${process.env.NEXT_PUBLIC_SERVER}/api/v1/programacao/criar`;
+      console.log(`[Programação] POST para: ${url}`);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER}/api/v1/programacao/criar`,
+        url,
         {
           method: "POST",
           headers: {
@@ -297,8 +299,22 @@ export default function ScheduledTripModal({
         }
       );
 
+      console.log("[Programação] Status da resposta:", response.status, response.statusText);
+      let responseBody = null;
+      try {
+        responseBody = await response.clone().json();
+        console.log("[Programação] Body da resposta:", responseBody);
+      } catch (e) {
+        try {
+          responseBody = await response.clone().text();
+          console.log("[Programação] Body da resposta (texto):", responseBody);
+        } catch (e2) {
+          console.log("[Programação] Body da resposta: não foi possível ler o corpo.");
+        }
+      }
+
       if (!response.ok) {
-        console.error("Error response:", response.statusText);
+        console.error("[Programação] Erro na resposta:", response.statusText);
         ShowToast({
           color: "danger",
           title: "Erro ao solicitar a viagem. Tente novamente mais tarde.",
@@ -316,20 +332,21 @@ export default function ScheduledTripModal({
       }
 
       // Se a resposta não for bem-sucedida, trate o erro
-      console.error("Erro ao solicitar a viagem:", response.statusText);
+      console.error("[Programação] Erro ao solicitar a viagem:", response.statusText);
       ShowToast({
         color: "danger",
         title: "Erro ao solicitar a viagem. Tente novamente mais tarde.",
       });
       return null;
     } catch (error) {
-      console.error(error);
+      console.error("[Programação] Exceção:", error);
       ShowToast({
         color: "danger",
         title: "Erro ao solicitar a viagem. Tente novamente mais tarde.",
       });
     } finally {
       setIsLoading(false);
+      console.log("[Programação] Fim do ciclo de requisição POST.");
     }
   }
 
