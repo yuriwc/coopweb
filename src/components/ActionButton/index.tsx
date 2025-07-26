@@ -20,11 +20,11 @@ export function ActionButton({
   const getVariantStyles = () => {
     switch (variant) {
       case "secondary":
-        return "backdrop-blur-md bg-gradient-to-br from-sky-100/40 via-blue-50/30 to-indigo-100/40 dark:from-sky-950/40 dark:via-blue-950/30 dark:to-indigo-950/40 border-sky-200/40 dark:border-sky-800/30 hover:from-sky-100/60 hover:via-blue-100/50 hover:to-indigo-100/60 dark:hover:from-sky-900/60 dark:hover:via-blue-900/50 dark:hover:to-indigo-900/60";
+        return "backdrop-blur-md bg-linear-to-br from-sky-100/40 via-blue-50/30 to-indigo-100/40 dark:from-sky-950/40 dark:via-blue-950/30 dark:to-indigo-950/40 border-sky-200/40 dark:border-sky-800/30 hover:from-sky-100/60 hover:via-blue-100/50 hover:to-indigo-100/60 dark:hover:from-sky-900/60 dark:hover:via-blue-900/50 dark:hover:to-indigo-900/60";
       case "tertiary":
-        return "backdrop-blur-md bg-gradient-to-br from-emerald-100/40 via-teal-50/30 to-cyan-100/40 dark:from-emerald-950/40 dark:via-teal-950/30 dark:to-cyan-950/40 border-emerald-200/40 dark:border-emerald-800/30 hover:from-emerald-100/60 hover:via-teal-100/50 hover:to-cyan-100/60 dark:hover:from-emerald-900/60 dark:hover:via-teal-900/50 dark:hover:to-cyan-900/60";
+        return "backdrop-blur-md bg-linear-to-br from-emerald-100/40 via-teal-50/30 to-cyan-100/40 dark:from-emerald-950/40 dark:via-teal-950/30 dark:to-cyan-950/40 border-emerald-200/40 dark:border-emerald-800/30 hover:from-emerald-100/60 hover:via-teal-100/50 hover:to-cyan-100/60 dark:hover:from-emerald-900/60 dark:hover:via-teal-900/50 dark:hover:to-cyan-900/60";
       default:
-        return "backdrop-blur-md bg-gradient-to-br from-blue-100/40 via-indigo-50/30 to-purple-100/40 dark:from-blue-950/40 dark:via-indigo-950/30 dark:to-purple-950/40 border-blue-200/40 dark:border-blue-800/30 hover:from-blue-100/60 hover:via-indigo-100/50 hover:to-purple-100/60 dark:hover:from-blue-900/60 dark:hover:via-indigo-900/50 dark:hover:to-purple-900/60";
+        return "backdrop-blur-md bg-linear-to-br from-blue-100/40 via-indigo-50/30 to-purple-100/40 dark:from-blue-950/40 dark:via-indigo-950/30 dark:to-purple-950/40 border-blue-200/40 dark:border-blue-800/30 hover:from-blue-100/60 hover:via-indigo-100/50 hover:to-purple-100/60 dark:hover:from-blue-900/60 dark:hover:via-indigo-900/50 dark:hover:to-purple-900/60";
     }
   };
 
@@ -63,7 +63,7 @@ export function ActionButton({
         `}
       >
         {/* Crystalline border effect */}
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent p-[1px] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute inset-0 rounded-2xl bg-linear-to-r from-transparent via-white/20 dark:via-white/10 to-transparent p-px opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <div className="h-full w-full rounded-2xl bg-transparent" />
         </div>
 

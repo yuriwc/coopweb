@@ -22,7 +22,7 @@ export default async function Home() {
   if (!response.ok) {
     console.error("Erro na requisição:", response.status, response.statusText);
     return (
-      <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 items-center justify-center px-4">
+      <div className="flex flex-col min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 items-center justify-center px-4">
         <Card className="max-w-md w-full border border-danger-200 bg-danger-50 dark:bg-danger-950/30">
           <CardBody className="flex flex-col items-center gap-4 p-8">
             <Icon
@@ -45,18 +45,18 @@ export default async function Home() {
   const empresas = await response.json();
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
+    <div className="flex flex-col min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-purple-200/30 to-pink-200/30 rounded-full blur-3xl" />
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-linear-to-br from-blue-200/30 to-purple-200/30 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-linear-to-tr from-purple-200/30 to-pink-200/30 rounded-full blur-3xl" />
       </div>
 
       <main className="flex flex-col items-center w-full max-w-6xl mx-auto gap-12 flex-1 justify-center px-4 py-12 relative z-10">
         {/* Header Section */}
         <div className="text-center space-y-6">
           <div className="flex items-center justify-center mb-6">
-            <div className="p-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg">
+            <div className="p-4 bg-linear-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg">
               <Icon
                 icon="solar:buildings-3-linear"
                 className="w-12 h-12 text-white"
@@ -65,10 +65,10 @@ export default async function Home() {
           </div>
 
           <div className="space-y-3">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent leading-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold bg-linear-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent leading-tight">
               CoopWeb
             </h1>
-            <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mx-auto" />
+            <div className="w-24 h-1 bg-linear-to-r from-blue-600 to-purple-600 rounded-full mx-auto" />
           </div>
 
           <h2 className="text-lg sm:text-xl font-medium text-gray-600 dark:text-gray-300 tracking-wide">
@@ -93,7 +93,7 @@ export default async function Home() {
                 <Card className="h-full border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 group-hover:border-blue-300 dark:group-hover:border-blue-600">
                   <CardBody className="flex flex-col items-center justify-center gap-6 p-8 min-h-[180px]">
                     {/* Company Icon */}
-                    <div className="p-4 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-xl transition-all duration-300 group-hover:scale-110">
+                    <div className="p-4 bg-linear-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-xl transition-all duration-300 group-hover:scale-110">
                       <Icon
                         icon="solar:buildings-2-linear"
                         className="w-8 h-8 text-blue-600 dark:text-blue-400"
@@ -105,7 +105,7 @@ export default async function Home() {
                       <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
                         {empresa.nome}
                       </h3>
-                      <div className="w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mx-auto transition-all duration-300 group-hover:w-12" />
+                      <div className="w-0 h-0.5 bg-linear-to-r from-blue-600 to-purple-600 rounded-full mx-auto transition-all duration-300 group-hover:w-12" />
                     </div>
 
                     {/* Access Button */}

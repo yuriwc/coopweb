@@ -47,7 +47,7 @@ const App = async (props: {
   return (
     <div className="min-h-screen relative overflow-hidden bg-blue-50/50 dark:bg-gray-900">
       {/* Liquid Glass Background */}
-      <div className="fixed inset-0 bg-gradient-to-br from-blue-100/40 via-cyan-50/30 to-sky-100/40 dark:from-blue-950/40 dark:via-purple-950/40 dark:to-emerald-950/40" />
+      <div className="fixed inset-0 bg-linear-to-br from-blue-100/40 via-cyan-50/30 to-sky-100/40 dark:from-blue-950/40 dark:via-purple-950/40 dark:to-emerald-950/40" />
       <div className="fixed inset-0 backdrop-blur-[2px]" />
 
       {/* Dynamic Background Particles */}
@@ -62,7 +62,7 @@ const App = async (props: {
       <div className="relative z-10 mx-auto max-w-7xl w-full pt-6 px-4 sm:px-6 lg:px-8">
         {/* Liquid Glass Breadcrumb Container */}
         <div className="mb-6 relative group">
-          <div className="absolute inset-0 bg-white/[0.15] dark:bg-white/[0.02] backdrop-blur-xl rounded-2xl border border-blue-200/25 dark:border-white/5" />
+          <div className="absolute inset-0 bg-white/15 dark:bg-white/2 backdrop-blur-xl rounded-2xl border border-blue-200/25 dark:border-white/5" />
           <div className="relative p-4 rounded-2xl">
             <Breadcrumb items={url} />
           </div>
@@ -71,11 +71,11 @@ const App = async (props: {
         {/* Liquid Glass Header Section */}
         <section className="mb-8 relative group">
           {/* Glass Effect Background */}
-          <div className="absolute inset-0 bg-white/[0.20] dark:bg-white/[0.05] backdrop-blur-xl rounded-2xl border border-blue-200/40 dark:border-white/10 shadow-2xl shadow-blue-500/15 dark:shadow-black/20" />
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-400/[0.08] via-cyan-400/[0.08] to-sky-400/[0.08] dark:from-blue-500/[0.03] dark:via-purple-500/[0.03] dark:to-emerald-500/[0.03] rounded-2xl" />
+          <div className="absolute inset-0 bg-white/20 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-blue-200/40 dark:border-white/10 shadow-2xl shadow-blue-500/15 dark:shadow-black/20" />
+          <div className="absolute inset-0 bg-linear-to-r from-blue-400/8 via-cyan-400/8 to-sky-400/8 dark:from-blue-500/3 dark:via-purple-500/3 dark:to-emerald-500/3 rounded-2xl" />
 
           {/* Crystalline Border Effect */}
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-blue-300/30 dark:via-white/10 to-transparent p-[1px]">
+          <div className="absolute inset-0 rounded-2xl bg-linear-to-r from-transparent via-blue-300/30 dark:via-white/10 to-transparent p-px">
             <div className="h-full w-full rounded-2xl bg-transparent" />
           </div>
 
@@ -120,14 +120,14 @@ const App = async (props: {
             </div>
 
             {/* Crystalline Divider */}
-            <div className="h-[1px] bg-gradient-to-r from-transparent via-blue-300/30 dark:via-white/10 to-transparent mb-6" />
+            <div className="h-px bg-linear-to-r from-transparent via-blue-300/30 dark:via-white/10 to-transparent mb-6" />
 
             {/* Statistics Cards with Glass Effect */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {/* Total de Viagens Card */}
               <div className="relative group/card">
-                <div className="absolute inset-0 bg-white/[0.15] dark:bg-white/[0.05] backdrop-blur-xl rounded-xl border border-blue-200/30 dark:border-white/10 shadow-lg shadow-blue-400/10" />
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-400/[0.05] to-cyan-400/[0.05] dark:from-blue-500/[0.02] dark:to-cyan-500/[0.02] rounded-xl" />
+                <div className="absolute inset-0 bg-white/15 dark:bg-white/5 backdrop-blur-xl rounded-xl border border-blue-200/30 dark:border-white/10 shadow-lg shadow-blue-400/10" />
+                <div className="absolute inset-0 bg-linear-to-br from-blue-400/5 to-cyan-400/5 dark:from-blue-500/2 dark:to-cyan-500/2 rounded-xl" />
 
                 <div className="relative p-6 rounded-xl transition-all duration-500 group-hover/card:backdrop-blur-2xl">
                   <div className="flex items-center justify-between">
@@ -157,7 +157,7 @@ const App = async (props: {
                       </span>
                     </div>
                     <div className="text-right">
-                      <div className="w-16 h-16 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 dark:from-blue-500/10 dark:to-cyan-500/10 rounded-full flex items-center justify-center">
+                      <div className="w-16 h-16 bg-linear-to-br from-blue-400/20 to-cyan-400/20 dark:from-blue-500/10 dark:to-cyan-500/10 rounded-full flex items-center justify-center">
                         <svg
                           className="w-8 h-8 text-blue-600 dark:text-blue-400"
                           fill="none"
@@ -179,8 +179,8 @@ const App = async (props: {
 
               {/* Valor Total Card */}
               <div className="relative group/card">
-                <div className="absolute inset-0 bg-white/[0.15] dark:bg-white/[0.05] backdrop-blur-xl rounded-xl border border-emerald-200/30 dark:border-white/10 shadow-lg shadow-emerald-400/10" />
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/[0.05] to-cyan-400/[0.05] dark:from-emerald-500/[0.02] dark:to-cyan-500/[0.02] rounded-xl" />
+                <div className="absolute inset-0 bg-white/15 dark:bg-white/5 backdrop-blur-xl rounded-xl border border-emerald-200/30 dark:border-white/10 shadow-lg shadow-emerald-400/10" />
+                <div className="absolute inset-0 bg-linear-to-br from-emerald-400/5 to-cyan-400/5 dark:from-emerald-500/2 dark:to-cyan-500/2 rounded-xl" />
 
                 <div className="relative p-6 rounded-xl transition-all duration-500 group-hover/card:backdrop-blur-2xl">
                   <div className="flex items-center justify-between">
@@ -210,7 +210,7 @@ const App = async (props: {
                       </span>
                     </div>
                     <div className="text-right">
-                      <div className="w-16 h-16 bg-gradient-to-br from-emerald-400/20 to-cyan-400/20 dark:from-emerald-500/10 dark:to-cyan-500/10 rounded-full flex items-center justify-center">
+                      <div className="w-16 h-16 bg-linear-to-br from-emerald-400/20 to-cyan-400/20 dark:from-emerald-500/10 dark:to-cyan-500/10 rounded-full flex items-center justify-center">
                         <svg
                           className="w-8 h-8 text-emerald-600 dark:text-emerald-400"
                           fill="none"
@@ -235,11 +235,11 @@ const App = async (props: {
 
         {/* Liquid Glass Table Container */}
         <section className="relative group mb-8">
-          <div className="absolute inset-0 bg-white/[0.18] dark:bg-white/[0.05] backdrop-blur-xl rounded-2xl border border-blue-200/30 dark:border-white/10 shadow-xl shadow-blue-400/15 dark:shadow-blue-500/5" />
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-400/[0.06] via-cyan-400/[0.04] to-sky-400/[0.06] dark:from-blue-500/[0.02] dark:via-cyan-500/[0.02] dark:to-sky-500/[0.02] rounded-2xl" />
+          <div className="absolute inset-0 bg-white/18 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-blue-200/30 dark:border-white/10 shadow-xl shadow-blue-400/15 dark:shadow-blue-500/5" />
+          <div className="absolute inset-0 bg-linear-to-br from-blue-400/6 via-cyan-400/4 to-sky-400/6 dark:from-blue-500/2 dark:via-cyan-500/2 dark:to-sky-500/2 rounded-2xl" />
 
           {/* Crystalline Highlight */}
-          <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-blue-300/50 dark:via-white/30 to-transparent" />
+          <div className="absolute top-0 left-1/4 right-1/4 h-px bg-linear-to-r from-transparent via-blue-300/50 dark:via-white/30 to-transparent" />
 
           {/* Loading Overlay */}
           <LoadingOverlay />
@@ -281,7 +281,7 @@ const App = async (props: {
 
         {/* Spacer with Glass Effect */}
         <div className="pb-20 relative">
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-blue-100/[0.08] to-transparent dark:from-white/[0.01] backdrop-blur-sm rounded-t-3xl" />
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-blue-100/8 to-transparent dark:from-white/1 backdrop-blur-sm rounded-t-3xl" />
         </div>
       </div>
     </div>

@@ -131,13 +131,13 @@ export default function CentroCustoModal({
         size="lg"
         classNames={{
           backdrop:
-            "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
+            "bg-linear-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
         }}
       >
         <ModalContent>
           {() => (
             <>
-              <ModalHeader className="flex flex-col gap-1 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/50 dark:to-green-950/50">
+              <ModalHeader className="flex flex-col gap-1 bg-linear-to-r from-emerald-50 to-green-50 dark:from-emerald-950/50 dark:to-green-950/50">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
                     <Icon
@@ -146,7 +146,7 @@ export default function CentroCustoModal({
                     />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
+                    <h3 className="text-xl font-semibold bg-linear-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
                       Cadastrar Centro de Custo
                     </h3>
                     <p className="text-sm text-foreground-600">
@@ -249,7 +249,7 @@ export default function CentroCustoModal({
                       />
                     ) : null
                   }
-                  className="bg-gradient-to-r from-emerald-600 to-green-600 text-white font-semibold"
+                  className="bg-linear-to-r from-emerald-600 to-green-600 text-white font-semibold"
                 >
                   {isLoading ? "Cadastrando..." : "Cadastrar"}
                 </Button>

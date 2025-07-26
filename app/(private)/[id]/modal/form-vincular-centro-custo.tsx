@@ -94,13 +94,13 @@ export default function VincularCentroCustoModal({
       size="lg"
       classNames={{
         backdrop:
-          "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
+          "bg-linear-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
       }}
     >
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-950/50 dark:to-indigo-950/50">
+            <ModalHeader className="flex flex-col gap-1 bg-linear-to-r from-purple-50 to-indigo-50 dark:from-purple-950/50 dark:to-indigo-950/50">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
                   <Icon
@@ -109,7 +109,7 @@ export default function VincularCentroCustoModal({
                   />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                  <h3 className="text-xl font-semibold bg-linear-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
                     Vincular Centro de Custo
                   </h3>
                   <p className="text-sm text-foreground-600">
@@ -146,7 +146,7 @@ export default function VincularCentroCustoModal({
                       size="md"
                       name={funcionario.name?.charAt(0).toUpperCase()}
                       classNames={{
-                        base: "bg-gradient-to-r from-purple-600 to-blue-600",
+                        base: "bg-linear-to-r from-purple-600 to-blue-600",
                         name: "text-white font-semibold",
                       }}
                     />
@@ -243,7 +243,7 @@ export default function VincularCentroCustoModal({
                     <Icon icon="solar:link-linear" className="w-4 h-4" />
                   ) : null
                 }
-                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold"
+                className="bg-linear-to-r from-purple-600 to-indigo-600 text-white font-semibold"
               >
                 {isLoading ? "Vinculando..." : "Vincular"}
               </Button>

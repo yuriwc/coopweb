@@ -130,7 +130,7 @@ const TablePassegers = ({
               </div>
 
               {/* Separador visual */}
-              <div className="h-8 w-px bg-gradient-to-b from-transparent via-gray-300/50 dark:via-gray-600/50 to-transparent" />
+              <div className="h-8 w-px bg-linear-to-b from-transparent via-gray-300/50 dark:via-gray-600/50 to-transparent" />
 
               {/* Gestão de Colaboradores */}
               <div className="flex flex-row items-center gap-2">

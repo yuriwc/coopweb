@@ -122,7 +122,7 @@ export default function Component() {
             <div className="bg-default-100">
               <Button
                 fullWidth
-                className="flex justify-start text-xs text-default-500 data-[pressed]:scale-100"
+                className="flex justify-start text-xs text-default-500 data-pressed:scale-100"
                 radius="none"
                 variant="light"
               >

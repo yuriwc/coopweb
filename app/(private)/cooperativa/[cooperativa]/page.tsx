@@ -9,7 +9,7 @@ const App = async (props: { params: Promise<{ cooperativa: string }> }) => {
       {/* Main Container */}
       <div className="h-full flex flex-col">
         {/* Top Header Bar */}
-        <div className="flex-shrink-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+        <div className="shrink-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">

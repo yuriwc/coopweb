@@ -229,7 +229,7 @@ export default function FaturasClient({
   return (
     <div className="relative overflow-hidden bg-blue-50/50 dark:bg-gray-900">
       {/* Liquid Glass Background */}
-      <div className="fixed inset-0 bg-gradient-to-br from-blue-100/40 via-cyan-50/30 to-sky-100/40 dark:from-blue-950/40 dark:via-purple-950/40 dark:to-emerald-950/40" />
+      <div className="fixed inset-0 bg-linear-to-br from-blue-100/40 via-cyan-50/30 to-sky-100/40 dark:from-blue-950/40 dark:via-purple-950/40 dark:to-emerald-950/40" />
       <div className="fixed inset-0 backdrop-blur-[2px]" />
 
       {/* Dynamic Background Particles */}
@@ -244,8 +244,8 @@ export default function FaturasClient({
       <div className="relative z-10 container mx-auto p-4 sm:p-8 max-w-7xl">
         {/* Header */}
         <header className="pb-4 mb-8 relative group">
-          <div className="absolute inset-0 bg-white/[0.20] dark:bg-white/[0.05] backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 shadow-2xl shadow-blue-500/15 dark:shadow-black/20" />
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-400/[0.08] via-cyan-400/[0.08] to-sky-400/[0.08] dark:from-blue-500/[0.03] dark:via-purple-500/[0.03] dark:to-emerald-500/[0.03] rounded-xl" />
+          <div className="absolute inset-0 bg-white/20 dark:bg-white/5 backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 shadow-2xl shadow-blue-500/15 dark:shadow-black/20" />
+          <div className="absolute inset-0 bg-linear-to-r from-blue-400/8 via-cyan-400/8 to-sky-400/8 dark:from-blue-500/3 dark:via-purple-500/3 dark:to-emerald-500/3 rounded-xl" />
 
           <div className="relative p-6 rounded-xl">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
@@ -291,7 +291,7 @@ export default function FaturasClient({
 
         {/* Filtros */}
         <section className="mb-8 relative">
-          <div className="absolute inset-0 bg-white/[0.15] dark:bg-white/[0.02] backdrop-blur-xl rounded-2xl border border-blue-200/25 dark:border-white/5" />
+          <div className="absolute inset-0 bg-white/15 dark:bg-white/2 backdrop-blur-xl rounded-2xl border border-blue-200/25 dark:border-white/5" />
           <div className="relative p-6 rounded-2xl">
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">
@@ -467,7 +467,7 @@ export default function FaturasClient({
 
         {/* Tabela de Vouchers */}
         <section className="relative">
-          <div className="absolute inset-0 bg-white/[0.15] dark:bg-white/[0.02] backdrop-blur-xl rounded-2xl border border-blue-200/25 dark:border-white/5" />
+          <div className="absolute inset-0 bg-white/15 dark:bg-white/2 backdrop-blur-xl rounded-2xl border border-blue-200/25 dark:border-white/5" />
           <div className="relative p-6 rounded-2xl">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-bold text-gray-800 dark:text-white">

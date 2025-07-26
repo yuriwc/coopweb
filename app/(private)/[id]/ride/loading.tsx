@@ -4,7 +4,7 @@ const Loading = () => {
   return (
     <div className="min-h-screen relative overflow-hidden bg-blue-50/50 dark:bg-gray-900">
       {/* Liquid Glass Background */}
-      <div className="fixed inset-0 bg-gradient-to-br from-blue-100/40 via-cyan-50/30 to-sky-100/40 dark:from-blue-950/40 dark:via-purple-950/40 dark:to-emerald-950/40" />
+      <div className="fixed inset-0 bg-linear-to-br from-blue-100/40 via-cyan-50/30 to-sky-100/40 dark:from-blue-950/40 dark:via-purple-950/40 dark:to-emerald-950/40" />
       <div className="fixed inset-0 backdrop-blur-[2px]" />
 
       {/* Dynamic Background Particles */}

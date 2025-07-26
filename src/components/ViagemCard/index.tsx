@@ -247,7 +247,7 @@ export default function ViagemCard({
               </div>
 
               {/* Linha conectora */}
-              <div className="ml-3 h-4 w-px bg-gradient-to-b from-success-300 to-danger-300"></div>
+              <div className="ml-3 h-4 w-px bg-linear-to-b from-success-300 to-danger-300"></div>
 
               {/* Destino */}
               <div className="flex items-start gap-3">

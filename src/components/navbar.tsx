@@ -95,11 +95,11 @@ export default function App() {
   return (
     <Navbar className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/20 dark:bg-white/10 border-b border-white/30 dark:border-white/20 shadow-xl rounded-none px-4">
       {/* Crystalline border effect */}
-      <div className="absolute bottom-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-blue-300/50 dark:via-white/30 to-transparent" />
+      <div className="absolute bottom-0 left-1/4 right-1/4 h-px bg-linear-to-r from-transparent via-blue-300/50 dark:via-white/30 to-transparent" />
 
       <NavbarBrand>
         <CoopGoLogo />
-        <span className="text-base sm:text-lg font-bold tracking-[0.15em] uppercase bg-gradient-to-r from-blue-600 via-sky-600 to-indigo-600 dark:from-blue-400 dark:via-sky-400 dark:to-indigo-400 bg-clip-text text-transparent ml-2">
+        <span className="text-base sm:text-lg font-bold tracking-[0.15em] uppercase bg-linear-to-r from-blue-600 via-sky-600 to-indigo-600 dark:from-blue-400 dark:via-sky-400 dark:to-indigo-400 bg-clip-text text-transparent ml-2">
           CoopGo
         </span>
       </NavbarBrand>

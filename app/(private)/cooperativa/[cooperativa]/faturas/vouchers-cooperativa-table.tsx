@@ -210,7 +210,7 @@ export default function VouchersCooperativaTable({ vouchers }: VouchersCooperati
                   {columnKey === "trajeto" && (
                     <div className="text-xs max-w-[200px] space-y-1">
                       <div className="flex items-start gap-1">
-                        <Icon icon="solar:map-point-linear" className="w-3 h-3 text-green-500 mt-0.5 flex-shrink-0" />
+                        <Icon icon="solar:map-point-linear" className="w-3 h-3 text-green-500 mt-0.5 shrink-0" />
                         <Tooltip content={voucher.origemViagem}>
                           <div className="truncate text-gray-600 dark:text-gray-400">
                             {voucher.origemViagem}
@@ -218,7 +218,7 @@ export default function VouchersCooperativaTable({ vouchers }: VouchersCooperati
                         </Tooltip>
                       </div>
                       <div className="flex items-start gap-1">
-                        <Icon icon="solar:map-point-favourite-linear" className="w-3 h-3 text-red-500 mt-0.5 flex-shrink-0" />
+                        <Icon icon="solar:map-point-favourite-linear" className="w-3 h-3 text-red-500 mt-0.5 shrink-0" />
                         <Tooltip content={voucher.destinoViagem}>
                           <div className="truncate text-gray-600 dark:text-gray-400">
                             {voucher.destinoViagem}

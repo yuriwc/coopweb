@@ -405,7 +405,7 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
               <div className="flex items-center gap-3 mb-2">
                 <div
                   className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-lg flex-shrink-0",
+                    "flex h-8 w-8 items-center justify-center rounded-lg shrink-0",
                     {
                       "bg-success-100 text-success-600":
                         item.color === "success",
@@ -532,13 +532,13 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
                   className={cn(
                     "absolute inset-0 opacity-5 transition-all duration-1000 ease-out",
                     {
-                      "bg-gradient-to-r from-success-200 to-success-300":
+                      "bg-linear-to-r from-success-200 to-success-300":
                         item.color === "success",
-                      "bg-gradient-to-r from-warning-200 to-warning-300":
+                      "bg-linear-to-r from-warning-200 to-warning-300":
                         item.color === "warning",
-                      "bg-gradient-to-r from-danger-200 to-danger-300":
+                      "bg-linear-to-r from-danger-200 to-danger-300":
                         item.color === "danger",
-                      "bg-gradient-to-r from-primary-200 to-primary-300":
+                      "bg-linear-to-r from-primary-200 to-primary-300":
                         item.color === "primary",
                     }
                   )}
@@ -550,7 +550,7 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
                   <div className="flex items-center gap-3 mb-2">
                     <div
                       className={cn(
-                        "flex h-8 w-8 items-center justify-center rounded-lg flex-shrink-0",
+                        "flex h-8 w-8 items-center justify-center rounded-lg shrink-0",
                         {
                           "bg-success-100 text-success-600":
                             item.color === "success",

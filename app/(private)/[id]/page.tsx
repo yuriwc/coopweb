@@ -8,7 +8,7 @@ import { Icon as IconifyIcon } from "@iconify/react";
 import styles from './styles.module.css';
 
 const ActionButton = dynamic(() => import("@/src/components/ActionButton").then(mod => ({ default: mod.ActionButton })), {
-  loading: () => <div className="min-h-[240px] bg-white/[0.18] dark:bg-white/[0.05] backdrop-blur-xl rounded-3xl border animate-pulse" />,
+  loading: () => <div className="min-h-[240px] bg-white/18 dark:bg-white/5 backdrop-blur-xl rounded-3xl border animate-pulse" />,
 });
 
 const App = async (props: { params: Promise<{ id: string }> }) => {
@@ -106,11 +106,11 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
               {/* Card 1 - Funcionários */}
               <div className="group relative">
                 {/* Glass Background */}
-                <div className="absolute inset-0 bg-white/[0.18] dark:bg-white/[0.05] backdrop-blur-xl rounded-xl border border-blue-200/30 dark:border-white/10 shadow-xl shadow-blue-400/15 dark:shadow-blue-500/5" />
-                <div className="absolute inset-0 bg-blue-400/[0.06] dark:bg-blue-500/[0.02] rounded-xl" />
+                <div className="absolute inset-0 bg-white/18 dark:bg-white/5 backdrop-blur-xl rounded-xl border border-blue-200/30 dark:border-white/10 shadow-xl shadow-blue-400/15 dark:shadow-blue-500/5" />
+                <div className="absolute inset-0 bg-blue-400/6 dark:bg-blue-500/2 rounded-xl" />
 
                 {/* Crystalline Highlight */}
-                <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-blue-300/50 dark:via-white/30 to-transparent" />
+                <div className="absolute top-0 left-1/4 right-1/4 h-px bg-linear-to-r from-transparent via-blue-300/50 dark:via-white/30 to-transparent" />
 
                 <div className="relative p-4 rounded-xl transition-all duration-500 hover:backdrop-blur-2xl hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-500/10">
                   <div className="flex items-center gap-3">
@@ -136,9 +136,9 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
 
               {/* Card 2 - Viagens Ativas */}
               <div className="group relative">
-                <div className="absolute inset-0 bg-white/[0.18] dark:bg-white/[0.05] backdrop-blur-xl rounded-xl border border-cyan-200/30 dark:border-white/10 shadow-xl shadow-cyan-400/15 dark:shadow-emerald-500/5" />
-                <div className="absolute inset-0 bg-cyan-400/[0.06] dark:bg-emerald-500/[0.02] rounded-xl" />
-                <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-cyan-300/50 dark:via-white/30 to-transparent" />
+                <div className="absolute inset-0 bg-white/18 dark:bg-white/5 backdrop-blur-xl rounded-xl border border-cyan-200/30 dark:border-white/10 shadow-xl shadow-cyan-400/15 dark:shadow-emerald-500/5" />
+                <div className="absolute inset-0 bg-cyan-400/6 dark:bg-emerald-500/2 rounded-xl" />
+                <div className="absolute top-0 left-1/4 right-1/4 h-px bg-linear-to-r from-transparent via-cyan-300/50 dark:via-white/30 to-transparent" />
 
                 <div className="relative p-4 rounded-xl transition-all duration-500 hover:backdrop-blur-2xl hover:scale-[1.02] hover:shadow-2xl hover:shadow-emerald-500/10">
                   <div className="flex items-center gap-3">
@@ -163,9 +163,9 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
 
               {/* Card 3 - Programadas */}
               <div className="group relative">
-                <div className="absolute inset-0 bg-white/[0.18] dark:bg-white/[0.05] backdrop-blur-xl rounded-xl border border-sky-200/30 dark:border-white/10 shadow-xl shadow-sky-400/15 dark:shadow-orange-500/5" />
-                <div className="absolute inset-0 bg-sky-400/[0.06] dark:bg-orange-500/[0.02] rounded-xl" />
-                <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-sky-300/50 dark:via-white/30 to-transparent" />
+                <div className="absolute inset-0 bg-white/18 dark:bg-white/5 backdrop-blur-xl rounded-xl border border-sky-200/30 dark:border-white/10 shadow-xl shadow-sky-400/15 dark:shadow-orange-500/5" />
+                <div className="absolute inset-0 bg-sky-400/6 dark:bg-orange-500/2 rounded-xl" />
+                <div className="absolute top-0 left-1/4 right-1/4 h-px bg-linear-to-r from-transparent via-sky-300/50 dark:via-white/30 to-transparent" />
 
                 <div className="relative p-4 rounded-xl transition-all duration-500 hover:backdrop-blur-2xl hover:scale-[1.02] hover:shadow-2xl hover:shadow-orange-500/10">
                   <div className="flex items-center gap-3">
@@ -190,9 +190,9 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
 
               {/* Card 4 - Eficiência */}
               <div className="group relative">
-                <div className="absolute inset-0 bg-white/[0.18] dark:bg-white/[0.05] backdrop-blur-xl rounded-xl border border-indigo-200/30 dark:border-white/10 shadow-xl shadow-indigo-400/15 dark:shadow-purple-500/5" />
-                <div className="absolute inset-0 bg-indigo-400/[0.06] dark:bg-purple-500/[0.02] rounded-xl" />
-                <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-indigo-300/50 dark:via-white/30 to-transparent" />
+                <div className="absolute inset-0 bg-white/18 dark:bg-white/5 backdrop-blur-xl rounded-xl border border-indigo-200/30 dark:border-white/10 shadow-xl shadow-indigo-400/15 dark:shadow-purple-500/5" />
+                <div className="absolute inset-0 bg-indigo-400/6 dark:bg-purple-500/2 rounded-xl" />
+                <div className="absolute top-0 left-1/4 right-1/4 h-px bg-linear-to-r from-transparent via-indigo-300/50 dark:via-white/30 to-transparent" />
 
                 <div className="relative p-4 rounded-xl transition-all duration-500 hover:backdrop-blur-2xl hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-500/10">
                   <div className="flex items-center gap-3">
@@ -221,7 +221,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
           <section className="relative">
             {/* Section Header with Glass Effect */}
             <div className="mb-8 relative">
-              <div className="absolute inset-0 bg-white/[0.15] dark:bg-white/[0.02] backdrop-blur-xl rounded-2xl border border-blue-200/25 dark:border-white/5" />
+              <div className="absolute inset-0 bg-white/15 dark:bg-white/2 backdrop-blur-xl rounded-2xl border border-blue-200/25 dark:border-white/5" />
               <div className="relative p-6 rounded-2xl">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2 drop-shadow-lg">
                   Solicitar Viagem
@@ -234,7 +234,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
 
             {/* Table with Liquid Glass Container */}
             <div className="relative">
-              <div className="absolute inset-0 bg-white/[0.20] dark:bg-white/[0.03] backdrop-blur-xl rounded-3xl border border-blue-200/40 dark:border-white/10 shadow-2xl shadow-blue-400/20 dark:shadow-black/20" />
+              <div className="absolute inset-0 bg-white/20 dark:bg-white/3 backdrop-blur-xl rounded-3xl border border-blue-200/40 dark:border-white/10 shadow-2xl shadow-blue-400/20 dark:shadow-black/20" />
               <div className="relative p-6 rounded-3xl">
                 <TablePassegers
                   funcionarios={funcionarios}
@@ -251,7 +251,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
           <section className="relative">
             {/* Section Header */}
             <div className="mb-10 relative">
-              <div className="absolute inset-0 bg-white/[0.15] dark:bg-white/[0.02] backdrop-blur-xl rounded-2xl border border-blue-200/25 dark:border-white/5" />
+              <div className="absolute inset-0 bg-white/15 dark:bg-white/2 backdrop-blur-xl rounded-2xl border border-blue-200/25 dark:border-white/5" />
               <div className="relative p-6 rounded-2xl">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2 drop-shadow-lg">
                   O que deseja fazer?
@@ -266,11 +266,11 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
               {/* Card 1 - Relatórios */}
               <div className="group relative min-h-[240px]">
-                <div className="absolute inset-0 bg-white/[0.20] dark:bg-white/[0.05] backdrop-blur-xl rounded-3xl border border-cyan-200/40 dark:border-white/10 shadow-2xl shadow-cyan-400/20 dark:shadow-blue-500/5" />
-                <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/[0.10] via-blue-400/[0.08] to-sky-400/[0.10] dark:from-blue-400/[0.08] dark:via-cyan-400/[0.06] dark:to-sky-400/[0.08] rounded-3xl" />
+                <div className="absolute inset-0 bg-white/20 dark:bg-white/5 backdrop-blur-xl rounded-3xl border border-cyan-200/40 dark:border-white/10 shadow-2xl shadow-cyan-400/20 dark:shadow-blue-500/5" />
+                <div className="absolute inset-0 bg-linear-to-br from-cyan-400/10 via-blue-400/8 to-sky-400/10 dark:from-blue-400/8 dark:via-cyan-400/6 dark:to-sky-400/8 rounded-3xl" />
 
-                <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-cyan-300/60 dark:via-white/40 to-transparent" />
-                <div className="absolute bottom-0 left-1/3 right-1/3 h-[1px] bg-gradient-to-r from-transparent via-cyan-300/40 dark:via-white/20 to-transparent" />
+                <div className="absolute top-0 left-1/4 right-1/4 h-px bg-linear-to-r from-transparent via-cyan-300/60 dark:via-white/40 to-transparent" />
+                <div className="absolute bottom-0 left-1/3 right-1/3 h-px bg-linear-to-r from-transparent via-cyan-300/40 dark:via-white/20 to-transparent" />
 
                 <div className="relative h-full p-8 rounded-3xl transition-all duration-700 hover:backdrop-blur-2xl hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-500/15 cursor-pointer">
                   <ActionButton
@@ -285,11 +285,11 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
 
               {/* Card 2 - Vouchers */}
               <div className="group relative min-h-[240px]">
-                <div className="absolute inset-0 bg-white/[0.20] dark:bg-white/[0.05] backdrop-blur-xl rounded-3xl border border-purple-200/40 dark:border-white/10 shadow-2xl shadow-purple-400/20 dark:shadow-purple-500/5" />
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-400/[0.10] via-indigo-400/[0.08] to-pink-400/[0.10] dark:from-purple-400/[0.08] dark:via-indigo-400/[0.06] dark:to-pink-400/[0.08] rounded-3xl" />
+                <div className="absolute inset-0 bg-white/20 dark:bg-white/5 backdrop-blur-xl rounded-3xl border border-purple-200/40 dark:border-white/10 shadow-2xl shadow-purple-400/20 dark:shadow-purple-500/5" />
+                <div className="absolute inset-0 bg-linear-to-br from-purple-400/10 via-indigo-400/8 to-pink-400/10 dark:from-purple-400/8 dark:via-indigo-400/6 dark:to-pink-400/8 rounded-3xl" />
 
-                <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-purple-300/60 dark:via-white/40 to-transparent" />
-                <div className="absolute bottom-0 left-1/3 right-1/3 h-[1px] bg-gradient-to-r from-transparent via-purple-300/40 dark:via-white/20 to-transparent" />
+                <div className="absolute top-0 left-1/4 right-1/4 h-px bg-linear-to-r from-transparent via-purple-300/60 dark:via-white/40 to-transparent" />
+                <div className="absolute bottom-0 left-1/3 right-1/3 h-px bg-linear-to-r from-transparent via-purple-300/40 dark:via-white/20 to-transparent" />
 
                 <div className="relative h-full p-8 rounded-3xl transition-all duration-700 hover:backdrop-blur-2xl hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-500/15 cursor-pointer">
                   <ActionButton
@@ -304,11 +304,11 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
 
               {/* Card 4 - Monitoramento em Tempo Real */}
               <div className="group relative min-h-[240px]">
-                <div className="absolute inset-0 bg-white/[0.20] dark:bg-white/[0.05] backdrop-blur-xl rounded-3xl border border-teal-200/40 dark:border-white/10 shadow-2xl shadow-teal-400/20 dark:shadow-emerald-500/5" />
-                <div className="absolute inset-0 bg-gradient-to-br from-teal-400/[0.10] via-cyan-400/[0.08] to-blue-400/[0.10] dark:from-emerald-400/[0.08] dark:via-teal-400/[0.06] dark:to-green-400/[0.08] rounded-3xl" />
+                <div className="absolute inset-0 bg-white/20 dark:bg-white/5 backdrop-blur-xl rounded-3xl border border-teal-200/40 dark:border-white/10 shadow-2xl shadow-teal-400/20 dark:shadow-emerald-500/5" />
+                <div className="absolute inset-0 bg-linear-to-br from-teal-400/10 via-cyan-400/8 to-blue-400/10 dark:from-emerald-400/8 dark:via-teal-400/6 dark:to-green-400/8 rounded-3xl" />
 
-                <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-teal-300/60 dark:via-white/40 to-transparent" />
-                <div className="absolute bottom-0 left-1/3 right-1/3 h-[1px] bg-gradient-to-r from-transparent via-teal-300/40 dark:via-white/20 to-transparent" />
+                <div className="absolute top-0 left-1/4 right-1/4 h-px bg-linear-to-r from-transparent via-teal-300/60 dark:via-white/40 to-transparent" />
+                <div className="absolute bottom-0 left-1/3 right-1/3 h-px bg-linear-to-r from-transparent via-teal-300/40 dark:via-white/20 to-transparent" />
 
                 <div className="relative h-full p-8 rounded-3xl transition-all duration-700 hover:backdrop-blur-2xl hover:scale-[1.02] hover:shadow-2xl hover:shadow-emerald-500/15 cursor-pointer">
                   <ActionButton
@@ -325,7 +325,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
 
           {/* Spacer with Glass Effect */}
           <div className="pb-20 relative">
-            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-blue-100/[0.08] to-transparent dark:from-white/[0.01] backdrop-blur-sm rounded-t-3xl" />
+            <div className="absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-blue-100/8 to-transparent dark:from-white/1 backdrop-blur-sm rounded-t-3xl" />
           </div>
         </main>
       </div>

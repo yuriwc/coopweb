@@ -12,7 +12,7 @@ const VouchersCharts = dynamic(() => import("./charts"), {
   loading: () => (
     <div className="space-y-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white/[0.20] dark:bg-white/[0.03] backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 h-96 flex items-center justify-center">
+        <div className="bg-white/20 dark:bg-white/3 backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 h-96 flex items-center justify-center">
           <div className="text-center">
             <div className="w-8 h-8 animate-spin mx-auto mb-4 border-4 border-blue-500 border-t-transparent rounded-full" />
             <p className="text-sm text-gray-600 dark:text-gray-300">
@@ -20,7 +20,7 @@ const VouchersCharts = dynamic(() => import("./charts"), {
             </p>
           </div>
         </div>
-        <div className="bg-white/[0.20] dark:bg-white/[0.03] backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 h-96 flex items-center justify-center">
+        <div className="bg-white/20 dark:bg-white/3 backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 h-96 flex items-center justify-center">
           <div className="text-center">
             <div className="w-8 h-8 animate-spin mx-auto mb-4 border-4 border-blue-500 border-t-transparent rounded-full" />
             <p className="text-sm text-gray-600 dark:text-gray-300">
@@ -29,7 +29,7 @@ const VouchersCharts = dynamic(() => import("./charts"), {
           </div>
         </div>
       </div>
-      <div className="bg-white/[0.20] dark:bg-white/[0.03] backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 h-96 flex items-center justify-center">
+      <div className="bg-white/20 dark:bg-white/3 backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 h-96 flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 animate-spin mx-auto mb-4 border-4 border-blue-500 border-t-transparent rounded-full" />
           <p className="text-sm text-gray-600 dark:text-gray-300">
@@ -231,13 +231,13 @@ export default function ResumoClient({
   return (
     <div className="min-h-screen relative overflow-hidden bg-blue-50/50 dark:bg-gray-900">
       {/* Background Effects */}
-      <div className="fixed inset-0 bg-gradient-to-br from-blue-100/40 via-cyan-50/30 to-sky-100/40 dark:from-blue-950/40 dark:via-purple-950/40 dark:to-emerald-950/40" />
+      <div className="fixed inset-0 bg-linear-to-br from-blue-100/40 via-cyan-50/30 to-sky-100/40 dark:from-blue-950/40 dark:via-purple-950/40 dark:to-emerald-950/40" />
       <div className="fixed inset-0 backdrop-blur-[2px]" />
 
       <div className="relative z-10 container mx-auto p-4 sm:p-8 max-w-7xl">
         {/* Header */}
         <header className="pb-2 mb-6 relative group">
-          <div className="absolute inset-0 bg-white/[0.20] dark:bg-white/[0.05] backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 shadow-2xl shadow-blue-500/15 dark:shadow-black/20" />
+          <div className="absolute inset-0 bg-white/20 dark:bg-white/5 backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 shadow-2xl shadow-blue-500/15 dark:shadow-black/20" />
           <div className="relative p-6 rounded-xl">
             <div className="flex flex-col gap-4">
               <Button
@@ -254,7 +254,7 @@ export default function ResumoClient({
               </Button>
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <div>
-                  <h1 className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 bg-clip-text text-transparent">
+                  <h1 className="text-2xl lg:text-3xl font-bold bg-linear-to-r from-blue-600 via-purple-600 to-emerald-600 bg-clip-text text-transparent">
                     Resumo de Vouchers
                   </h1>
                   <p className="text-gray-600 dark:text-gray-300 mt-1">
@@ -283,7 +283,7 @@ export default function ResumoClient({
 
         {/* Month Filter Tabs */}
         <section className="mb-6">
-          <Card className="bg-white/[0.20] dark:bg-white/[0.03] backdrop-blur-xl border border-blue-200/40 dark:border-white/10">
+          <Card className="bg-white/20 dark:bg-white/3 backdrop-blur-xl border border-blue-200/40 dark:border-white/10">
             <CardBody className="p-4">
               <Tabs
                 selectedKey={selectedMonth}
@@ -301,7 +301,7 @@ export default function ResumoClient({
 
         {/* Summary Cards */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card className="bg-white/[0.18] dark:bg-white/[0.05] backdrop-blur-xl border border-blue-200/30 dark:border-white/10">
+          <Card className="bg-white/18 dark:bg-white/5 backdrop-blur-xl border border-blue-200/30 dark:border-white/10">
             <CardBody className="p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-blue-100/20 dark:bg-blue-900/20 rounded-lg">
@@ -322,7 +322,7 @@ export default function ResumoClient({
             </CardBody>
           </Card>
 
-          <Card className="bg-white/[0.18] dark:bg-white/[0.05] backdrop-blur-xl border border-emerald-200/30 dark:border-white/10">
+          <Card className="bg-white/18 dark:bg-white/5 backdrop-blur-xl border border-emerald-200/30 dark:border-white/10">
             <CardBody className="p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-emerald-100/20 dark:bg-emerald-900/20 rounded-lg">
@@ -343,7 +343,7 @@ export default function ResumoClient({
             </CardBody>
           </Card>
 
-          <Card className="bg-white/[0.18] dark:bg-white/[0.05] backdrop-blur-xl border border-green-200/30 dark:border-white/10">
+          <Card className="bg-white/18 dark:bg-white/5 backdrop-blur-xl border border-green-200/30 dark:border-white/10">
             <CardBody className="p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-100/20 dark:bg-green-900/20 rounded-lg">
@@ -364,7 +364,7 @@ export default function ResumoClient({
             </CardBody>
           </Card>
 
-          <Card className="bg-white/[0.18] dark:bg-white/[0.05] backdrop-blur-xl border border-orange-200/30 dark:border-white/10">
+          <Card className="bg-white/18 dark:bg-white/5 backdrop-blur-xl border border-orange-200/30 dark:border-white/10">
             <CardBody className="p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-orange-100/20 dark:bg-orange-900/20 rounded-lg">

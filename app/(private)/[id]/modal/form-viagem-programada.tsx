@@ -699,7 +699,7 @@ export default function ScheduledTripModal({
                     />
                   ) : null
                 }
-                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold"
+                className="bg-linear-to-r from-purple-600 to-pink-600 text-white font-semibold"
               >
                 {isLoading ? "Programando..." : "Programar Viagem"}
               </Button>

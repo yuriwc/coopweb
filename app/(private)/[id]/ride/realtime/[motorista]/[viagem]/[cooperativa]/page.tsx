@@ -225,7 +225,7 @@ const Page = () => {
   return (
     <div className="min-h-screen relative overflow-hidden bg-blue-50/50 dark:bg-gray-900">
       {/* Liquid Glass Background */}
-      <div className="fixed inset-0 bg-gradient-to-br from-blue-100/40 via-cyan-50/30 to-sky-100/40 dark:from-blue-950/40 dark:via-purple-950/40 dark:to-emerald-950/40" />
+      <div className="fixed inset-0 bg-linear-to-br from-blue-100/40 via-cyan-50/30 to-sky-100/40 dark:from-blue-950/40 dark:via-purple-950/40 dark:to-emerald-950/40" />
       <div className="fixed inset-0 backdrop-blur-[2px]" />
 
       {/* Dynamic Background Particles */}
@@ -241,11 +241,11 @@ const Page = () => {
         {/* Liquid Glass Header */}
         <header className="mx-4 mt-4 mb-6 relative group">
           {/* Glass Effect Background */}
-          <div className="absolute inset-0 bg-white/[0.20] dark:bg-white/[0.05] backdrop-blur-xl rounded-2xl border border-blue-200/40 dark:border-white/10 shadow-2xl shadow-blue-500/15 dark:shadow-black/20" />
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-400/[0.08] via-cyan-400/[0.08] to-sky-400/[0.08] dark:from-blue-500/[0.03] dark:via-purple-500/[0.03] dark:to-emerald-500/[0.03] rounded-2xl" />
+          <div className="absolute inset-0 bg-white/20 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-blue-200/40 dark:border-white/10 shadow-2xl shadow-blue-500/15 dark:shadow-black/20" />
+          <div className="absolute inset-0 bg-linear-to-r from-blue-400/8 via-cyan-400/8 to-sky-400/8 dark:from-blue-500/3 dark:via-purple-500/3 dark:to-emerald-500/3 rounded-2xl" />
 
           {/* Crystalline Border Effect */}
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-blue-300/30 dark:via-white/10 to-transparent p-[1px]">
+          <div className="absolute inset-0 rounded-2xl bg-linear-to-r from-transparent via-blue-300/30 dark:via-white/10 to-transparent p-px">
             <div className="h-full w-full rounded-2xl bg-transparent" />
           </div>
 
@@ -374,7 +374,7 @@ const Page = () => {
         {isLoading ? (
           <div className="flex items-center justify-center h-[60vh]">
             <div className="relative">
-              <div className="absolute inset-0 bg-white/[0.15] dark:bg-white/[0.02] backdrop-blur-xl rounded-3xl border border-blue-200/25 dark:border-white/5" />
+              <div className="absolute inset-0 bg-white/15 dark:bg-white/2 backdrop-blur-xl rounded-3xl border border-blue-200/25 dark:border-white/5" />
               <div className="relative p-12 rounded-3xl text-center">
                 <Spinner size="lg" color="primary" className="mb-4" />
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
@@ -391,8 +391,8 @@ const Page = () => {
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
               {/* Container do Mapa com Glass Effect */}
               <div className="map-container relative group">
-                <div className="absolute inset-0 bg-white/[0.18] dark:bg-white/[0.05] backdrop-blur-xl rounded-2xl border border-blue-200/30 dark:border-white/10 shadow-xl shadow-blue-400/15 dark:shadow-blue-500/5" />
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-400/[0.06] via-cyan-400/[0.04] to-sky-400/[0.06] dark:from-blue-500/[0.02] dark:via-cyan-500/[0.02] dark:to-sky-500/[0.02] rounded-2xl" />
+                <div className="absolute inset-0 bg-white/18 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-blue-200/30 dark:border-white/10 shadow-xl shadow-blue-400/15 dark:shadow-blue-500/5" />
+                <div className="absolute inset-0 bg-linear-to-br from-blue-400/6 via-cyan-400/4 to-sky-400/6 dark:from-blue-500/2 dark:via-cyan-500/2 dark:to-sky-500/2 rounded-2xl" />
 
                 <div className="relative p-4 rounded-2xl">
                   {/* Map Header */}
@@ -582,8 +582,8 @@ const Page = () => {
 
               {/* Painel de Informações com Glass Effect */}
               <div className="relative group">
-                <div className="absolute inset-0 bg-white/[0.18] dark:bg-white/[0.05] backdrop-blur-xl rounded-2xl border border-blue-200/30 dark:border-white/10 shadow-xl shadow-blue-400/15 dark:shadow-blue-500/5" />
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-400/[0.06] via-cyan-400/[0.04] to-sky-400/[0.06] dark:from-blue-500/[0.02] dark:via-cyan-500/[0.02] dark:to-sky-500/[0.02] rounded-2xl" />
+                <div className="absolute inset-0 bg-white/18 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-blue-200/30 dark:border-white/10 shadow-xl shadow-blue-400/15 dark:shadow-blue-500/5" />
+                <div className="absolute inset-0 bg-linear-to-br from-blue-400/6 via-cyan-400/4 to-sky-400/6 dark:from-blue-500/2 dark:via-cyan-500/2 dark:to-sky-500/2 rounded-2xl" />
 
                 <div className="relative p-4 rounded-2xl">
                   {/* Info Header */}
@@ -628,7 +628,7 @@ const Page = () => {
                     </div>
                   </div>
 
-                  <div className="h-[1px] bg-gradient-to-r from-transparent via-blue-300/30 dark:via-white/10 to-transparent mb-6" />
+                  <div className="h-px bg-linear-to-r from-transparent via-blue-300/30 dark:via-white/10 to-transparent mb-6" />
 
                   <div className="space-y-6 max-h-[600px] overflow-y-auto">
                     <ViagemInfoCards viagem={viagem} />
@@ -689,7 +689,7 @@ const Page = () => {
         ) : (
           <div className="flex items-center justify-center h-[60vh]">
             <div className="relative">
-              <div className="absolute inset-0 bg-white/[0.15] dark:bg-white/[0.02] backdrop-blur-xl rounded-3xl border border-orange-200/25 dark:border-white/5" />
+              <div className="absolute inset-0 bg-white/15 dark:bg-white/2 backdrop-blur-xl rounded-3xl border border-orange-200/25 dark:border-white/5" />
               <div className="relative p-12 rounded-3xl text-center">
                 <div className="mb-4">
                   <div className="w-16 h-16 mx-auto bg-orange-100/50 dark:bg-orange-900/30 rounded-full flex items-center justify-center">

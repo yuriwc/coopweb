@@ -103,7 +103,7 @@ export default function VouchersCharts({ data }: Props) {
     <div className="space-y-8">
       {/* Gráfico de Barras - Comparação de Vouchers */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-white/[0.20] dark:bg-white/[0.03] backdrop-blur-xl border border-blue-200/40 dark:border-white/10">
+        <Card className="bg-white/20 dark:bg-white/3 backdrop-blur-xl border border-blue-200/40 dark:border-white/10">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-blue-100/20 dark:bg-blue-900/20 rounded-lg">
@@ -141,7 +141,7 @@ export default function VouchersCharts({ data }: Props) {
           </CardBody>
         </Card>
 
-        <Card className="bg-white/[0.20] dark:bg-white/[0.03] backdrop-blur-xl border border-blue-200/40 dark:border-white/10">
+        <Card className="bg-white/20 dark:bg-white/3 backdrop-blur-xl border border-blue-200/40 dark:border-white/10">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-emerald-100/20 dark:bg-emerald-900/20 rounded-lg">
@@ -198,7 +198,7 @@ export default function VouchersCharts({ data }: Props) {
 
       {/* Gráfico de Área - Valores por Status */}
       <section>
-        <Card className="bg-white/[0.20] dark:bg-white/[0.03] backdrop-blur-xl border border-blue-200/40 dark:border-white/10">
+        <Card className="bg-white/20 dark:bg-white/3 backdrop-blur-xl border border-blue-200/40 dark:border-white/10">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-purple-100/20 dark:bg-purple-900/20 rounded-lg">
@@ -257,7 +257,7 @@ export default function VouchersCharts({ data }: Props) {
 
       {/* Gráfico de Linha - Taxa de Pagamento */}
       <section>
-        <Card className="bg-white/[0.20] dark:bg-white/[0.03] backdrop-blur-xl border border-blue-200/40 dark:border-white/10">
+        <Card className="bg-white/20 dark:bg-white/3 backdrop-blur-xl border border-blue-200/40 dark:border-white/10">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-cyan-100/20 dark:bg-cyan-900/20 rounded-lg">
