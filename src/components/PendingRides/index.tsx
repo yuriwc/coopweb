@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Chip } from "@heroui/chip";
 import { ScrollShadow } from "@heroui/scroll-shadow";
-import { Select, SelectItem } from "@heroui/select";
+import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
 import { Button } from "@heroui/button";
 import { Icon as IconifyIcon } from "@iconify/react";
 import { useFirebaseRides, PendingRide } from "@/src/services/firebase-rides";
@@ -44,10 +44,10 @@ export const PendingRidesHeader = ({ cooperativaId }: PendingRidesHeaderProps) =
       </div>
       <div className="text-right">
         <p className="text-sm font-semibold text-gray-900 dark:text-white">
-          {rides.length} viagem{rides.length !== 1 ? 'ns' : ''}
+          {rides.length} {rides.length === 1 ? 'viagem' : 'viagens'}
         </p>
         <p className="text-xs text-gray-500 dark:text-gray-400">
-          pendente{rides.length !== 1 ? 's' : ''}
+          {rides.length === 1 ? 'pendente' : 'pendentes'}
         </p>
       </div>
     </div>
@@ -141,7 +141,7 @@ export const PendingRides = ({ cooperativaId, showHeader = true }: PendingRidesP
             </h2>
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            {rides.length} viagem{rides.length !== 1 ? 'ns' : ''} aguardando atribuição
+            {rides.length} {rides.length === 1 ? 'viagem' : 'viagens'} aguardando atribuição
           </p>
         </div>
       )}
@@ -161,7 +161,7 @@ export const PendingRides = ({ cooperativaId, showHeader = true }: PendingRidesP
                     />
                   </div>
                   <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
-                    {ride.externalId}
+                    {ride.externalId || `ID: ${ride.id.substring(0, 8)}`}
                   </h3>
                 </div>
                 <Chip 
@@ -219,99 +219,117 @@ export const PendingRides = ({ cooperativaId, showHeader = true }: PendingRidesP
                 </div>
 
                 {/* Passenger */}
+                {(ride.passengers && ride.passengers.length > 0) || ride.nomePassageiro ? (
+                  <div className="flex items-center gap-2">
+                    <IconifyIcon
+                      icon="solar:user-linear"
+                      className="w-3 h-3 text-gray-400 dark:text-gray-500"
+                    />
+                    <span className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                      {ride.nomePassageiro || ride.passengers?.[0]?.nome || 'Passageiro não identificado'}
+                    </span>
+                    {ride.passengers && ride.passengers.length > 1 && (
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        +{ride.passengers.length - 1}
+                      </span>
+                    )}
+                  </div>
+                ) : null}
+
+                {/* Schedule Date - Campo obrigatório */}
                 <div className="flex items-center gap-2">
                   <IconifyIcon
-                    icon="solar:user-linear"
-                    className="w-3 h-3 text-gray-400 dark:text-gray-500"
+                    icon="solar:calendar-linear"
+                    className="w-3 h-3 text-blue-500 dark:text-blue-400"
                   />
-                  <span className="text-xs text-gray-600 dark:text-gray-400 truncate">
-                    {ride.passenger.email}
+                  <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
+                    Agendada: {new Date(ride.scheduleDate).toLocaleString('pt-BR', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
                   </span>
                 </div>
 
-                {/* Schedule Date */}
-                {ride.scheduleDate && (
-                  <div className="flex items-center gap-2">
-                    <IconifyIcon
-                      icon="solar:calendar-linear"
-                      className="w-3 h-3 text-blue-500 dark:text-blue-400"
-                    />
-                    <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
-                      Agendada: {new Date(ride.scheduleDate).toLocaleString('pt-BR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </span>
-                  </div>
-                )}
-
-                {/* Created Time */}
+                {/* Created Time - Campo obrigatório */}
                 <div className="flex items-center gap-2">
                   <IconifyIcon
                     icon="solar:clock-circle-linear"
                     className="w-3 h-3 text-gray-400 dark:text-gray-500"
                   />
                   <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                    Criada: {formatTimestampToTime(ride.createdAt)}
+                    Criada: {formatTimestampToTime(ride.timestamp)}
                   </span>
                 </div>
 
                 {/* Observations */}
-                {ride.observations && (
+                {(ride.observacao || ride.observations) && (
                   <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded">
                     <p className="text-xs text-blue-700 dark:text-blue-300">
-                      {ride.observations}
+                      {ride.observacao || ride.observations}
                     </p>
                   </div>
                 )}
 
                 {/* Distance & Duration */}
-                <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
-                  <div className="flex items-center gap-1">
-                    <IconifyIcon
-                      icon="solar:map-linear"
-                      className="w-3 h-3 text-gray-400 dark:text-gray-500"
-                    />
-                    <span className="text-xs text-gray-600 dark:text-gray-400">
-                      {(ride.distance / 1000).toFixed(1)} km
-                    </span>
+                {(ride.distance || ride.duration) && (
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
+                    {ride.distance && (
+                      <div className="flex items-center gap-1">
+                        <IconifyIcon
+                          icon="solar:map-linear"
+                          className="w-3 h-3 text-gray-400 dark:text-gray-500"
+                        />
+                        <span className="text-xs text-gray-600 dark:text-gray-400">
+                          {(ride.distance / 1000).toFixed(1)} km
+                        </span>
+                      </div>
+                    )}
+                    {ride.duration && (
+                      <div className="flex items-center gap-1">
+                        <IconifyIcon
+                          icon="solar:clock-circle-linear"
+                          className="w-3 h-3 text-gray-400 dark:text-gray-500"
+                        />
+                        <span className="text-xs text-gray-600 dark:text-gray-400">
+                          {Math.round(ride.duration / 60)} min
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  <div className="flex items-center gap-1">
-                    <IconifyIcon
-                      icon="solar:clock-circle-linear"
-                      className="w-3 h-3 text-gray-400 dark:text-gray-500"
-                    />
-                    <span className="text-xs text-gray-600 dark:text-gray-400">
-                      {Math.round(ride.duration / 60)} min
-                    </span>
-                  </div>
-                </div>
+                )}
 
                 {/* Motorista Assignment */}
                 <div className="pt-3 border-t border-gray-100 dark:border-gray-700 space-y-2">
-                  <Select
+                  <Autocomplete
                     size="sm"
-                    placeholder="Selecione um motorista"
-                    aria-label="Selecionar motorista para a viagem"
-                    selectedKeys={selectedMotorista[ride.id] ? [selectedMotorista[ride.id]] : []}
-                    onSelectionChange={(keys) => {
-                      const selected = Array.from(keys)[0] as string;
+                    placeholder="Buscar motorista por nome"
+                    aria-label="Buscar e selecionar motorista para a viagem"
+                    selectedKey={selectedMotorista[ride.id] || null}
+                    onSelectionChange={(key) => {
+                      const selected = key as string;
                       setSelectedMotorista(prev => ({ ...prev, [ride.id]: selected }));
                     }}
                     classNames={{
                       trigger: "h-8 min-h-8",
-                      value: "text-xs",
+                      input: "text-xs",
+                      listbox: "max-h-32",
+                    }}
+                    inputProps={{
+                      classNames: {
+                        input: "text-xs",
+                        inputWrapper: "h-8 min-h-8",
+                      },
                     }}
                   >
                     {motoristas.map((motorista) => (
-                      <SelectItem key={motorista.id} value={motorista.id}>
+                      <AutocompleteItem key={motorista.id} value={motorista.id}>
                         {motorista.nome}
-                      </SelectItem>
+                      </AutocompleteItem>
                     ))}
-                  </Select>
+                  </Autocomplete>
                   
                   <Button
                     size="sm"

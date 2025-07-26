@@ -96,7 +96,7 @@ export const PendingRidesNotification = ({ cooperativaId }: PendingRidesNotifica
               Viagens Disponíveis
             </h3>
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              {pendingCount} viagem{pendingCount !== 1 ? 'ns' : ''} aguardando atribuição
+              {pendingCount} {pendingCount === 1 ? 'viagem' : 'viagens'} aguardando atribuição
             </p>
           </div>
 
@@ -111,7 +111,7 @@ export const PendingRidesNotification = ({ cooperativaId }: PendingRidesNotifica
                   {/* Header */}
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-medium text-gray-900 dark:text-white">
-                      {ride.externalId}
+                      {ride.externalId || `ID: ${ride.id.substring(0, 8)}`}
                     </span>
                     <span className="text-xs px-2 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded">
                       {ride.category}
@@ -144,17 +144,21 @@ export const PendingRidesNotification = ({ cooperativaId }: PendingRidesNotifica
 
                   {/* Time info */}
                   <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                    {ride.scheduleDate && (
+                    <span>
+                      📅 {new Date(ride.scheduleDate).toLocaleString('pt-BR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </span>
+                    {(ride.distance || ride.duration) && (
                       <span>
-                        📅 {new Date(ride.scheduleDate).toLocaleString('pt-BR', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
+                        {ride.distance ? `${(ride.distance / 1000).toFixed(1)}km` : ''}
+                        {ride.distance && ride.duration ? ' • ' : ''}
+                        {ride.duration ? `${Math.round(ride.duration / 60)}min` : ''}
                       </span>
                     )}
-                    <span>{(ride.distance / 1000).toFixed(1)}km • {Math.round(ride.duration / 60)}min</span>
                   </div>
                 </div>
               </button>

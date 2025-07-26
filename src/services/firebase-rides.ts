@@ -3,42 +3,55 @@ import { useCallback } from "react";
 import { database } from "@/scripts/firebase-config";
 import { ref, onValue, off } from "firebase/database";
 
-export interface RideDestination {
-  address: string;
+export interface RideCoordinate {
   lat: number;
   lng: number;
-  name: string;
-}
-
-export interface RideOrigin {
-  address: string;
-  lat: number;
-  lng: number;
-  name: string;
+  name?: string;
+  address?: string;
+  placeId?: string;
 }
 
 export interface RideEmpresa {
-  id: string;
   nome: string;
 }
 
 export interface RidePassenger {
-  email: string;
+  nome: string;
+  whatsapp: string;
+  email?: string;
+  observacoes?: string;
+}
+
+export interface IntermediateCoordinate {
+  lat: number;
+  lng: number;
+  name?: string;
+  address?: string;
+  placeId?: string;
 }
 
 export interface PendingRide {
+  // 📍 CAMPOS OBRIGATÓRIOS
   id: string;
+  status: "aguardando_motorista";
+  timestamp: number;
+  scheduleDate: string;
   category: string;
-  createdAt: number;
-  destination: RideDestination;
-  distance: number;
-  duration: number;
+  origin: RideCoordinate;
+  destination: RideCoordinate;
   empresa: RideEmpresa;
-  externalId: string;
+
+  // 🔧 CAMPOS OPCIONAIS
+  passengers?: RidePassenger[];
+  nomePassageiro?: string;
+  whatsappPassageiro?: string;
+  externalId?: string;
   observations?: string;
-  origin: RideOrigin;
-  passenger: RidePassenger;
-  scheduleDate?: string;
+  observacao?: string;
+  distance?: number;
+  duration?: number;
+  path?: string;
+  intermediateCoordinates?: IntermediateCoordinate[];
 }
 
 export const useFirebaseRides = (

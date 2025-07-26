@@ -42,14 +42,13 @@ export async function assignMotoristaToRide(
 ): Promise<boolean> {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER}/cooperativa/${cooperativaId}/rides/${rideId}/assign`,
+      `${process.env.NEXT_PUBLIC_SERVER}/api/v1/cooperativa/${cooperativaId}/viagem/${rideId}/motorista/${motoristaId}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getTokenClient()}`,
         },
-        body: JSON.stringify({ motoristaId }),
       }
     );
 
