@@ -22,8 +22,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
       enableSystem={false}
       storageKey="coopweb-theme"
     >
-      {children}
       <ToastProvider />
+      {children}
     </NextThemesProvider>
   );
 }
