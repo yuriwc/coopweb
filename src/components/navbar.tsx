@@ -6,6 +6,7 @@ import { Avatar } from "@heroui/avatar";
 import { useState, useRef, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { ThemeSwitcher } from "./theme-switcher";
+import { PendingRidesNotification } from "./PendingRidesNotification";
 
 export const CoopGoLogo = () => {
   return (
@@ -161,6 +162,11 @@ export default function App() {
       </NavbarContent>
 
       <NavbarContent as="div" justify="end" className="gap-2">
+        {isCooperativaRoute && cooperativaId && (
+          <NavbarItem>
+            <PendingRidesNotification cooperativaId={cooperativaId} />
+          </NavbarItem>
+        )}
         <NavbarItem>
           <div className="backdrop-blur-sm bg-white/20 dark:bg-white/10 border border-white/30 dark:border-white/20 rounded-xl p-1 shadow-lg">
             <ThemeSwitcher />

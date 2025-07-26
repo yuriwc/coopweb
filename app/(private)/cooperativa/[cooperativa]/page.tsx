@@ -1,5 +1,6 @@
 import { ActionButton } from "@/src/components/ActionButton";
 import { FilasDisplay, FilasHeader } from "@/src/components/FilasDisplay";
+import { PendingRides, PendingRidesHeader } from "@/src/components/PendingRides";
 
 const App = async (props: { params: Promise<{ cooperativa: string }> }) => {
   const params = await props.params;
@@ -20,14 +21,22 @@ const App = async (props: { params: Promise<{ cooperativa: string }> }) => {
               </p>
             </div>
             
-            {/* Filas Header */}
-            <FilasHeader cooperativaId={params.cooperativa} />
+            {/* Headers */}
+            <div className="flex items-center gap-6">
+              <PendingRidesHeader cooperativaId={params.cooperativa} />
+              <FilasHeader cooperativaId={params.cooperativa} />
+            </div>
           </div>
         </div>
 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-6 space-y-8">
+            {/* Pending Rides Section */}
+            <section>
+              <PendingRides cooperativaId={params.cooperativa} showHeader={true} />
+            </section>
+
             {/* Filas Section */}
             <section>
               <FilasDisplay cooperativaId={params.cooperativa} showHeader={true} />
