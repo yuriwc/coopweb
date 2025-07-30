@@ -9,6 +9,8 @@ export interface RideCoordinate {
   name?: string;
   address?: string;
   placeId?: string;
+  nome?: string;
+  whatsapp?: string;
 }
 
 export interface RideEmpresa {
@@ -28,6 +30,8 @@ export interface IntermediateCoordinate {
   name?: string;
   address?: string;
   placeId?: string;
+  nome?: string;
+  whatsapp?: string;
 }
 
 export interface PendingRide {
@@ -67,6 +71,8 @@ export const useFirebaseRides = (
         const rides: PendingRide[] = Object.keys(data).map((rideId) => ({
           id: rideId,
           ...data[rideId],
+          // Map paradas to intermediateCoordinates for compatibility
+          intermediateCoordinates: data[rideId].paradas || data[rideId].intermediateCoordinates,
         }));
         onRidesUpdate(rides);
       } else {

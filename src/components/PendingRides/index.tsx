@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Chip } from "@heroui/chip";
-import { ScrollShadow } from "@heroui/scroll-shadow";
 import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
 import { Button } from "@heroui/button";
 import { Icon as IconifyIcon } from "@iconify/react";
@@ -200,8 +199,47 @@ export const PendingRides = ({ cooperativaId, showHeader = true }: PendingRidesP
                     <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
                       {ride.origin.name || ride.origin.address}
                     </p>
+                    {ride.origin.nome && (
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        {ride.origin.nome}
+                      </p>
+                    )}
+                    {ride.origin.whatsapp && (
+                      <p className="text-xs text-green-600 dark:text-green-400 truncate">
+                        {ride.origin.whatsapp}
+                      </p>
+                    )}
                   </div>
                 </div>
+
+                {/* Stops/Paradas */}
+                {ride.intermediateCoordinates && ride.intermediateCoordinates.length > 0 && (
+                  ride.intermediateCoordinates.map((parada, index) => (
+                    <div key={index} className="flex gap-3">
+                      <div className="flex-shrink-0 w-6 h-6 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mt-0.5">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-medium text-gray-900 dark:text-white">
+                          Parada {index + 1}
+                        </p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                          {parada.name || parada.address || `${parada.lat}, ${parada.lng}`}
+                        </p>
+                        {parada.nome && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                            {parada.nome}
+                          </p>
+                        )}
+                        {parada.whatsapp && (
+                          <p className="text-xs text-green-600 dark:text-green-400 truncate">
+                            {parada.whatsapp}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
 
                 {/* Destination */}
                 <div className="flex gap-3">
@@ -215,6 +253,16 @@ export const PendingRides = ({ cooperativaId, showHeader = true }: PendingRidesP
                     <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
                       {ride.destination.name || ride.destination.address}
                     </p>
+                    {ride.destination.nome && (
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        {ride.destination.nome}
+                      </p>
+                    )}
+                    {ride.destination.whatsapp && (
+                      <p className="text-xs text-green-600 dark:text-green-400 truncate">
+                        {ride.destination.whatsapp}
+                      </p>
+                    )}
                   </div>
                 </div>
 
