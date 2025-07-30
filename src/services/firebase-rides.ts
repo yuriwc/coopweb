@@ -1,5 +1,5 @@
 "use client";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { database } from "@/scripts/firebase-config";
 import { ref, onValue, off } from "firebase/database";
 
@@ -63,9 +63,20 @@ export const useFirebaseRides = (
   onRidesUpdate: (rides: PendingRide[]) => void
 ) => {
   const ridesRef = ref(database, `rides/${cooperativaId}`);
+  const listenerRef = useRef<(() => void) | null>(null);
+  const callbackRef = useRef(onRidesUpdate);
+
+  // Update callback ref when callback changes
+  callbackRef.current = onRidesUpdate;
 
   const startListening = useCallback(() => {
-    onValue(ridesRef, (snapshot) => {
+    // Stop any existing listener first
+    if (listenerRef.current) {
+      listenerRef.current();
+      listenerRef.current = null;
+    }
+
+    const unsubscribe = onValue(ridesRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
         const rides: PendingRide[] = Object.keys(data).map((rideId) => ({
@@ -74,16 +85,22 @@ export const useFirebaseRides = (
           // Map paradas to intermediateCoordinates for compatibility
           intermediateCoordinates: data[rideId].paradas || data[rideId].intermediateCoordinates,
         }));
-        onRidesUpdate(rides);
+        callbackRef.current(rides);
       } else {
-        onRidesUpdate([]);
+        callbackRef.current([]);
       }
     });
-  }, [ridesRef, onRidesUpdate]);
+
+    // Store the unsubscribe function
+    listenerRef.current = unsubscribe;
+  }, [ridesRef]);
 
   const stopListening = useCallback(() => {
-    off(ridesRef);
-  }, [ridesRef]);
+    if (listenerRef.current) {
+      listenerRef.current();
+      listenerRef.current = null;
+    }
+  }, []);
 
   return { startListening, stopListening };
 };

@@ -36,10 +36,7 @@ export const PendingRidesHeader = ({ cooperativaId }: PendingRidesHeaderProps) =
   return (
     <div className="flex items-center gap-3">
       <div className="flex items-center justify-center w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-lg">
-        <IconifyIcon
-          icon="solar:car-linear"
-          className="w-5 h-5 text-orange-600 dark:text-orange-400"
-        />
+        <span className="text-orange-600 dark:text-orange-400 text-lg">🚗</span>
       </div>
       <div className="text-right">
         <p className="text-sm font-semibold text-gray-900 dark:text-white">
@@ -130,10 +127,7 @@ export const PendingRides = ({ cooperativaId, showHeader = true }: PendingRidesP
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-1">
             <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
-              <IconifyIcon
-                icon="solar:car-linear"
-                className="w-4 h-4 text-orange-600 dark:text-orange-400"
-              />
+              <span className="text-orange-600 dark:text-orange-400 text-base">🚗</span>
             </div>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
               Viagens Pendentes
