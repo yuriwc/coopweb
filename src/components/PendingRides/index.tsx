@@ -6,7 +6,11 @@ import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
 import { Button } from "@heroui/button";
 import { Icon as IconifyIcon } from "@iconify/react";
 import { useFirebaseRides, PendingRide } from "@/src/services/firebase-rides";
-import { getMotoristas, assignMotoristaToRide, Motorista } from "@/src/services/motorista";
+import {
+  getMotoristas,
+  assignMotoristaToRide,
+  Motorista,
+} from "@/src/services/motorista";
 import { formatTimestampToTime } from "@/src/utils/date";
 
 interface PendingRidesProps {
@@ -18,7 +22,9 @@ interface PendingRidesHeaderProps {
   cooperativaId: string;
 }
 
-export const PendingRidesHeader = ({ cooperativaId }: PendingRidesHeaderProps) => {
+export const PendingRidesHeader = ({
+  cooperativaId,
+}: PendingRidesHeaderProps) => {
   const [rides, setRides] = useState<PendingRide[]>([]);
 
   const { startListening, stopListening } = useFirebaseRides(
@@ -40,20 +46,25 @@ export const PendingRidesHeader = ({ cooperativaId }: PendingRidesHeaderProps) =
       </div>
       <div className="text-right">
         <p className="text-sm font-semibold text-gray-900 dark:text-white">
-          {rides.length} {rides.length === 1 ? 'viagem' : 'viagens'}
+          {rides.length} {rides.length === 1 ? "viagem" : "viagens"}
         </p>
         <p className="text-xs text-gray-500 dark:text-gray-400">
-          {rides.length === 1 ? 'pendente' : 'pendentes'}
+          {rides.length === 1 ? "pendente" : "pendentes"}
         </p>
       </div>
     </div>
   );
 };
 
-export const PendingRides = ({ cooperativaId, showHeader = true }: PendingRidesProps) => {
+export const PendingRides = ({
+  cooperativaId,
+  showHeader = true,
+}: PendingRidesProps) => {
   const [rides, setRides] = useState<PendingRide[]>([]);
   const [motoristas, setMotoristas] = useState<Motorista[]>([]);
-  const [selectedMotorista, setSelectedMotorista] = useState<Record<string, string>>({});
+  const [selectedMotorista, setSelectedMotorista] = useState<
+    Record<string, string>
+  >({});
   const [assigning, setAssigning] = useState<Record<string, boolean>>({});
 
   const { startListening, stopListening } = useFirebaseRides(
@@ -80,21 +91,25 @@ export const PendingRides = ({ cooperativaId, showHeader = true }: PendingRidesP
     const motoristaId = selectedMotorista[rideId];
     if (!motoristaId) return;
 
-    setAssigning(prev => ({ ...prev, [rideId]: true }));
-    
-    const success = await assignMotoristaToRide(cooperativaId, rideId, motoristaId);
-    
+    setAssigning((prev) => ({ ...prev, [rideId]: true }));
+
+    const success = await assignMotoristaToRide(
+      cooperativaId,
+      rideId,
+      motoristaId
+    );
+
     if (success) {
       // Remove a viagem da lista após sucesso na atribuição
-      setRides(prev => prev.filter(ride => ride.id !== rideId));
-      setSelectedMotorista(prev => {
+      setRides((prev) => prev.filter((ride) => ride.id !== rideId));
+      setSelectedMotorista((prev) => {
         const newSelected = { ...prev };
         delete newSelected[rideId];
         return newSelected;
       });
     }
-    
-    setAssigning(prev => ({ ...prev, [rideId]: false }));
+
+    setAssigning((prev) => ({ ...prev, [rideId]: false }));
   };
 
   if (rides.length === 0) {
@@ -127,14 +142,17 @@ export const PendingRides = ({ cooperativaId, showHeader = true }: PendingRidesP
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-1">
             <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
-              <span className="text-orange-600 dark:text-orange-400 text-base">🚗</span>
+              <span className="text-orange-600 dark:text-orange-400 text-base">
+                🚗
+              </span>
             </div>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
               Viagens Pendentes
             </h2>
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            {rides.length} {rides.length === 1 ? 'viagem' : 'viagens'} aguardando atribuição
+            {rides.length} {rides.length === 1 ? "viagem" : "viagens"}{" "}
+            aguardando atribuição
           </p>
         </div>
       )}
@@ -142,7 +160,10 @@ export const PendingRides = ({ cooperativaId, showHeader = true }: PendingRidesP
       {/* Rides Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {rides.map((ride) => (
-          <div key={ride.id} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div
+            key={ride.id}
+            className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+          >
             {/* Ride Header */}
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between mb-2">
@@ -157,15 +178,15 @@ export const PendingRides = ({ cooperativaId, showHeader = true }: PendingRidesP
                     {ride.externalId || `ID: ${ride.id.substring(0, 8)}`}
                   </h3>
                 </div>
-                <Chip 
-                  size="sm" 
+                <Chip
+                  size="sm"
                   variant="flat"
                   className="bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300"
                 >
                   {ride.category}
                 </Chip>
               </div>
-              
+
               {/* Company Info */}
               <div className="flex items-center gap-2">
                 <IconifyIcon
@@ -207,7 +228,8 @@ export const PendingRides = ({ cooperativaId, showHeader = true }: PendingRidesP
                 </div>
 
                 {/* Stops/Paradas */}
-                {ride.intermediateCoordinates && ride.intermediateCoordinates.length > 0 && (
+                {ride.intermediateCoordinates &&
+                  ride.intermediateCoordinates.length > 0 &&
                   ride.intermediateCoordinates.map((parada, index) => (
                     <div key={index} className="flex gap-3">
                       <div className="flex-shrink-0 w-6 h-6 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mt-0.5">
@@ -218,7 +240,9 @@ export const PendingRides = ({ cooperativaId, showHeader = true }: PendingRidesP
                           Parada {index + 1}
                         </p>
                         <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
-                          {parada.name || parada.address || `${parada.lat}, ${parada.lng}`}
+                          {parada.name ||
+                            parada.address ||
+                            `${parada.lat}, ${parada.lng}`}
                         </p>
                         {parada.nome && (
                           <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
@@ -232,8 +256,7 @@ export const PendingRides = ({ cooperativaId, showHeader = true }: PendingRidesP
                         )}
                       </div>
                     </div>
-                  ))
-                )}
+                  ))}
 
                 {/* Destination */}
                 <div className="flex gap-3">
@@ -261,14 +284,17 @@ export const PendingRides = ({ cooperativaId, showHeader = true }: PendingRidesP
                 </div>
 
                 {/* Passenger */}
-                {(ride.passengers && ride.passengers.length > 0) || ride.nomePassageiro ? (
+                {(ride.passengers && ride.passengers.length > 0) ||
+                ride.nomePassageiro ? (
                   <div className="flex items-center gap-2">
                     <IconifyIcon
                       icon="solar:user-linear"
                       className="w-3 h-3 text-gray-400 dark:text-gray-500"
                     />
                     <span className="text-xs text-gray-600 dark:text-gray-400 truncate">
-                      {ride.nomePassageiro || ride.passengers?.[0]?.nome || 'Passageiro não identificado'}
+                      {ride.nomePassageiro ||
+                        ride.passengers?.[0]?.nome ||
+                        "Passageiro não identificado"}
                     </span>
                     {ride.passengers && ride.passengers.length > 1 && (
                       <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -285,12 +311,13 @@ export const PendingRides = ({ cooperativaId, showHeader = true }: PendingRidesP
                     className="w-3 h-3 text-blue-500 dark:text-blue-400"
                   />
                   <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
-                    Agendada: {new Date(ride.scheduleDate).toLocaleString('pt-BR', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
+                    Agendada:{" "}
+                    {new Date(ride.scheduleDate).toLocaleString("pt-BR", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
                     })}
                   </span>
                 </div>
@@ -352,11 +379,12 @@ export const PendingRides = ({ cooperativaId, showHeader = true }: PendingRidesP
                     selectedKey={selectedMotorista[ride.id] || null}
                     onSelectionChange={(key) => {
                       const selected = key as string;
-                      setSelectedMotorista(prev => ({ ...prev, [ride.id]: selected }));
+                      setSelectedMotorista((prev) => ({
+                        ...prev,
+                        [ride.id]: selected,
+                      }));
                     }}
                     classNames={{
-                      trigger: "h-8 min-h-8",
-                      input: "text-xs",
                       listbox: "max-h-32",
                     }}
                     inputProps={{
@@ -367,21 +395,25 @@ export const PendingRides = ({ cooperativaId, showHeader = true }: PendingRidesP
                     }}
                   >
                     {motoristas.map((motorista) => (
-                      <AutocompleteItem key={motorista.id} value={motorista.id}>
+                      <AutocompleteItem key={motorista.id}>
                         {motorista.nome}
                       </AutocompleteItem>
                     ))}
                   </Autocomplete>
-                  
+
                   <Button
                     size="sm"
                     color="primary"
                     className="w-full h-8"
-                    isDisabled={!selectedMotorista[ride.id] || assigning[ride.id]}
+                    isDisabled={
+                      !selectedMotorista[ride.id] || assigning[ride.id]
+                    }
                     isLoading={assigning[ride.id]}
                     onPress={() => handleAssignMotorista(ride.id)}
                   >
-                    {assigning[ride.id] ? 'Atribuindo...' : 'Atribuir Motorista'}
+                    {assigning[ride.id]
+                      ? "Atribuindo..."
+                      : "Atribuir Motorista"}
                   </Button>
                 </div>
               </div>
