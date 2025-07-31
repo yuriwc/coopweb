@@ -564,90 +564,126 @@
 
       // Função para filtrar seções indesejadas
       function filterUnwantedSections(markdownText) {
-        const sectionsToRemove = [
-          'Ambientes',
-          'Suporte Técnico', 
-          'Changelog'
-        ];
-        
+        const sectionsToRemove = ["Ambientes", "Suporte Técnico", "Changelog"];
+
         let filteredText = markdownText;
-        
-        sectionsToRemove.forEach(section => {
+
+        sectionsToRemove.forEach((section) => {
           // Regex para encontrar a seção e todo seu conteúdo até a próxima seção de mesmo nível ou fim do documento
           const sectionRegex = new RegExp(
             `## ${section}[\\s\\S]*?(?=\\n## |$)`,
-            'gi'
+            "gi"
           );
-          filteredText = filteredText.replace(sectionRegex, '');
+          filteredText = filteredText.replace(sectionRegex, "");
         });
-        
+
         return filteredText;
       }
 
       // Função para adicionar IDs aos títulos para navegação
       function addNavigationIds() {
-        const headings = document.querySelectorAll('.markdown-content h2');
-        console.log('Títulos encontrados:', headings.length);
-        
+        const headings = document.querySelectorAll(".markdown-content h2");
+        console.log("Títulos encontrados:", headings.length);
+
         headings.forEach((heading, index) => {
           const text = heading.textContent.trim();
           console.log(`Título ${index + 1}: "${text}"`);
-          
+
           // Mapear títulos para IDs específicos
           const idMap = {
-            '1. Cadastro de Empresas': '1-cadastro-de-empresas',
-            '2. Autenticação JWT': '2-autenticação-jwt', 
-            '3. Cotação de Preços': '3-cotação-de-preços',
-            '4. Solicitação de Corridas': '4-solicitação-de-corridas',
-            '5. Cancelamento de Corridas': '5-cancelamento-de-corridas',
-            '6. Consulta de Status': '6-consulta-de-status',
-            '7. Notificações Webhook': '7-notificações-webhook',
-            'Códigos de Erro': 'códigos-de-erro'
+            "1. Cadastro de Empresas": "1-cadastro-de-empresas",
+            "2. Autenticação JWT": "2-autenticação-jwt",
+            "3. Cotação de Preços": "3-cotação-de-preços",
+            "4. Solicitação de Corridas": "4-solicitação-de-corridas",
+            "5. Cancelamento de Corridas": "5-cancelamento-de-corridas",
+            "6. Consulta de Status": "6-consulta-de-status",
+            "7. Notificações Webhook": "7-notificações-webhook",
+            "Códigos de Erro": "códigos-de-erro",
           };
-          
+
           let finalId;
           if (idMap[text]) {
             finalId = idMap[text];
           } else {
             // Fallback: gerar ID baseado no texto
-            finalId = text.toLowerCase()
-              .replace(/[^\w\s-]/g, '') // Remove caracteres especiais
-              .replace(/\s+/g, '-') // Substitui espaços por hífens
+            finalId = text
+              .toLowerCase()
+              .replace(/[^\w\s-]/g, "") // Remove caracteres especiais
+              .replace(/\s+/g, "-") // Substitui espaços por hífens
               .trim();
           }
-          
+
           heading.id = finalId;
           console.log(`ID atribuído: "${finalId}"`);
         });
-        
+
         // Verificar se os links funcionam
         setTimeout(() => {
-          const navLinks = document.querySelectorAll('.nav-item');
-          navLinks.forEach(link => {
-            const href = link.getAttribute('href');
-            const target = document.querySelector(href);
-            console.log(`Link ${href}: ${target ? 'ENCONTRADO' : 'NÃO ENCONTRADO'}`);
+          console.log("=== VERIFICAÇÃO DE LINKS ===");
+          const navLinks = document.querySelectorAll(".nav-item");
+          navLinks.forEach((link, index) => {
+            const href = link.getAttribute("href");
+            const targetId = href.substring(1);
+            const target = document.getElementById(targetId);
+            console.log(
+              `${index + 1}. Link ${href}: ${
+                target ? "✅ ENCONTRADO" : "❌ NÃO ENCONTRADO"
+              }`
+            );
+            if (target) {
+              console.log(
+                `   Elemento: ${
+                  target.tagName
+                }, Texto: "${target.textContent.substring(0, 50)}..."`
+              );
+            }
           });
-        }, 100);
+
+          // Listar todos os IDs disponíveis
+          console.log("\n=== TODOS OS IDs DISPONÍVEIS ===");
+          const allWithIds = document.querySelectorAll("[id]");
+          allWithIds.forEach((el, index) => {
+            if (el.id && el.closest(".markdown-content")) {
+              console.log(
+                `${index + 1}. #${el.id} (${
+                  el.tagName
+                }): "${el.textContent.substring(0, 50)}..."`
+              );
+            }
+          });
+        }, 200);
       }
 
       // Função para processar métodos HTTP após renderização
       function processHttpMethods() {
-        const codeBlocks = document.querySelectorAll('pre code');
-        codeBlocks.forEach(block => {
-          if (block.textContent.includes('POST ') || 
-              block.textContent.includes('GET ') || 
-              block.textContent.includes('PUT ') || 
-              block.textContent.includes('DELETE ')) {
-            
+        const codeBlocks = document.querySelectorAll("pre code");
+        codeBlocks.forEach((block) => {
+          if (
+            block.textContent.includes("POST ") ||
+            block.textContent.includes("GET ") ||
+            block.textContent.includes("PUT ") ||
+            block.textContent.includes("DELETE ")
+          ) {
             let html = block.innerHTML;
-            
+
             // Adicionar badges para métodos HTTP
-            html = html.replace(/(POST)(\s+\/[^\s]*)/g, '<span class="endpoint-method method-post">$1</span>$2');
-            html = html.replace(/(GET)(\s+\/[^\s]*)/g, '<span class="endpoint-method method-get">$1</span>$2');
-            html = html.replace(/(PUT)(\s+\/[^\s]*)/g, '<span class="endpoint-method method-put">$1</span>$2');
-            html = html.replace(/(DELETE)(\s+\/[^\s]*)/g, '<span class="endpoint-method method-delete">$1</span>$2');
-            
+            html = html.replace(
+              /(POST)(\s+\/[^\s]*)/g,
+              '<span class="endpoint-method method-post">$1</span>$2'
+            );
+            html = html.replace(
+              /(GET)(\s+\/[^\s]*)/g,
+              '<span class="endpoint-method method-get">$1</span>$2'
+            );
+            html = html.replace(
+              /(PUT)(\s+\/[^\s]*)/g,
+              '<span class="endpoint-method method-put">$1</span>$2'
+            );
+            html = html.replace(
+              /(DELETE)(\s+\/[^\s]*)/g,
+              '<span class="endpoint-method method-delete">$1</span>$2'
+            );
+
             block.innerHTML = html;
           }
         });
@@ -656,25 +692,53 @@
       // Função para adicionar smooth scrolling
       function addSmoothScrolling() {
         const links = document.querySelectorAll('a[href^="#"]');
-        console.log('Links de navegação encontrados:', links.length);
-        
+        console.log("Links de navegação encontrados:", links.length);
+
         links.forEach((link, index) => {
-          const href = link.getAttribute('href');
+          const href = link.getAttribute("href");
           console.log(`Link ${index + 1}: ${href}`);
-          
+
           link.addEventListener("click", function (e) {
             e.preventDefault();
+            e.stopPropagation();
             console.log(`Clicou no link: ${href}`);
-            
-            const target = document.querySelector(href);
+
+            const targetId = href.substring(1); // Remove o #
+            const target = document.getElementById(targetId);
+
             if (target) {
               console.log(`Elemento encontrado, fazendo scroll para: ${href}`);
-              target.scrollIntoView({
+
+              // Calcular posição com offset para compensar header fixo
+              const rect = target.getBoundingClientRect();
+              const scrollTop =
+                window.pageYOffset || document.documentElement.scrollTop;
+              const targetPosition = rect.top + scrollTop - 100; // 100px de offset
+
+              // Scroll suave manual
+              window.scrollTo({
+                top: targetPosition,
                 behavior: "smooth",
-                block: "start",
               });
+
+              // Fallback caso o behavior smooth não funcione
+              setTimeout(() => {
+                target.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                  inline: "nearest",
+                });
+              }, 100);
             } else {
               console.error(`Elemento não encontrado: ${href}`);
+              console.log(`Tentando buscar por: #${targetId}`);
+
+              // Tentar buscar todos os elementos com IDs similares
+              const allElements = document.querySelectorAll("[id]");
+              console.log("Todos os IDs disponíveis:");
+              allElements.forEach((el) => {
+                if (el.id) console.log(`- ${el.id}`);
+              });
             }
           });
         });
