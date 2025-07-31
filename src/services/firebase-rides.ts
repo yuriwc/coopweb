@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useRef } from "react";
 import { database } from "@/scripts/firebase-config";
-import { ref, onValue, off } from "firebase/database";
+import { ref, onValue } from "firebase/database";
 
 export interface RideCoordinate {
   lat: number;
@@ -83,7 +83,8 @@ export const useFirebaseRides = (
           id: rideId,
           ...data[rideId],
           // Map paradas to intermediateCoordinates for compatibility
-          intermediateCoordinates: data[rideId].paradas || data[rideId].intermediateCoordinates,
+          intermediateCoordinates:
+            data[rideId].paradas || data[rideId].intermediateCoordinates,
         }));
         callbackRef.current(rides);
       } else {

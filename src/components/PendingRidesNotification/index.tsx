@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { Badge } from "@heroui/badge";
 import { Icon as IconifyIcon } from "@iconify/react";
 import { useRouter } from "next/navigation";
 import { useFirebaseRides, PendingRide } from "@/src/services/firebase-rides";
@@ -10,7 +9,9 @@ interface PendingRidesNotificationProps {
   cooperativaId: string;
 }
 
-export const PendingRidesNotification = ({ cooperativaId }: PendingRidesNotificationProps) => {
+export const PendingRidesNotification = ({
+  cooperativaId,
+}: PendingRidesNotificationProps) => {
   const [rides, setRides] = useState<PendingRide[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -56,9 +57,8 @@ export const PendingRidesNotification = ({ cooperativaId }: PendingRidesNotifica
     router.push(`/cooperativa/${cooperativaId}#ride-${rideId}`);
   };
 
-
   const pendingCount = rides.length;
-  
+
   // Para debug - forçar um número de teste (descomente para testar)
   // const pendingCount = 2;
 
@@ -92,11 +92,15 @@ export const PendingRidesNotification = ({ cooperativaId }: PendingRidesNotifica
         <div className="absolute right-0 top-full mt-2 w-80 backdrop-blur-md bg-white/90 dark:bg-gray-800/90 border border-white/30 dark:border-white/20 rounded-xl shadow-xl z-50 max-h-96 overflow-y-auto">
           <div className="p-4 border-b border-white/20 dark:border-white/10">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-              <IconifyIcon icon="solar:car-linear" className="w-4 h-4 text-orange-600" />
+              <IconifyIcon
+                icon="solar:car-linear"
+                className="w-4 h-4 text-orange-600"
+              />
               Viagens Disponíveis
             </h3>
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              {pendingCount} {pendingCount === 1 ? 'viagem' : 'viagens'} aguardando atribuição
+              {pendingCount} {pendingCount === 1 ? "viagem" : "viagens"}{" "}
+              aguardando atribuição
             </p>
           </div>
 
@@ -136,7 +140,10 @@ export const PendingRidesNotification = ({ cooperativaId }: PendingRidesNotifica
 
                   {/* Company */}
                   <div className="flex items-center gap-1">
-                    <IconifyIcon icon="solar:buildings-2-linear" className="w-3 h-3 text-gray-400" />
+                    <IconifyIcon
+                      icon="solar:buildings-2-linear"
+                      className="w-3 h-3 text-gray-400"
+                    />
                     <span className="text-xs text-gray-500 dark:text-gray-400 truncate">
                       {ride.empresa.nome}
                     </span>
@@ -145,18 +152,23 @@ export const PendingRidesNotification = ({ cooperativaId }: PendingRidesNotifica
                   {/* Time info */}
                   <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                     <span>
-                      📅 {new Date(ride.scheduleDate).toLocaleString('pt-BR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit'
+                      📅{" "}
+                      {new Date(ride.scheduleDate).toLocaleString("pt-BR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
                       })}
                     </span>
                     {(ride.distance || ride.duration) && (
                       <span>
-                        {ride.distance ? `${(ride.distance / 1000).toFixed(1)}km` : ''}
-                        {ride.distance && ride.duration ? ' • ' : ''}
-                        {ride.duration ? `${Math.round(ride.duration / 60)}min` : ''}
+                        {ride.distance
+                          ? `${(ride.distance / 1000).toFixed(1)}km`
+                          : ""}
+                        {ride.distance && ride.duration ? " • " : ""}
+                        {ride.duration
+                          ? `${Math.round(ride.duration / 60)}min`
+                          : ""}
                       </span>
                     )}
                   </div>
