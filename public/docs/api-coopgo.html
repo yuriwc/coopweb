@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API CoopGo - Documentação de Integração</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.7;
+        color: #2c3e50;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        background: white;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        border-radius: 20px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 50px;
+        padding: 40px 0;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: white;
+        border-radius: 15px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .header::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          45deg,
+          transparent 30%,
+          rgba(255, 255, 255, 0.1) 50%,
+          transparent 70%
+        );
+        animation: shine 3s infinite;
+      }
+
+      @keyframes shine {
+        0% {
+          transform: translateX(-100%) translateY(-100%) rotate(45deg);
+        }
+        100% {
+          transform: translateX(100%) translateY(100%) rotate(45deg);
+        }
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        font-weight: 300;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero-section {
+        background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 40px;
+        text-align: center;
+      }
+
+      .hero-section h2 {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+      }
+
+      .hero-section p {
+        font-size: 1.1rem;
+        opacity: 0.95;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6b7280;
+      }
+
+      .loading-spinner {
+        border: 4px solid #f3f4f6;
+        border-top: 4px solid #4f46e5;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .content {
+        display: none;
+      }
+
+      .content.loaded {
+        display: block;
+      }
+
+      /* Estilos para Markdown renderizado */
+      .markdown-content h1 {
+        color: #4f46e5;
+        font-size: 2.2rem;
+        margin: 40px 0 20px 0;
+        border-left: 6px solid #4f46e5;
+        padding-left: 20px;
+        position: relative;
+      }
+
+      .markdown-content h1::after {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        left: 20px;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #4f46e5, #7c3aed);
+        border-radius: 2px;
+      }
+
+      .markdown-content h2 {
+        color: #1e40af;
+        font-size: 1.8rem;
+        margin: 35px 0 15px 0;
+        border-left: 4px solid #1e40af;
+        padding-left: 15px;
+      }
+
+      .markdown-content h3 {
+        color: #0ea5e9;
+        font-size: 1.4rem;
+        margin: 25px 0 12px 0;
+        font-weight: 600;
+      }
+
+      .markdown-content h4 {
+        color: #2c3e50;
+        font-size: 1.2rem;
+        margin: 20px 0 10px 0;
+        font-weight: 600;
+      }
+
+      .markdown-content p {
+        margin: 15px 0;
+        text-align: justify;
+      }
+
+      .markdown-content ul,
+      .markdown-content ol {
+        margin: 15px 0;
+        padding-left: 30px;
+      }
+
+      .markdown-content li {
+        margin: 8px 0;
+      }
+
+      .markdown-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 25px 0;
+        background: #f8fafc;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .markdown-content th {
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        color: white;
+        padding: 15px 12px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .markdown-content td {
+        padding: 12px;
+        border-bottom: 1px solid #e2e8f0;
+        font-size: 0.9rem;
+      }
+
+      .markdown-content tr:last-child td {
+        border-bottom: none;
+      }
+
+      .markdown-content tr:hover {
+        background: #f1f5f9;
+      }
+
+      .markdown-content code {
+        background: #f1f5f9;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-family: "Fira Code", "Monaco", "Cascadia Code", monospace;
+        font-size: 0.9em;
+        color: #7c3aed;
+        border: 1px solid #e2e8f0;
+      }
+
+      .markdown-content pre {
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 12px;
+        overflow-x: auto;
+        margin: 20px 0;
+        box-shadow: 0 8px 25px rgba(30, 41, 59, 0.3);
+        border: 1px solid #334155;
+      }
+
+      .markdown-content pre code {
+        background: none;
+        padding: 0;
+        border: none;
+        color: inherit;
+        font-size: 0.9rem;
+      }
+
+      .markdown-content blockquote {
+        border-left: 4px solid #4f46e5;
+        padding: 15px 20px;
+        margin: 20px 0;
+        background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+        border-radius: 8px;
+        font-style: italic;
+      }
+
+      /* Estilos para badges/tags */
+      .markdown-content em {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-style: normal;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      /* Estilos para links */
+      .markdown-content a {
+        color: #4f46e5;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border-bottom: 2px solid transparent;
+      }
+
+      .markdown-content a:hover {
+        color: #7c3aed;
+        border-bottom-color: #7c3aed;
+      }
+
+      /* Scroll to top button */
+      .scroll-to-top {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        transition: all 0.3s ease;
+        opacity: 0;
+        visibility: hidden;
+        border: none;
+        font-size: 20px;
+      }
+
+      .scroll-to-top.visible {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .scroll-to-top:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(79, 70, 229, 0.4);
+      }
+
+      /* Seção de navegação rápida */
+      .nav-section {
+        background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .nav-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .nav-item {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        border-left: 4px solid #4f46e5;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+      }
+
+      .nav-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .nav-item h4 {
+        color: #4f46e5;
+        margin-bottom: 8px;
+        font-size: 1.1rem;
+      }
+
+      .nav-item p {
+        color: #6b7280;
+        font-size: 0.9rem;
+        margin: 0;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          margin: 10px;
+          padding: 20px;
+          border-radius: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        .nav-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .markdown-content table {
+          font-size: 0.8rem;
+        }
+
+        .markdown-content th,
+        .markdown-content td {
+          padding: 8px 6px;
+        }
+      }
+
+      /* Highlight para diferentes tipos de conteúdo */
+      .endpoint-method {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        margin-right: 8px;
+      }
+
+      .method-post {
+        background: #dcfdf7;
+        color: #047857;
+      }
+      .method-get {
+        background: #dbeafe;
+        color: #1d4ed8;
+      }
+      .method-put {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .method-delete {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>API CoopGo</h1>
+        <p class="subtitle">
+          Documentação Completa para Integração com Terceiros
+        </p>
+      </div>
+
+      <div class="hero-section">
+        <h2>🔌 Integração Empresarial</h2>
+        <p>
+          APIs RESTful para integração completa com plataformas de mobilidade
+          urbana
+        </p>
+      </div>
+
+      <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <p>Carregando documentação da API...</p>
+      </div>
+
+      <div class="content" id="content">
+        <div class="nav-section">
+          <h3>🚀 Navegação Rápida</h3>
+          <div class="nav-grid">
+            <a href="#1-cadastro-de-empresas" class="nav-item">
+              <h4>📝 Cadastro de Empresas</h4>
+              <p>Registre empresas no sistema CoopGo</p>
+            </a>
+            <a href="#2-autenticação-jwt" class="nav-item">
+              <h4>🔐 Autenticação JWT</h4>
+              <p>Obtenha tokens para acesso às APIs</p>
+            </a>
+            <a href="#3-cotação-de-preços" class="nav-item">
+              <h4>💰 Cotação de Preços</h4>
+              <p>Calcule preços e verifique disponibilidade</p>
+            </a>
+            <a href="#4-solicitação-de-corridas" class="nav-item">
+              <h4>🚗 Solicitação de Corridas</h4>
+              <p>Crie e gerencie viagens</p>
+            </a>
+            <a href="#5-cancelamento-de-corridas" class="nav-item">
+              <h4>❌ Cancelamento</h4>
+              <p>Cancele corridas quando necessário</p>
+            </a>
+            <a href="#6-consulta-de-status" class="nav-item">
+              <h4>📊 Consulta de Status</h4>
+              <p>Monitore o andamento das viagens</p>
+            </a>
+            <a href="#7-notificações-webhook" class="nav-item">
+              <h4>🔔 Webhooks</h4>
+              <p>Receba notificações em tempo real</p>
+            </a>
+            <a href="#códigos-de-erro" class="nav-item">
+              <h4>⚠️ Códigos de Erro</h4>
+              <p>Lista completa de erros da API</p>
+            </a>
+          </div>
+        </div>
+
+        <div class="markdown-content" id="markdown-content">
+          <!-- Conteúdo Markdown será inserido aqui -->
+        </div>
+      </div>
+
+      <button class="scroll-to-top" id="scrollToTopBtn" title="Voltar ao topo">
+        ↑
+      </button>
+    </div>
+
+    <script>
+      // Configurar o marked para melhor renderização
+      marked.setOptions({
+        highlight: function (code, lang) {
+          if (Prism.languages[lang]) {
+            return Prism.highlight(code, Prism.languages[lang], lang);
+          }
+          return code;
+        },
+        breaks: true,
+        gfm: true,
+      });
+
+      // Função para buscar e renderizar o Markdown
+      async function loadMarkdown() {
+        try {
+          const response = await fetch("./API_CoopGo_Integracao_Terceiros.md");
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const markdownText = await response.text();
+
+          // Filtrar seções indesejadas
+          const filteredMarkdown = filterUnwantedSections(markdownText);
+
+          // Converter Markdown para HTML
+          const htmlContent = marked.parse(filteredMarkdown);
+
+          // Inserir o conteúdo na página
+          document.getElementById("markdown-content").innerHTML = htmlContent;
+
+          // Processar métodos HTTP após renderização
+          processHttpMethods();
+
+          // Adicionar IDs aos títulos para navegação
+          addNavigationIds();
+
+          // Mostrar o conteúdo e esconder o loading
+          document.getElementById("loading").style.display = "none";
+          document.getElementById("content").classList.add("loaded");
+
+          // Re-executar o Prism para highlighting
+          if (typeof Prism !== "undefined") {
+            Prism.highlightAll();
+          }
+
+          // Adicionar smooth scroll para links âncora (após um pequeno delay)
+          setTimeout(() => {
+            addSmoothScrolling();
+          }, 500);
+        } catch (error) {
+          console.error("Erro ao carregar documentação:", error);
+          document.getElementById("loading").innerHTML = `
+            <div style="color: #dc2626; text-align: center;">
+              <h3>❌ Erro ao Carregar Documentação</h3>
+              <p>Não foi possível carregar o arquivo da API. Verifique se o arquivo <code>API_CoopGo_Integracao_Terceiros.md</code> está disponível.</p>
+              <p><strong>Erro:</strong> ${error.message}</p>
+            </div>
+          `;
+        }
+      }
+
+      // Função para filtrar seções indesejadas
+      function filterUnwantedSections(markdownText) {
+        const sectionsToRemove = [
+          'Ambientes',
+          'Suporte Técnico', 
+          'Changelog'
+        ];
+        
+        let filteredText = markdownText;
+        
+        sectionsToRemove.forEach(section => {
+          // Regex para encontrar a seção e todo seu conteúdo até a próxima seção de mesmo nível ou fim do documento
+          const sectionRegex = new RegExp(
+            `## ${section}[\\s\\S]*?(?=\\n## |$)`,
+            'gi'
+          );
+          filteredText = filteredText.replace(sectionRegex, '');
+        });
+        
+        return filteredText;
+      }
+
+      // Função para adicionar IDs aos títulos para navegação
+      function addNavigationIds() {
+        const headings = document.querySelectorAll('.markdown-content h2');
+        console.log('Títulos encontrados:', headings.length);
+        
+        headings.forEach((heading, index) => {
+          const text = heading.textContent.trim();
+          console.log(`Título ${index + 1}: "${text}"`);
+          
+          // Mapear títulos para IDs específicos
+          const idMap = {
+            '1. Cadastro de Empresas': '1-cadastro-de-empresas',
+            '2. Autenticação JWT': '2-autenticação-jwt', 
+            '3. Cotação de Preços': '3-cotação-de-preços',
+            '4. Solicitação de Corridas': '4-solicitação-de-corridas',
+            '5. Cancelamento de Corridas': '5-cancelamento-de-corridas',
+            '6. Consulta de Status': '6-consulta-de-status',
+            '7. Notificações Webhook': '7-notificações-webhook',
+            'Códigos de Erro': 'códigos-de-erro'
+          };
+          
+          let finalId;
+          if (idMap[text]) {
+            finalId = idMap[text];
+          } else {
+            // Fallback: gerar ID baseado no texto
+            finalId = text.toLowerCase()
+              .replace(/[^\w\s-]/g, '') // Remove caracteres especiais
+              .replace(/\s+/g, '-') // Substitui espaços por hífens
+              .trim();
+          }
+          
+          heading.id = finalId;
+          console.log(`ID atribuído: "${finalId}"`);
+        });
+        
+        // Verificar se os links funcionam
+        setTimeout(() => {
+          const navLinks = document.querySelectorAll('.nav-item');
+          navLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            const target = document.querySelector(href);
+            console.log(`Link ${href}: ${target ? 'ENCONTRADO' : 'NÃO ENCONTRADO'}`);
+          });
+        }, 100);
+      }
+
+      // Função para processar métodos HTTP após renderização
+      function processHttpMethods() {
+        const codeBlocks = document.querySelectorAll('pre code');
+        codeBlocks.forEach(block => {
+          if (block.textContent.includes('POST ') || 
+              block.textContent.includes('GET ') || 
+              block.textContent.includes('PUT ') || 
+              block.textContent.includes('DELETE ')) {
+            
+            let html = block.innerHTML;
+            
+            // Adicionar badges para métodos HTTP
+            html = html.replace(/(POST)(\s+\/[^\s]*)/g, '<span class="endpoint-method method-post">$1</span>$2');
+            html = html.replace(/(GET)(\s+\/[^\s]*)/g, '<span class="endpoint-method method-get">$1</span>$2');
+            html = html.replace(/(PUT)(\s+\/[^\s]*)/g, '<span class="endpoint-method method-put">$1</span>$2');
+            html = html.replace(/(DELETE)(\s+\/[^\s]*)/g, '<span class="endpoint-method method-delete">$1</span>$2');
+            
+            block.innerHTML = html;
+          }
+        });
+      }
+
+      // Função para adicionar smooth scrolling
+      function addSmoothScrolling() {
+        const links = document.querySelectorAll('a[href^="#"]');
+        console.log('Links de navegação encontrados:', links.length);
+        
+        links.forEach((link, index) => {
+          const href = link.getAttribute('href');
+          console.log(`Link ${index + 1}: ${href}`);
+          
+          link.addEventListener("click", function (e) {
+            e.preventDefault();
+            console.log(`Clicou no link: ${href}`);
+            
+            const target = document.querySelector(href);
+            if (target) {
+              console.log(`Elemento encontrado, fazendo scroll para: ${href}`);
+              target.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+            } else {
+              console.error(`Elemento não encontrado: ${href}`);
+            }
+          });
+        });
+      }
+
+      // Botão de voltar ao topo
+      const scrollBtn = document.getElementById("scrollToTopBtn");
+      window.addEventListener("scroll", function () {
+        if (window.scrollY > 300) {
+          scrollBtn.classList.add("visible");
+        } else {
+          scrollBtn.classList.remove("visible");
+        }
+      });
+
+      scrollBtn.addEventListener("click", function () {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      // Carregar o markdown quando a página carregar
+      document.addEventListener("DOMContentLoaded", loadMarkdown);
+    </script>
+  </body>
+</html>
