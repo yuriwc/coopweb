@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API CoopGo - Guia de Integração para Terceiros</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8fafc;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: #1e293b;
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar h1 {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #60a5fa;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 15px;
+        }
+
+        .sidebar nav ul {
+            list-style: none;
+        }
+
+        .sidebar nav ul li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar nav ul li a {
+            color: #cbd5e1;
+            text-decoration: none;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .sidebar nav ul li a:hover {
+            background: #334155;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .sidebar nav ul li a.active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            margin-left: 300px;
+            padding: 40px;
+            max-width: calc(100vw - 300px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #3b82f6, #1e40af);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .url-base {
+            background: #0f172a;
+            color: #60a5fa;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 1.1rem;
+            margin: 20px 0;
+            border-left: 4px solid #3b82f6;
+        }
+
+        /* Sections */
+        .section {
+            background: white;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: #f1f5f9;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .section-header h2 {
+            color: #1e293b;
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .section-header p {
+            color: #64748b;
+            font-size: 1rem;
+        }
+
+        .section-content {
+            padding: 30px;
+        }
+
+        /* Endpoint styling */
+        .endpoint {
+            background: #0f172a;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            margin: 20px 0;
+            border-left: 4px solid #10b981;
+        }
+
+        .endpoint .method {
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .endpoint.post .method { color: #f59e0b; }
+        .endpoint.get .method { color: #10b981; }
+
+        /* Code blocks */
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 4px solid #60a5fa;
+        }
+
+        .code-block .comment {
+            color: #94a3b8;
+        }
+
+        .code-block .string {
+            color: #34d399;
+        }
+
+        .code-block .number {
+            color: #fbbf24;
+        }
+
+        .code-block .boolean {
+            color: #f87171;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #374151;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        /* Status badges */
+        .required {
+            background: #ef4444;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .optional {
+            background: #6b7280;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Response examples */
+        .response-example {
+            margin: 20px 0;
+        }
+
+        .response-example h4 {
+            color: #374151;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .success { border-left-color: #10b981; }
+        .error { border-left-color: #ef4444; }
+
+        /* Alert boxes */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background: #eff6ff;
+            border-left-color: #3b82f6;
+            color: #1e40af;
+        }
+
+        .alert-warning {
+            background: #fffbeb;
+            border-left-color: #f59e0b;
+            color: #92400e;
+        }
+
+        .alert-success {
+            background: #f0fdf4;
+            border-left-color: #10b981;
+            color: #065f46;
+        }
+
+        /* Status codes */
+        .status-codes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .status-code {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #64748b;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .status-code.success { border-left-color: #10b981; }
+        .status-code.error { border-left-color: #ef4444; }
+        .status-code.warning { border-left-color: #f59e0b; }
+
+        .status-code .code {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .status-code .description {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* Contact info */
+        .contact-info {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 30px 0;
+        }
+
+        .contact-info h3 {
+            margin-bottom: 15px;
+        }
+
+        .contact-info ul {
+            list-style: none;
+        }
+
+        .contact-info ul li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .contact-info ul li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #6ee7b7;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                max-width: 100vw;
+                padding: 20px;
+            }
+
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 1000;
+                background: #3b82f6;
+                color: white;
+                border: none;
+                padding: 10px;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+        }
+
+        .menu-toggle {
+            display: none;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Section spacing */
+        .section + .section {
+            margin-top: 40px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1e293b;
+            color: #cbd5e1;
+            padding: 40px;
+            text-align: center;
+            margin-top: 60px;
+            border-radius: 12px;
+        }
+
+        .footer p {
+            margin-bottom: 10px;
+        }
+
+        .version {
+            background: #3b82f6;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <h1>📋 CoopGo API</h1>
+            <nav>
+                <ul>
+                    <li><a href="#overview" class="active">Visão Geral</a></li>
+                    <li><a href="#authentication">Autenticação</a></li>
+                    <li><a href="#empresa-cadastro">1. Cadastro de Empresas</a></li>
+                    <li><a href="#auth-token">2. Token JWT</a></li>
+                    <li><a href="#quote">3. Cotação de Preços</a></li>
+                    <li><a href="#rides">4. Solicitação de Corridas</a></li>
+                    <li><a href="#cancel">5. Cancelamento</a></li>
+                    <li><a href="#status">6. Consulta de Status</a></li>
+                    <li><a href="#webhooks">7. Webhooks</a></li>
+                    <li><a href="#errors">Códigos de Erro</a></li>
+                    <li><a href="#environments">Ambientes</a></li>
+                    <li><a href="#support">Suporte</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="header">
+                <h1>🚕 API CoopGo</h1>
+                <p>Guia completo de integração para plataformas de mobilidade urbana</p>
+            </div>
+
+            <section id="overview" class="section">
+                <div class="section-header">
+                    <h2>📖 Visão Geral</h2>
+                    <p>APIs públicas para integração com o sistema CoopGo</p>
+                </div>
+                <div class="section-content">
+                    <p>Esta documentação descreve as APIs públicas do sistema CoopGo para integração com plataformas de mobilidade urbana e aplicativos de transporte. A API permite o cadastro de empresas, autenticação, cotação de preços, solicitação e gerenciamento de corridas.</p>
+                    
+                    <h3>URL Base</h3>
+                    <div class="url-base">
+                        https://api.coopgo.bygoapps.com
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <strong>🔐 Segurança:</strong> Todas as requisições devem ser feitas via HTTPS. HTTP não é suportado.
+                    </div>
+                </div>
+            </section>
+
+            <section id="authentication" class="section">
+                <div class="section-header">
+                    <h2>🔑 Autenticação</h2>
+                    <p>Sistema de autenticação em duas etapas</p>
+                </div>
+                <div class="section-content">
+                    <p>O sistema utiliza um modelo de autenticação em duas etapas:</p>
+                    
+                    <ol>
+                        <li><strong>API Key do Provider</strong>: Chave única fornecida para cada parceiro integrador</li>
+                        <li><strong>Token JWT</strong>: Token temporário gerado para cada empresa cadastrada</li>
+                    </ol>
+
+                    <div class="contact-info">
+                        <h3>🤝 Obtenção da API Key</h3>
+                        <p>Entre em contato com nossa equipe comercial para obter sua API Key de integração:</p>
+                        <ul>
+                            <li><strong>Email:</strong> integracao@coopgo.com.br</li>
+                            <li><strong>Telefone:</strong> (11) 3000-0000</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="empresa-cadastro" class="section">
+                <div class="section-header">
+                    <h2>1️⃣ Cadastro de Empresas</h2>
+                    <p>Endpoint para cadastrar empresas parceiras no sistema</p>
+                </div>
+                <div class="section-content">
+                    <div class="endpoint post">
+                        <span class="method">POST</span>/api/mobicity/empresas
+                    </div>
+
+                    <h4>Headers</h4>
+                    <div class="code-block">
+Content-Type: application/json
+X-Provider-API-Key: sua_api_key_aqui
+                    </div>
+
+                    <h4>Dados Básicos da Empresa (obrigatórios)</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Campo</th>
+                                    <th>Tipo</th>
+                                    <th>Obrigatório</th>
+                                    <th>Validação</th>
+                                    <th>Descrição</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>nome</code></td>
+                                    <td>string</td>
+                                    <td><span class="required">✅</span></td>
+                                    <td>max 100 chars</td>
+                                    <td>Nome fantasia da empresa</td>
+                                </tr>
+                                <tr>
+                                    <td><code>cnpj</code></td>
+                                    <td>string</td>
+                                    <td><span class="required">✅</span></td>
+                                    <td>14 dígitos</td>
+                                    <td>CNPJ apenas números</td>
+                                </tr>
+                                <tr>
+                                    <td><code>razaoSocial</code></td>
+                                    <td>string</td>
+                                    <td><span class="required">✅</span></td>
+                                    <td>max 150 chars</td>
+                                    <td>Razão social completa</td>
+                                </tr>
+                                <tr>
+                                    <td><code>inscricaoEstadual</code></td>
+                                    <td>string</td>
+                                    <td><span class="required">✅</span></td>
+                                    <td>max 20 chars</td>
+                                    <td>Inscrição estadual</td>
+                                </tr>
+                                <tr>
+                                    <td><code>dataFechamento</code></td>
+                                    <td>integer</td>
+                                    <td><span class="required">✅</span></td>
+                                    <td>1-31</td>
+                                    <td>Dia do fechamento mensal</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="response-example">
+                        <h4>📤 Exemplo de Request</h4>
+                        <div class="code-block">
+{
+  <span class="string">"nome"</span>: <span class="string">"TransPorte Rápido Ltda"</span>,
+  <span class="string">"cnpj"</span>: <span class="string">"12345678000195"</span>,
+  <span class="string">"razaoSocial"</span>: <span class="string">"TransPorte Rápido Transporte e Logística Ltda ME"</span>,
+  <span class="string">"inscricaoEstadual"</span>: <span class="string">"123456789"</span>,
+  <span class="string">"inscricaoMunicipal"</span>: <span class="string">"9876543"</span>,
+  <span class="string">"dataFechamento"</span>: <span class="number">15</span>,
+  <span class="string">"contato"</span>: {
+    <span class="string">"telefone"</span>: <span class="string">"1133334444"</span>,
+    <span class="string">"celular"</span>: <span class="string">"11999887766"</span>,
+    <span class="string">"email"</span>: <span class="string">"contato@transporterapido.com.br"</span>,
+    <span class="string">"logradouro"</span>: <span class="string">"Rua das Flores"</span>,
+    <span class="string">"numero"</span>: <span class="string">"123"</span>,
+    <span class="string">"complemento"</span>: <span class="string">"Sala 45"</span>,
+    <span class="string">"bairro"</span>: <span class="string">"Centro"</span>,
+    <span class="string">"cidade"</span>: <span class="string">"São Paulo"</span>,
+    <span class="string">"uf"</span>: <span class="string">"SP"</span>,
+    <span class="string">"cep"</span>: <span class="string">"01234567"</span>,
+    <span class="string">"latitude"</span>: <span class="number">-23.5505</span>,
+    <span class="string">"longitude"</span>: <span class="number">-46.6333</span>
+  },
+  <span class="string">"centrosCusto"</span>: [
+    {
+      <span class="string">"codigo"</span>: <span class="string">"ADM"</span>,
+      <span class="string">"descricao"</span>: <span class="string">"Administrativo"</span>,
+      <span class="string">"ativo"</span>: <span class="boolean">true</span>
+    },
+    {
+      <span class="string">"codigo"</span>: <span class="string">"OPE"</span>,
+      <span class="string">"descricao"</span>: <span class="string">"Operacional"</span>,
+      <span class="string">"ativo"</span>: <span class="boolean">true</span>
+    }
+  ],
+  <span class="string">"configuracoes"</span>: {
+    <span class="string">"calcularPrecoAutomatico"</span>: <span class="boolean">true</span>,
+    <span class="string">"precoPorKm"</span>: <span class="number">2.50</span>,
+    <span class="string">"precoBase"</span>: <span class="number">5.00</span>,
+    <span class="string">"notificacaoEmail"</span>: <span class="boolean">true</span>,
+    <span class="string">"webhookUrl"</span>: <span class="string">"https://api.parceiro.com/webhooks/coopgo"</span>,
+    <span class="string">"mobicityAtiva"</span>: <span class="boolean">true</span>
+  },
+  <span class="string">"observacoes"</span>: <span class="string">"Empresa parceira prioritária"</span>
+}
+                        </div>
+                    </div>
+
+                    <div class="response-example">
+                        <h4>✅ Resposta de Sucesso (201 Created)</h4>
+                        <div class="code-block success">
+{
+  <span class="string">"success"</span>: <span class="boolean">true</span>,
+  <span class="string">"message"</span>: <span class="string">"Empresa cadastrada com sucesso"</span>,
+  <span class="string">"timestamp"</span>: <span class="string">"2024-01-15T10:30:00"</span>,
+  <span class="string">"empresaId"</span>: <span class="string">"123e4567-e89b-12d3-a456-426614174000"</span>,
+  <span class="string">"nome"</span>: <span class="string">"Empresa Exemplo Ltda"</span>,
+  <span class="string">"cnpj"</span>: <span class="string">"12345678000100"</span>,
+  <span class="string">"accessToken"</span>: <span class="string">"eyJhbGciOiJIUzI1NiIs..."</span>,
+  <span class="string">"tokenType"</span>: <span class="string">"Bearer"</span>,
+  <span class="string">"expiresIn"</span>: <span class="number">36000</span>,
+  <span class="string">"apiKey"</span>: <span class="string">"empresa_1234567890abcdef"</span>,
+  <span class="string">"statusIntegracao"</span>: <span class="string">"ATIVA"</span>
+}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="auth-token" class="section">
+                <div class="section-header">
+                    <h2>2️⃣ Autenticação JWT</h2>
+                    <p>Geração de tokens para autenticação nas APIs</p>
+                </div>
+                <div class="section-content">
+                    <div class="endpoint post">
+                        <span class="method">POST</span>/api/mobicity/auth/token
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <strong>⚠️ Público:</strong> Esta API não requer API Key do provider.
+                    </div>
+
+                    <h4>Campos do Request</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Campo</th>
+                                    <th>Tipo</th>
+                                    <th>Obrigatório</th>
+                                    <th>Descrição</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>empresaId</code></td>
+                                    <td>UUID</td>
+                                    <td><span class="required">✅</span></td>
+                                    <td>ID da empresa no sistema</td>
+                                </tr>
+                                <tr>
+                                    <td><code>apiKey</code></td>
+                                    <td>string</td>
+                                    <td><span class="required">✅</span></td>
+                                    <td>API Key da empresa</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="response-example">
+                        <h4>📤 Exemplo de Request</h4>
+                        <div class="code-block">
+{
+  <span class="string">"empresaId"</span>: <span class="string">"123e4567-e89b-12d3-a456-426614174000"</span>,
+  <span class="string">"apiKey"</span>: <span class="string">"empresa_1234567890abcdef"</span>
+}
+                        </div>
+                    </div>
+
+                    <div class="response-example">
+                        <h4>✅ Resposta de Sucesso (200 OK)</h4>
+                        <div class="code-block success">
+{
+  <span class="string">"success"</span>: <span class="boolean">true</span>,
+  <span class="string">"message"</span>: <span class="string">"Token gerado com sucesso"</span>,
+  <span class="string">"token"</span>: <span class="string">"eyJhbGciOiJIUzI1NiIs..."</span>,
+  <span class="string">"empresaId"</span>: <span class="string">"123e4567-e89b-12d3-a456-426614174000"</span>,
+  <span class="string">"empresaNome"</span>: <span class="string">"TransPorte Rápido Ltda"</span>,
+  <span class="string">"expiresIn"</span>: <span class="number">36000</span>,
+  <span class="string">"tokenType"</span>: <span class="string">"Bearer"</span>
+}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="quote" class="section">
+                <div class="section-header">
+                    <h2>3️⃣ Cotação de Preços</h2>
+                    <p>Calcular preços e verificar disponibilidade de veículos</p>
+                </div>
+                <div class="section-content">
+                    <div class="endpoint post">
+                        <span class="method">POST</span>/api/quote
+                    </div>
+
+                    <h4>Headers</h4>
+                    <div class="code-block">
+Content-Type: application/json
+Authorization: Bearer &lt;jwt_token_da_empresa&gt;
+                    </div>
+
+                    <div class="alert alert-info">
+                        <strong>🎯 Cálculo Automático:</strong> Os campos distance e duration são calculados automaticamente via Google Maps se não informados.
+                    </div>
+
+                    <div class="response-example">
+                        <h4>📤 Exemplo de Request</h4>
+                        <div class="code-block">
+{
+  <span class="string">"origin"</span>: {
+    <span class="string">"lat"</span>: <span class="number">-23.5505</span>,
+    <span class="string">"lng"</span>: <span class="number">-46.6333</span>,
+    <span class="string">"cidade"</span>: <span class="string">"São Paulo"</span>
+  },
+  <span class="string">"destination"</span>: {
+    <span class="string">"lat"</span>: <span class="number">-23.5489</span>,
+    <span class="string">"lng"</span>: <span class="number">-46.6388</span>,
+    <span class="string">"cidade"</span>: <span class="string">"São Paulo"</span>
+  },
+  <span class="string">"intermediateCoordinates"</span>: [
+    {
+      <span class="string">"lat"</span>: <span class="number">-23.5495</span>,
+      <span class="string">"lng"</span>: <span class="number">-46.6360</span>,
+      <span class="string">"cidade"</span>: <span class="string">"São Paulo"</span>,
+      <span class="string">"name"</span>: <span class="string">"Shopping Ibirapuera"</span>,
+      <span class="string">"address"</span>: <span class="string">"Av. Ibirapuera, 3103"</span>
+    }
+  ],
+  <span class="string">"providerId"</span>: <span class="string">"987fcdeb-51a2-43d8-b123-456789abcdef"</span>,
+  <span class="string">"scheduleDate"</span>: <span class="string">"2024-01-15T14:30:00"</span>
+}
+                        </div>
+                    </div>
+
+                    <div class="response-example">
+                        <h4>✅ Resposta de Sucesso (200 OK)</h4>
+                        <div class="code-block success">
+{
+  <span class="string">"success"</span>: <span class="boolean">true</span>,
+  <span class="string">"message"</span>: <span class="string">"Orçamento calculado com sucesso"</span>,
+  <span class="string">"categories"</span>: [
+    {
+      <span class="string">"name"</span>: <span class="string">"Básico"</span>,
+      <span class="string">"code"</span>: <span class="string">"BASICO"</span>,
+      <span class="string">"price"</span>: <span class="number">15.50</span>,
+      <span class="string">"eta"</span>: <span class="number">8</span>,
+      <span class="string">"description"</span>: <span class="string">"Veículo econômico padrão"</span>,
+      <span class="string">"available"</span>: <span class="boolean">true</span>,
+      <span class="string">"availableCars"</span>: <span class="number">12</span>,
+      <span class="string">"currency"</span>: <span class="string">"BRL"</span>
+    },
+    {
+      <span class="string">"name"</span>: <span class="string">"Premium"</span>,
+      <span class="string">"code"</span>: <span class="string">"PREMIUM"</span>, 
+      <span class="string">"price"</span>: <span class="number">22.80</span>,
+      <span class="string">"eta"</span>: <span class="number">5</span>,
+      <span class="string">"description"</span>: <span class="string">"Veículo executivo com ar condicionado"</span>,
+      <span class="string">"available"</span>: <span class="boolean">true</span>,
+      <span class="string">"availableCars"</span>: <span class="number">6</span>,
+      <span class="string">"currency"</span>: <span class="string">"BRL"</span>
+    }
+  ]
+}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="rides" class="section">
+                <div class="section-header">
+                    <h2>4️⃣ Solicitação de Corridas</h2>
+                    <p>Criar novas viagens no sistema</p>
+                </div>
+                <div class="section-content">
+                    <div class="endpoint post">
+                        <span class="method">POST</span>/api/v1/rides/{idCooperativa}
+                    </div>
+
+                    <h4>Headers</h4>
+                    <div class="code-block">
+Content-Type: application/json
+Authorization: Bearer &lt;jwt_token_da_empresa&gt;
+                    </div>
+
+                    <div class="alert alert-success">
+                        <strong>✅ Status Inicial:</strong> Corridas são criadas com status PENDENTE, aguardando aceite de motorista.
+                    </div>
+
+                    <div class="response-example">
+                        <h4>📤 Exemplo de Request</h4>
+                        <div class="code-block">
+{
+  <span class="string">"scheduleDate"</span>: <span class="string">"2024-01-15T14:30:00"</span>,
+  <span class="string">"origin"</span>: {
+    <span class="string">"lat"</span>: <span class="number">-23.5505</span>,
+    <span class="string">"lng"</span>: <span class="number">-46.6333</span>,
+    <span class="string">"name"</span>: <span class="string">"Residência"</span>,
+    <span class="string">"address"</span>: <span class="string">"Rua das Flores, 123 - Centro, São Paulo - SP"</span>,
+    <span class="string">"nome"</span>: <span class="string">"João Silva"</span>,
+    <span class="string">"whatsapp"</span>: <span class="string">"11999887766"</span>,
+    <span class="string">"email"</span>: <span class="string">"joao.silva@email.com"</span>,
+    <span class="string">"observacoes"</span>: <span class="string">"Portão azul, interfone 123"</span>
+  },
+  <span class="string">"destination"</span>: {
+    <span class="string">"lat"</span>: <span class="number">-23.5489</span>,
+    <span class="string">"lng"</span>: <span class="number">-46.6388</span>,
+    <span class="string">"name"</span>: <span class="string">"Trabalho"</span>,
+    <span class="string">"address"</span>: <span class="string">"Av. Paulista, 1000 - Bela Vista, São Paulo - SP"</span>
+  },
+  <span class="string">"intermediateCoordinates"</span>: [
+    {
+      <span class="string">"lat"</span>: <span class="number">-23.5495</span>,
+      <span class="string">"lng"</span>: <span class="number">-46.6360</span>,
+      <span class="string">"name"</span>: <span class="string">"Shopping Ibirapuera"</span>,
+      <span class="string">"nome"</span>: <span class="string">"Maria Santos"</span>,
+      <span class="string">"whatsapp"</span>: <span class="string">"11988776655"</span>,
+      <span class="string">"observacoes"</span>: <span class="string">"Aguardar na entrada principal"</span>
+    }
+  ],
+  <span class="string">"category"</span>: <span class="string">"BASICO"</span>,
+  <span class="string">"user"</span>: <span class="string">"user_001"</span>,
+  <span class="string">"externalId"</span>: <span class="string">"EXT_001234"</span>,
+  <span class="string">"observations"</span>: <span class="string">"Corrida executiva com parada para buscar passageira adicional"</span>
+}
+                        </div>
+                    </div>
+
+                    <div class="response-example">
+                        <h4>✅ Resposta de Sucesso (201 Created)</h4>
+                        <div class="code-block success">
+{
+  <span class="string">"success"</span>: <span class="boolean">true</span>,
+  <span class="string">"message"</span>: <span class="string">"Corrida criada com sucesso"</span>,
+  <span class="string">"rideId"</span>: <span class="string">"123e4567-e89b-12d3-a456-426614174000"</span>,
+  <span class="string">"externalId"</span>: <span class="string">"EXT_001234"</span>,
+  <span class="string">"status"</span>: <span class="string">"PENDENTE"</span>,
+  <span class="string">"scheduleDate"</span>: <span class="string">"2024-01-15T14:30:00"</span>,
+  <span class="string">"empresaId"</span>: <span class="string">"987fcdeb-51a2-43d8-b123-456789abcdef"</span>,
+  <span class="string">"empresaNome"</span>: <span class="string">"TransPorte Rápido Ltda"</span>,
+  <span class="string">"passengerName"</span>: <span class="string">"João Silva"</span>,
+  <span class="string">"passengerWhatsapp"</span>: <span class="string">"11999887766"</span>,
+  <span class="string">"estimatedPrice"</span>: <span class="number">15.50</span>,
+  <span class="string">"currency"</span>: <span class="string">"BRL"</span>,
+  <span class="string">"category"</span>: <span class="string">"BASICO"</span>
+}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="cancel" class="section">
+                <div class="section-header">
+                    <h2>5️⃣ Cancelamento de Corridas</h2>
+                    <p>Cancelar corridas existentes</p>
+                </div>
+                <div class="section-content">
+                    <div class="endpoint post">
+                        <span class="method">POST</span>/api/v1/rides/cancel
+                    </div>
+
+                    <h4>Regras de Cancelamento</h4>
+                    <div class="status-codes">
+                        <div class="status-code success">
+                            <div class="code">✅ Podem ser canceladas</div>
+                            <div class="description">PENDENTE, INICIADA, EM_ANDAMENTO</div>
+                        </div>
+                        <div class="status-code error">
+                            <div class="code">❌ Não podem ser canceladas</div>
+                            <div class="description">CANCELADA, FINALIZADA, ASSINADA</div>
+                        </div>
+                    </div>
+
+                    <div class="response-example">
+                        <h4>📤 Exemplo de Request</h4>
+                        <div class="code-block">
+{
+  <span class="string">"rideId"</span>: <span class="string">"123e4567-e89b-12d3-a456-426614174000"</span>
+}
+                        </div>
+                    </div>
+
+                    <div class="response-example">
+                        <h4>✅ Resposta de Sucesso (200 OK)</h4>
+                        <div class="code-block success">
+{
+  <span class="string">"success"</span>: <span class="boolean">true</span>,
+  <span class="string">"message"</span>: <span class="string">"Viagem cancelada com sucesso"</span>,
+  <span class="string">"rideId"</span>: <span class="string">"123e4567-e89b-12d3-a456-426614174000"</span>,
+  <span class="string">"status"</span>: <span class="string">"CANCELADA"</span>,
+  <span class="string">"canceledAt"</span>: <span class="string">"2024-01-15T10:30:00"</span>
+}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="status" class="section">
+                <div class="section-header">
+                    <h2>6️⃣ Consulta de Status</h2>
+                    <p>Consultar status atual das corridas</p>
+                </div>
+                <div class="section-content">
+                    <div class="endpoint get">
+                        <span class="method">GET</span>/api/v1/rides/{rideId}/status
+                    </div>
+
+                    <h4>Status da Viagem</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th>Descrição</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>waiting_driver</code></td>
+                                    <td>Aguardando aceite de motorista</td>
+                                </tr>
+                                <tr>
+                                    <td><code>driver_assigned</code></td>
+                                    <td>Motorista aceitou a corrida</td>
+                                </tr>
+                                <tr>
+                                    <td><code>driver_waiting_passenger</code></td>
+                                    <td>Motorista aguardando passageiro</td>
+                                </tr>
+                                <tr>
+                                    <td><code>completed</code></td>
+                                    <td>Corrida concluída</td>
+                                </tr>
+                                <tr>
+                                    <td><code>cancelled</code></td>
+                                    <td>Corrida cancelada</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <strong>📍 Localização em Tempo Real:</strong> O campo updatedLocation mostra a posição atual do motorista.
+                    </div>
+
+                    <div class="response-example">
+                        <h4>✅ Resposta de Sucesso (200 OK)</h4>
+                        <div class="code-block success">
+{
+  <span class="string">"id"</span>: <span class="string">"123e4567-e89b-12d3-a456-426614174000"</span>,
+  <span class="string">"status"</span>: <span class="string">"driver_assigned"</span>,
+  <span class="string">"driver"</span>: {
+    <span class="string">"name"</span>: <span class="string">"Carlos Silva"</span>,
+    <span class="string">"contact"</span>: <span class="string">"11999887766"</span>,
+    <span class="string">"car"</span>: {
+      <span class="string">"plate"</span>: <span class="string">"ABC-1234"</span>,
+      <span class="string">"color"</span>: <span class="string">"Branco"</span>,
+      <span class="string">"model"</span>: <span class="string">"Toyota Corolla"</span>
+    }
+  },
+  <span class="string">"eta"</span>: <span class="number">300</span>,
+  <span class="string">"updatedLocation"</span>: {
+    <span class="string">"lat"</span>: <span class="number">-23.5495</span>,
+    <span class="string">"lng"</span>: <span class="number">-46.6360</span>
+  }
+}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="webhooks" class="section">
+                <div class="section-header">
+                    <h2>7️⃣ Sistema de Webhooks</h2>
+                    <p>Notificações automáticas de mudanças de status</p>
+                </div>
+                <div class="section-content">
+                    <p>O sistema envia notificações automáticas sobre mudanças de status das viagens para um endpoint webhook configurado.</p>
+
+                    <div class="alert alert-warning">
+                        <strong>⚙️ Configuração:</strong> Para receber notificações, informe a URL do seu webhook durante o cadastro da empresa ou através do suporte técnico.
+                    </div>
+
+                    <h4>Estrutura das Notificações</h4>
+                    <div class="code-block">
+POST https://sua-api.com/webhooks/coopgo
+Content-Type: application/json
+Authorization: Bearer &lt;jwt_token_empresa&gt;
+                    </div>
+
+                    <h4>Eventos que Geram Notificações</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Evento</th>
+                                    <th>Status</th>
+                                    <th>Descrição</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Motorista aceita</td>
+                                    <td><code>driver_assigned</code></td>
+                                    <td>Motorista aceitou a corrida</td>
+                                </tr>
+                                <tr>
+                                    <td>Motorista aguarda</td>
+                                    <td><code>driver_waiting_passenger</code></td>
+                                    <td>Motorista chegou no local</td>
+                                </tr>
+                                <tr>
+                                    <td>Corrida finalizada</td>
+                                    <td><code>completed</code></td>
+                                    <td>Corrida foi concluída</td>
+                                </tr>
+                                <tr>
+                                    <td>Corrida cancelada</td>
+                                    <td><code>cancelled</code></td>
+                                    <td>Corrida foi cancelada</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <strong>🔒 Requisitos do Webhook:</strong>
+                        <ul style="margin-top: 10px;">
+                            <li>Responder com HTTP 200 para confirmar recebimento</li>
+                            <li>Processar rapidamente (timeout de 5 segundos)</li>
+                            <li>Usar HTTPS obrigatoriamente</li>
+                            <li>Validar o token JWT no header Authorization</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="errors" class="section">
+                <div class="section-header">
+                    <h2>⚠️ Códigos de Erro</h2>
+                    <p>Referência completa de códigos de erro da API</p>
+                </div>
+                <div class="section-content">
+                    <h4>Códigos HTTP</h4>
+                    <div class="status-codes">
+                        <div class="status-code success">
+                            <div class="code">200/201</div>
+                            <div class="description">Sucesso</div>
+                        </div>
+                        <div class="status-code warning">
+                            <div class="code">400</div>
+                            <div class="description">Dados inválidos</div>
+                        </div>
+                        <div class="status-code error">
+                            <div class="code">401</div>
+                            <div class="description">Não autorizado</div>
+                        </div>
+                        <div class="status-code error">
+                            <div class="code">404</div>
+                            <div class="description">Não encontrado</div>
+                        </div>
+                        <div class="status-code error">
+                            <div class="code">409</div>
+                            <div class="description">Conflito</div>
+                        </div>
+                        <div class="status-code error">
+                            <div class="code">500</div>
+                            <div class="description">Erro interno</div>
+                        </div>
+                    </div>
+
+                    <h4>Códigos de Erro Específicos</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Descrição</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>INVALID_API_KEY</code></td>
+                                    <td>API Key inválida</td>
+                                </tr>
+                                <tr>
+                                    <td><code>INVALID_TOKEN</code></td>
+                                    <td>Token JWT inválido</td>
+                                </tr>
+                                <tr>
+                                    <td><code>EXPIRED_TOKEN</code></td>
+                                    <td>Token JWT expirado</td>
+                                </tr>
+                                <tr>
+                                    <td><code>CNPJ_JA_EXISTS</code></td>
+                                    <td>CNPJ já cadastrado</td>
+                                </tr>
+                                <tr>
+                                    <td><code>RIDE_NOT_FOUND</code></td>
+                                    <td>Viagem não encontrada</td>
+                                </tr>
+                                <tr>
+                                    <td><code>RIDE_CANNOT_BE_CANCELED</code></td>
+                                    <td>Viagem não pode ser cancelada</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="environments" class="section">
+                <div class="section-header">
+                    <h2>🌍 Ambientes</h2>
+                    <p>URLs de produção e homologação</p>
+                </div>
+                <div class="section-content">
+                    <div class="status-codes">
+                        <div class="status-code success">
+                            <div class="code">🟢 Produção</div>
+                            <div class="description">https://api.coopgo.bygoapps.com</div>
+                        </div>
+                        <div class="status-code warning">
+                            <div class="code">🟡 Homologação</div>
+                            <div class="description">https://api-staging.coopgo.bygoapps.com</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="support" class="section">
+                <div class="section-header">
+                    <h2>🆘 Suporte Técnico</h2>
+                    <p>Canais de atendimento e recursos adicionais</p>
+                </div>
+                <div class="section-content">
+                    <div class="contact-info">
+                        <h3>📞 Contatos</h3>
+                        <ul>
+                            <li><strong>Email:</strong> suporte-api@coopgo.com.br</li>
+                            <li><strong>WhatsApp:</strong> (11) 99999-0000</li>
+                            <li><strong>Horário:</strong> Segunda a Sexta, 8h às 18h</li>
+                        </ul>
+                    </div>
+
+                    <h4>📚 Documentação Adicional</h4>
+                    <ul>
+                        <li><strong>Postman Collection:</strong> Disponível mediante solicitação</li>
+                        <li><strong>SDKs:</strong> Node.js, PHP, Java (em desenvolvimento)</li>
+                        <li><strong>Webhooks Tester:</strong> Ferramenta online para testar notificações</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="footer">
+                <p><strong>API CoopGo</strong> - Plataforma de Integração para Mobilidade Urbana</p>
+                <p><span class="version">v1.2.0</span> | Última atualização: Janeiro 2024</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Sidebar toggle for mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.querySelector('.menu-toggle');
+            
+            if (window.innerWidth <= 1024 && 
+                !sidebar.contains(event.target) && 
+                !menuToggle.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Smooth scrolling and active nav links
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.sidebar nav a');
+            const sections = document.querySelectorAll('.section');
+
+            // Update active nav link on scroll
+            window.addEventListener('scroll', function() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 100;
+                    if (window.pageYOffset >= sectionTop) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + current) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+
+            // Smooth scrolling for nav links
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                    
+                    // Close sidebar on mobile after clicking
+                    if (window.innerWidth <= 1024) {
+                        document.getElementById('sidebar').classList.remove('open');
+                    }
+                });
+            });
+        });
+
+        // Copy code blocks on click
+        document.querySelectorAll('.code-block').forEach(block => {
+            block.addEventListener('click', function() {
+                navigator.clipboard.writeText(this.textContent.trim()).then(() => {
+                    const originalBg = this.style.backgroundColor;
+                    this.style.backgroundColor = '#10b981';
+                    setTimeout(() => {
+                        this.style.backgroundColor = originalBg;
+                    }, 200);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

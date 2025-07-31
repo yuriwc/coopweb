@@ -75,6 +75,46 @@ const destinoIcon = L.icon({
   iconSize: [44, 44],
 });
 
+const paradaIcon = L.icon({
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png", // Ícone de parada
+  iconSize: [40, 40],
+});
+
+// Helper functions to extract coordinates based on provider
+const getOrigemCoordinates = (viagem: ViagemRealTime): [number, number] | null => {
+  if (viagem.provider === "mobicity" && viagem.origin) {
+    return [viagem.origin.lat, viagem.origin.lng];
+  }
+  if (viagem.latitudeOrigem !== undefined && viagem.longitudeOrigem !== undefined) {
+    return [viagem.latitudeOrigem, viagem.longitudeOrigem];
+  }
+  return null;
+};
+
+const getDestinoCoordinates = (viagem: ViagemRealTime): [number, number] | null => {
+  if (viagem.provider === "mobicity" && viagem.destination) {
+    return [viagem.destination.lat, viagem.destination.lng];
+  }
+  if (viagem.latitudeDestino !== undefined && viagem.longitudeDestino !== undefined) {
+    return [viagem.latitudeDestino, viagem.longitudeDestino];
+  }
+  return null;
+};
+
+const getOrigemAddress = (viagem: ViagemRealTime): string => {
+  if (viagem.provider === "mobicity" && viagem.origin) {
+    return viagem.origin.name || viagem.origin.address;
+  }
+  return viagem.enderecoEmpresa || "Origem";
+};
+
+const getDestinoAddress = (viagem: ViagemRealTime): string => {
+  if (viagem.provider === "mobicity" && viagem.destination) {
+    return viagem.destination.name || viagem.destination.address;
+  }
+  return viagem.passageiros?.[0]?.cidade || "Destino";
+};
+
 const Page = () => {
   const [viagem, setViagem] = useState<ViagemRealTime | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -482,21 +522,26 @@ const Page = () => {
                           attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
                         />
 
-                        <Polyline
-                          positions={[
-                            [
-                              viagem.latitudeMotorista,
-                              viagem.longitudeMotorista,
-                            ],
-                            [viagem.latitudeDestino, viagem.longitudeDestino],
-                          ]}
-                          pathOptions={{
-                            color: "#0070f3",
-                            dashArray: "8 12",
-                            weight: 4,
-                            opacity: 0.8,
-                          }}
-                        />
+                        {(() => {
+                          const destinoCoords = getDestinoCoordinates(viagem);
+                          return destinoCoords && (
+                            <Polyline
+                              positions={[
+                                [
+                                  viagem.latitudeMotorista,
+                                  viagem.longitudeMotorista,
+                                ],
+                                destinoCoords,
+                              ]}
+                              pathOptions={{
+                                color: "#0070f3",
+                                dashArray: "8 12",
+                                weight: 4,
+                                opacity: 0.8,
+                              }}
+                            />
+                          );
+                        })()}
 
                         <Marker
                           position={[
@@ -523,43 +568,77 @@ const Page = () => {
                           </Popup>
                         </Marker>
 
-                        <Marker
-                          position={[
-                            viagem.latitudeOrigem,
-                            viagem.longitudeOrigem,
-                          ]}
-                          icon={origemIcon}
-                        >
-                          <Popup className="text-sm">
-                            <div className="space-y-1">
-                              <div className="font-semibold text-success">
-                                📍 ORIGEM (GPS)
-                              </div>
-                              <div className="text-xs">
-                                {viagem.enderecoEmpresa}
-                              </div>
-                            </div>
-                          </Popup>
-                        </Marker>
+                        {(() => {
+                          const origemCoords = getOrigemCoordinates(viagem);
+                          return origemCoords && (
+                            <Marker
+                              position={origemCoords}
+                              icon={origemIcon}
+                            >
+                              <Popup className="text-sm">
+                                <div className="space-y-1">
+                                  <div className="font-semibold text-success">
+                                    📍 ORIGEM
+                                  </div>
+                                  <div className="text-xs">
+                                    {getOrigemAddress(viagem)}
+                                  </div>
+                                </div>
+                              </Popup>
+                            </Marker>
+                          );
+                        })()}
 
-                        <Marker
-                          position={[
-                            viagem.latitudeDestino,
-                            viagem.longitudeDestino,
-                          ]}
-                          icon={destinoIcon}
-                        >
-                          <Popup className="text-sm">
-                            <div className="space-y-1">
-                              <div className="font-semibold text-warning">
-                                👤 DESTINO (PASSAGEIRO)
+                        {(() => {
+                          const destinoCoords = getDestinoCoordinates(viagem);
+                          return destinoCoords && (
+                            <Marker
+                              position={destinoCoords}
+                              icon={destinoIcon}
+                            >
+                              <Popup className="text-sm">
+                                <div className="space-y-1">
+                                  <div className="font-semibold text-warning">
+                                    🎯 DESTINO
+                                  </div>
+                                  <div className="text-xs">
+                                    {getDestinoAddress(viagem)}
+                                  </div>
+                                </div>
+                              </Popup>
+                            </Marker>
+                          );
+                        })()}
+
+                        {/* Paradas (stops) - only for mobicity provider */}
+                        {viagem.provider === "mobicity" && viagem.paradas?.map((parada, index) => (
+                          <Marker
+                            key={`parada-${index}`}
+                            position={[parada.lat, parada.lng]}
+                            icon={paradaIcon}
+                          >
+                            <Popup className="text-sm">
+                              <div className="space-y-1">
+                                <div className="font-semibold text-primary">
+                                  🚏 PARADA {index + 1}
+                                </div>
+                                <div className="text-xs font-medium">
+                                  {parada.name || parada.address}
+                                </div>
+                                {parada.nome && (
+                                  <div className="text-xs text-gray-600">
+                                    👤 {parada.nome}
+                                  </div>
+                                )}
+                                {parada.whatsapp && (
+                                  <div className="text-xs text-green-600">
+                                    📱 {parada.whatsapp}
+                                  </div>
+                                )}
                               </div>
-                              <div className="text-xs">
-                                {viagem.passageiros?.[0]?.cidade || "Destino"}
-                              </div>
-                            </div>
-                          </Popup>
-                        </Marker>
+                            </Popup>
+                          </Marker>
+                        ))}
                       </MapContainer>
                     ) : (
                       <div className="flex items-center justify-center h-full">

@@ -113,6 +113,31 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
 
   // Função para obter informações dos passageiros
   const getPassageirosInfo = () => {
+    // Para provider mobicity, contar paradas + destino
+    if (viagem.provider === "mobicity") {
+      const names: string[] = [];
+      let count = 0;
+
+      // Adicionar passageiros das paradas
+      if (viagem.paradas) {
+        viagem.paradas.forEach(parada => {
+          if (parada.nome) {
+            names.push(parada.nome);
+            count++;
+          }
+        });
+      }
+
+      // Adicionar passageiro do destino
+      if (viagem.destination?.nome) {
+        names.push(viagem.destination.nome);
+        count++;
+      }
+
+      return { count, names };
+    }
+
+    // Para estrutura padrão
     if (!viagem.passageiros) return { count: 0, names: [] };
 
     const passageirosArray = Array.isArray(viagem.passageiros)
@@ -297,14 +322,28 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
     },
   ];
 
+  // Helper functions to extract coordinates based on provider
+  const getDestinoCoordinates = (viagem: ViagemRealTime): [number, number] | null => {
+    if (viagem.provider === "mobicity" && viagem.destination) {
+      return [viagem.destination.lat, viagem.destination.lng];
+    }
+    if (viagem.latitudeDestino !== undefined && viagem.longitudeDestino !== undefined) {
+      return [viagem.latitudeDestino, viagem.longitudeDestino];
+    }
+    return null;
+  };
+
   // Funções para calcular estimativas da viagem
   const calcularDistancia = () => {
     if (!viagem.latitudeMotorista || !viagem.longitudeMotorista) return 0;
 
+    const destinoCoords = getDestinoCoordinates(viagem);
+    if (!destinoCoords) return 0;
+
     const lat1 = viagem.latitudeMotorista;
     const lon1 = viagem.longitudeMotorista;
-    const lat2 = viagem.latitudeDestino;
-    const lon2 = viagem.longitudeDestino;
+    const lat2 = destinoCoords[0];
+    const lon2 = destinoCoords[1];
 
     const R = 6371; // Raio da Terra em km
     const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -512,8 +551,8 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
         ))}
       </div>
 
-      {/* Cards de Estimativas - apenas se houver localização do motorista */}
-      {viagem.latitudeMotorista && viagem.longitudeMotorista && (
+      {/* Cards de Estimativas - apenas se houver localização do motorista e destino */}
+      {viagem.latitudeMotorista && viagem.longitudeMotorista && getDestinoCoordinates(viagem) && (
         <div>
           <div className="mb-3">
             <h3 className="text-sm font-semibold text-foreground-600 flex items-center gap-2">

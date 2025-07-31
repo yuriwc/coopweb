@@ -57,4 +57,28 @@ export interface ViagemRealTime {
   timestampUltimaLocalizacao?: number;
   distanciaPercorrida?: number;
   tempoEstimado?: number;
+  // Campos específicos do provider mobicity
+  provider?: string;
+  origin?: {
+    address: string;
+    lat: number;
+    lng: number;
+    name: string;
+  };
+  destination?: {
+    address: string;
+    lat: number;
+    lng: number;
+    name: string;
+    nome?: string;
+    whatsapp?: string;
+  };
+  paradas?: Array<{
+    address: string;
+    lat: number;
+    lng: number;
+    name: string;
+    nome?: string;
+    whatsapp?: string;
+  }>;
 }
