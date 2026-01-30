@@ -66,7 +66,7 @@ export const PendingRidesNotification = ({
     <div className="relative" ref={menuRef}>
       <button
         onClick={handleBellClick}
-        className="backdrop-blur-sm bg-white/20 dark:bg-white/10 border border-white/30 dark:border-white/20 rounded-xl p-2 shadow-lg relative hover:bg-white/30 dark:hover:bg-white/20 transition-colors"
+        className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-2 shadow-sm relative hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
       >
         {pendingCount > 0 ? (
           <>
@@ -89,8 +89,8 @@ export const PendingRidesNotification = ({
 
       {/* Dropdown Menu */}
       {isMenuOpen && pendingCount > 0 && (
-        <div className="absolute right-0 top-full mt-2 w-80 backdrop-blur-md bg-white/90 dark:bg-gray-800/90 border border-white/30 dark:border-white/20 rounded-xl shadow-xl z-50 max-h-96 overflow-y-auto">
-          <div className="p-4 border-b border-white/20 dark:border-white/10">
+        <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 max-h-96 overflow-y-auto">
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               <IconifyIcon
                 icon="solar:car-linear"
@@ -109,7 +109,7 @@ export const PendingRidesNotification = ({
               <button
                 key={ride.id}
                 onClick={() => handleRideClick(ride.id)}
-                className="w-full text-left px-4 py-3 hover:bg-white/50 dark:hover:bg-white/10 transition-colors border-b border-white/10 dark:border-white/5 last:border-b-0"
+                className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0"
               >
                 <div className="space-y-2">
                   {/* Header */}
@@ -178,7 +178,7 @@ export const PendingRidesNotification = ({
           </div>
 
           {/* Footer */}
-          <div className="p-3 border-t border-white/20 dark:border-white/10 bg-gray-50/50 dark:bg-gray-900/50">
+          <div className="p-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
             <button
               onClick={() => {
                 setIsMenuOpen(false);

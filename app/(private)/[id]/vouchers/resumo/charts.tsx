@@ -186,10 +186,7 @@ export default function VouchersCharts({ data }: Props) {
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(value: number) => [
-                      formatCurrency(value),
-                      "Valor",
-                    ]}
+                    formatter={(value?: number) => [formatCurrency(value ?? 0), "Valor"]}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -291,10 +288,10 @@ export default function VouchersCharts({ data }: Props) {
                     domain={[0, 100]}
                   />
                   <Tooltip
-                    formatter={(value: number) => [
-                      `${value.toFixed(1)}%`,
-                      "Taxa de Pagamento",
-                    ]}
+                    formatter={(value) => {
+                      const v = typeof value === "number" ? value : 0;
+                      return [`${v.toFixed(1)}%`, "Taxa de Pagamento"];
+                    }}
                   />
                   <Line
                     type="monotone"

@@ -28,7 +28,7 @@ export function ThemeSwitcher() {
     <button
       aria-label="Alternar tema"
       onClick={toggleTheme}
-      className="backdrop-blur-md bg-white/30 dark:bg-white/20 border border-white/40 dark:border-white/30 hover:bg-white/40 dark:hover:bg-white/25 transition-all duration-300 rounded-xl p-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center justify-center relative overflow-hidden shadow-lg hover:shadow-xl hover:scale-105"
+      className="bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-300 rounded-xl p-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center justify-center relative overflow-hidden shadow-sm hover:shadow-md hover:scale-105"
       style={{
         outline: "none",
         width: 40,

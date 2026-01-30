@@ -53,7 +53,7 @@ export default function FilterPeriodo({
   return (
     <div className="flex items-center gap-4">
       <div className="flex items-center gap-2">
-        <div className="w-6 h-6 bg-sky-100/50 dark:bg-sky-900/30 rounded-full flex items-center justify-center">
+        <div className="w-6 h-6 bg-sky-100 dark:bg-sky-900 rounded-full flex items-center justify-center">
           <svg
             className="w-4 h-4 text-sky-600 dark:text-sky-400"
             fill="none"
@@ -87,26 +87,22 @@ export default function FilterPeriodo({
           isLoading || isPending ? <Spinner size="sm" color="primary" /> : null
         }
         classNames={{
-          base: "backdrop-blur-sm",
-          mainWrapper: "backdrop-blur-sm",
           trigger: [
-            "backdrop-blur-md",
-            "bg-white/40 dark:bg-white/10",
-            "border-white/50 dark:border-white/20",
-            "hover:bg-white/50 dark:hover:bg-white/15",
-            "focus:bg-white/60 dark:focus:bg-white/20",
-            "data-[open=true]:bg-white/60 dark:data-[open=true]:bg-white/20",
+            "bg-white dark:bg-gray-800",
+            "border-gray-200 dark:border-gray-700",
+            "hover:bg-gray-50 dark:hover:bg-gray-700",
+            "focus:bg-gray-50 dark:focus:bg-gray-700",
+            "data-[open=true]:bg-gray-50 dark:data-[open=true]:bg-gray-700",
             "rounded-xl",
-            "shadow-lg",
+            "shadow-sm",
             "transition-all duration-300",
             isLoading || isPending ? "opacity-70" : "",
           ],
           value: "text-slate-800 dark:text-slate-200 font-medium",
           selectorIcon: "text-slate-600 dark:text-slate-400",
           popoverContent: [
-            "backdrop-blur-md",
-            "bg-white/90 dark:bg-slate-900/90",
-            "border-white/50 dark:border-white/20",
+            "bg-white dark:bg-gray-800",
+            "border-gray-200 dark:border-gray-700",
             "rounded-xl",
             "shadow-xl",
           ],
@@ -158,7 +154,7 @@ export default function FilterPeriodo({
         {periodos.map((periodo) => (
           <SelectItem
             key={periodo.key}
-            className="data-[selected=true]:bg-blue-100/50 dark:data-[selected=true]:bg-blue-900/30"
+            className="data-[selected=true]:bg-blue-100 dark:data-[selected=true]:bg-blue-900"
           >
             <div className="flex items-center gap-2">
               <svg

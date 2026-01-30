@@ -45,46 +45,27 @@ const App = async (props: {
   const viagens = (await response.json()) as ViagemResumo;
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-blue-50/50 dark:bg-gray-900">
-      {/* Liquid Glass Background */}
-      <div className="fixed inset-0 bg-linear-to-br from-blue-100/40 via-cyan-50/30 to-sky-100/40 dark:from-blue-950/40 dark:via-purple-950/40 dark:to-emerald-950/40" />
-      <div className="fixed inset-0 backdrop-blur-[2px]" />
-
-      {/* Dynamic Background Particles */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-10 left-10 w-32 h-32 bg-blue-200/20 dark:bg-blue-400/10 rounded-full blur-xl animate-pulse" />
-        <div className="absolute top-32 right-20 w-24 h-24 bg-cyan-200/20 dark:bg-purple-400/10 rounded-full blur-xl animate-pulse delay-700" />
-        <div className="absolute bottom-20 left-1/3 w-40 h-40 bg-sky-200/20 dark:bg-emerald-400/10 rounded-full blur-xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 right-1/3 w-20 h-20 bg-blue-300/15 dark:bg-blue-500/8 rounded-full blur-2xl animate-pulse delay-500" />
-        <div className="absolute bottom-1/3 left-1/4 w-28 h-28 bg-cyan-300/15 dark:bg-cyan-500/8 rounded-full blur-2xl animate-pulse delay-1200" />
-      </div>
+    <div className="min-h-screen relative overflow-hidden bg-[#F5F5F5] dark:bg-[#060607]">
 
       <div className="relative z-10 mx-auto max-w-7xl w-full pt-6 px-4 sm:px-6 lg:px-8">
-        {/* Liquid Glass Breadcrumb Container */}
+        {/* Breadcrumb Container */}
         <div className="mb-6 relative group">
-          <div className="absolute inset-0 bg-white/15 dark:bg-white/2 backdrop-blur-xl rounded-2xl border border-blue-200/25 dark:border-white/5" />
+          <div className="absolute inset-0 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm" />
           <div className="relative p-4 rounded-2xl">
             <Breadcrumb items={url} />
           </div>
         </div>
 
-        {/* Liquid Glass Header Section */}
+        {/* Header Section */}
         <section className="mb-8 relative group">
-          {/* Glass Effect Background */}
-          <div className="absolute inset-0 bg-white/20 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-blue-200/40 dark:border-white/10 shadow-2xl shadow-blue-500/15 dark:shadow-black/20" />
-          <div className="absolute inset-0 bg-linear-to-r from-blue-400/8 via-cyan-400/8 to-sky-400/8 dark:from-blue-500/3 dark:via-purple-500/3 dark:to-emerald-500/3 rounded-2xl" />
-
-          {/* Crystalline Border Effect */}
-          <div className="absolute inset-0 rounded-2xl bg-linear-to-r from-transparent via-blue-300/30 dark:via-white/10 to-transparent p-px">
-            <div className="h-full w-full rounded-2xl bg-transparent" />
-          </div>
+          <div className="absolute inset-0 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg" />
 
           {/* Loading Overlay */}
           <LoadingOverlay />
 
-          <div className="relative p-6 rounded-2xl transition-all duration-700 group-hover:backdrop-blur-2xl">
+          <div className="relative p-6 rounded-2xl transition-all duration-700">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-blue-100/50 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
                 <svg
                   className="w-6 h-6 text-blue-600 dark:text-blue-400"
                   fill="none"
@@ -100,7 +81,7 @@ const App = async (props: {
                 </svg>
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white drop-shadow-lg">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
                   Minhas Viagens
                 </h1>
                 <p className="text-gray-600 dark:text-gray-300 text-sm font-medium">
@@ -111,7 +92,7 @@ const App = async (props: {
 
             {/* Filter Section */}
             <div className="mb-6">
-              <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-xl p-4">
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4">
                 <FilterPeriodo
                   currentPeriodo={periodo}
                   baseUrl={`/${params.id}/ride`}
@@ -119,21 +100,19 @@ const App = async (props: {
               </div>
             </div>
 
-            {/* Crystalline Divider */}
-            <div className="h-px bg-linear-to-r from-transparent via-blue-300/30 dark:via-white/10 to-transparent mb-6" />
+            <div className="h-px bg-gray-200 dark:bg-gray-700 mb-6" />
 
-            {/* Statistics Cards with Glass Effect */}
+            {/* Statistics Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {/* Total de Viagens Card */}
               <div className="relative group/card">
-                <div className="absolute inset-0 bg-white/15 dark:bg-white/5 backdrop-blur-xl rounded-xl border border-blue-200/30 dark:border-white/10 shadow-lg shadow-blue-400/10" />
-                <div className="absolute inset-0 bg-linear-to-br from-blue-400/5 to-cyan-400/5 dark:from-blue-500/2 dark:to-cyan-500/2 rounded-xl" />
+                <div className="absolute inset-0 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md" />
 
-                <div className="relative p-6 rounded-xl transition-all duration-500 group-hover/card:backdrop-blur-2xl">
+                <div className="relative p-6 rounded-xl transition-all duration-500">
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="flex items-center gap-2 mb-2">
-                        <div className="w-8 h-8 bg-blue-100/50 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                        <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
                           <svg
                             className="w-4 h-4 text-blue-600 dark:text-blue-400"
                             fill="none"
@@ -152,12 +131,12 @@ const App = async (props: {
                           Total de Viagens
                         </span>
                       </div>
-                      <span className="text-3xl font-bold text-gray-800 dark:text-white drop-shadow-lg">
+                      <span className="text-3xl font-bold text-gray-800 dark:text-white">
                         {viagens.totalViagens}
                       </span>
                     </div>
                     <div className="text-right">
-                      <div className="w-16 h-16 bg-linear-to-br from-blue-400/20 to-cyan-400/20 dark:from-blue-500/10 dark:to-cyan-500/10 rounded-full flex items-center justify-center">
+                      <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
                         <svg
                           className="w-8 h-8 text-blue-600 dark:text-blue-400"
                           fill="none"
@@ -179,14 +158,13 @@ const App = async (props: {
 
               {/* Valor Total Card */}
               <div className="relative group/card">
-                <div className="absolute inset-0 bg-white/15 dark:bg-white/5 backdrop-blur-xl rounded-xl border border-emerald-200/30 dark:border-white/10 shadow-lg shadow-emerald-400/10" />
-                <div className="absolute inset-0 bg-linear-to-br from-emerald-400/5 to-cyan-400/5 dark:from-emerald-500/2 dark:to-cyan-500/2 rounded-xl" />
+                <div className="absolute inset-0 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md" />
 
-                <div className="relative p-6 rounded-xl transition-all duration-500 group-hover/card:backdrop-blur-2xl">
+                <div className="relative p-6 rounded-xl transition-all duration-500">
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="flex items-center gap-2 mb-2">
-                        <div className="w-8 h-8 bg-emerald-100/50 dark:bg-emerald-900/30 rounded-full flex items-center justify-center">
+                        <div className="w-8 h-8 bg-emerald-100 dark:bg-emerald-900 rounded-full flex items-center justify-center">
                           <svg
                             className="w-4 h-4 text-emerald-600 dark:text-emerald-400"
                             fill="none"
@@ -205,12 +183,12 @@ const App = async (props: {
                           Valor Total
                         </span>
                       </div>
-                      <span className="text-3xl font-bold text-gray-800 dark:text-white drop-shadow-lg">
+                      <span className="text-3xl font-bold text-gray-800 dark:text-white">
                         R$ {viagens.totalValor.toFixed(2)}
                       </span>
                     </div>
                     <div className="text-right">
-                      <div className="w-16 h-16 bg-linear-to-br from-emerald-400/20 to-cyan-400/20 dark:from-emerald-500/10 dark:to-cyan-500/10 rounded-full flex items-center justify-center">
+                      <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900 rounded-full flex items-center justify-center">
                         <svg
                           className="w-8 h-8 text-emerald-600 dark:text-emerald-400"
                           fill="none"
@@ -233,20 +211,16 @@ const App = async (props: {
           </div>
         </section>
 
-        {/* Liquid Glass Table Container */}
+        {/* Table Container */}
         <section className="relative group mb-8">
-          <div className="absolute inset-0 bg-white/18 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-blue-200/30 dark:border-white/10 shadow-xl shadow-blue-400/15 dark:shadow-blue-500/5" />
-          <div className="absolute inset-0 bg-linear-to-br from-blue-400/6 via-cyan-400/4 to-sky-400/6 dark:from-blue-500/2 dark:via-cyan-500/2 dark:to-sky-500/2 rounded-2xl" />
-
-          {/* Crystalline Highlight */}
-          <div className="absolute top-0 left-1/4 right-1/4 h-px bg-linear-to-r from-transparent via-blue-300/50 dark:via-white/30 to-transparent" />
+          <div className="absolute inset-0 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg" />
 
           {/* Loading Overlay */}
           <LoadingOverlay />
 
           <div className="relative p-6 rounded-2xl transition-all duration-500">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-8 h-8 bg-blue-100/50 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
                 <svg
                   className="w-5 h-5 text-blue-600 dark:text-blue-400"
                   fill="none"
@@ -273,16 +247,13 @@ const App = async (props: {
             </div>
 
             {/* Table Container */}
-            <div className="bg-white/5 dark:bg-white/5 backdrop-blur-sm rounded-xl p-4 min-h-[500px]">
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 min-h-[500px]">
               <ViagemTable viagens={viagens.viagens} />
             </div>
           </div>
         </section>
 
-        {/* Spacer with Glass Effect */}
-        <div className="pb-20 relative">
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-blue-100/8 to-transparent dark:from-white/1 backdrop-blur-sm rounded-t-3xl" />
-        </div>
+        <div className="pb-20" />
       </div>
     </div>
   );

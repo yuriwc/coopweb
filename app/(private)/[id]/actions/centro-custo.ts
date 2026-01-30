@@ -23,7 +23,7 @@ export async function vincularCentroCusto(
     );
 
     if (response.ok) {
-      revalidateTag("getFuncionarios");
+      revalidateTag("getFuncionarios", "");
       return { success: true };
     } else {
       const errorData = await response.json();

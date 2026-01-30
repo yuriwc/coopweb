@@ -20,8 +20,8 @@ export default function LoadingOverlay() {
   if (!isLoading) return null;
 
   return (
-    <div className="absolute inset-0 backdrop-blur-sm bg-white/30 dark:bg-black/30 rounded-2xl z-50 flex items-center justify-center">
-      <div className="backdrop-blur-md bg-white/60 dark:bg-white/10 border border-white/40 dark:border-white/20 rounded-xl p-6 shadow-xl">
+    <div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 rounded-2xl z-50 flex items-center justify-center">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-xl">
         <div className="flex flex-col items-center gap-3">
           <Spinner
             size="md"

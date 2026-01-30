@@ -22,7 +22,7 @@ export default async function Home() {
   if (!response.ok) {
     console.error("Erro na requisição:", response.status, response.statusText);
     return (
-      <div className="flex flex-col min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 items-center justify-center px-4">
+      <div className="flex flex-col min-h-screen bg-[#F5F5F5] dark:bg-[#060607] items-center justify-center px-4">
         <Card className="max-w-md w-full border border-danger-200 bg-danger-50 dark:bg-danger-950/30">
           <CardBody className="flex flex-col items-center gap-4 p-8">
             <Icon
@@ -45,12 +45,7 @@ export default async function Home() {
   const empresas = await response.json();
 
   return (
-    <div className="flex flex-col min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-linear-to-br from-blue-200/30 to-purple-200/30 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-linear-to-tr from-purple-200/30 to-pink-200/30 rounded-full blur-3xl" />
-      </div>
+    <div className="flex flex-col min-h-screen bg-[#F5F5F5] dark:bg-[#060607] relative overflow-hidden">
 
       <main className="flex flex-col items-center w-full max-w-6xl mx-auto gap-12 flex-1 justify-center px-4 py-12 relative z-10">
         {/* Header Section */}
@@ -90,7 +85,7 @@ export default async function Home() {
                 href={`/${empresa.id}`}
                 key={empresa.id}
               >
-                <Card className="h-full border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 group-hover:border-blue-300 dark:group-hover:border-blue-600">
+                <Card className="h-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-lg transition-all duration-300 group-hover:border-blue-300 dark:group-hover:border-blue-600">
                   <CardBody className="flex flex-col items-center justify-center gap-6 p-8 min-h-[180px]">
                     {/* Company Icon */}
                     <div className="p-4 bg-linear-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-xl transition-all duration-300 group-hover:scale-110">

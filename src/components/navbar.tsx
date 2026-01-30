@@ -94,10 +94,7 @@ export default function App() {
   };
 
   return (
-    <Navbar className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-b border-gray-200/50 dark:border-gray-700/50 shadow-lg rounded-none px-6 transition-all duration-300">
-      {/* Modern gradient border */}
-      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-blue-400/20 via-purple-500/20 to-blue-400/20 animate-pulse" />
+    <Navbar className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm rounded-none px-6 transition-all duration-300">
 
       <NavbarBrand className="group cursor-pointer">
         <div className="transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
@@ -199,7 +196,7 @@ export default function App() {
           </NavbarItem>
         )}
         <NavbarItem>
-          <div className="backdrop-blur-md bg-white/30 dark:bg-gray-800/30 border border-gray-200/30 dark:border-gray-600/30 rounded-2xl p-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-white/40 dark:hover:bg-gray-800/40 hover:scale-105">
+          <div className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-2 shadow-sm hover:shadow-md transition-all duration-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-105">
             <ThemeSwitcher />
           </div>
         </NavbarItem>

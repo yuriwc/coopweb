@@ -243,15 +243,12 @@ export default function DashboardClient({
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-blue-50/50 dark:bg-gray-900">
-      {/* Background Effects */}
-      <div className="fixed inset-0 bg-linear-to-br from-blue-100/40 via-cyan-50/30 to-sky-100/40 dark:from-blue-950/40 dark:via-purple-950/40 dark:to-emerald-950/40" />
-      <div className="fixed inset-0 backdrop-blur-[2px]" />
+    <div className="min-h-screen relative overflow-hidden bg-[#F5F5F5] dark:bg-[#060607]">
 
       <div className="relative z-10 container mx-auto p-4 sm:p-8 max-w-7xl">
         {/* Header */}
         <header className="pb-2 mb-6 relative group">
-          <div className="absolute inset-0 bg-white/20 dark:bg-white/5 backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 shadow-2xl shadow-blue-500/15 dark:shadow-black/20" />
+          <div className="absolute inset-0 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg" />
           <div className="relative p-6 rounded-xl">
             <div className="flex flex-col gap-4">
               <Button
@@ -298,7 +295,7 @@ export default function DashboardClient({
 
         {/* Month Filter Tabs */}
         <section className="mb-6">
-          <Card className="bg-white/20 dark:bg-white/3 backdrop-blur-xl border border-blue-200/40 dark:border-white/10">
+          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
             <CardBody className="p-4">
               <Tabs
                 selectedKey={selectedMonth}
@@ -316,10 +313,10 @@ export default function DashboardClient({
 
         {/* Summary Cards */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card className="bg-white/18 dark:bg-white/5 backdrop-blur-xl border border-blue-200/30 dark:border-white/10">
+          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
             <CardBody className="p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100/20 dark:bg-blue-900/20 rounded-lg">
+                <div className="p-2 bg-blue-50 dark:bg-blue-900 rounded-lg">
                   <Icon
                     icon="solar:ticket-linear"
                     className="w-5 h-5 text-blue-600 dark:text-blue-400"

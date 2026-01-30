@@ -24,8 +24,8 @@ export async function assignMotorista({
     if (!response.ok) {
       return { success: false };
     }
-    revalidateTag("programacoes");
-    revalidateTag("programacoes-com-motorista");
+    revalidateTag("programacoes", "");
+    revalidateTag("programacoes-com-motorista", "");
     return { success: true };
   } catch {
     return { success: false };

@@ -36,17 +36,9 @@ export default function App() {
   }, [router, state.success, state.redirect]);
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-linear-to-br from-blue-50 via-sky-50/80 to-indigo-100/60 dark:from-slate-950 dark:via-blue-950/50 dark:to-indigo-950/30">
-      {/* Background aquático com partículas */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-linear-to-br from-blue-400/20 to-sky-600/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-linear-to-tr from-indigo-400/15 to-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/3 left-1/4 w-64 h-64 bg-linear-to-br from-cyan-400/10 to-blue-400/5 rounded-full blur-2xl animate-pulse delay-2000" />
-        <div className="absolute bottom-1/4 right-1/3 w-72 h-72 bg-linear-to-tl from-sky-400/10 to-indigo-400/5 rounded-full blur-2xl animate-pulse delay-500" />
-      </div>
-
+    <div className="min-h-screen relative overflow-hidden bg-[#F5F5F5] dark:bg-[#060607]">
       <div className="relative z-10 flex justify-center items-center min-h-screen p-4">
-        <div className="w-full max-w-md backdrop-blur-md bg-white/20 dark:bg-white/10 border border-white/30 dark:border-white/20 rounded-2xl p-8 shadow-xl">
+        <div className="w-full max-w-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 shadow-lg">
           {/* Header com logo */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold bg-linear-to-r from-blue-600 via-sky-600 to-indigo-600 dark:from-blue-400 dark:via-sky-400 dark:to-indigo-400 bg-clip-text text-transparent tracking-wide mb-2">
@@ -70,17 +62,16 @@ export default function App() {
               isRequired
               variant="bordered"
               classNames={{
-                base: "backdrop-blur-sm",
-                mainWrapper: "backdrop-blur-sm",
+                base: "",
+                mainWrapper: "",
                 inputWrapper: [
-                  "backdrop-blur-md",
-                  "bg-white/40 dark:bg-white/10",
-                  "border-white/50 dark:border-white/20",
-                  "hover:bg-white/50 dark:hover:bg-white/15",
-                  "focus-within:bg-white/60 dark:focus-within:bg-white/20",
-                  "group-data-[focus=true]:bg-white/60 dark:group-data-[focus=true]:bg-white/20",
+                  "bg-gray-50 dark:bg-gray-700",
+                  "border-gray-200 dark:border-gray-600",
+                  "hover:bg-gray-100 dark:hover:bg-gray-600",
+                  "focus-within:bg-white dark:focus-within:bg-gray-600",
+                  "group-data-[focus=true]:bg-white dark:group-data-[focus=true]:bg-gray-600",
                   "rounded-xl",
-                  "shadow-lg",
+                  "shadow-sm",
                   "transition-all duration-300",
                 ],
                 input: [
@@ -99,17 +90,16 @@ export default function App() {
               isRequired
               variant="bordered"
               classNames={{
-                base: "backdrop-blur-sm",
-                mainWrapper: "backdrop-blur-sm",
+                base: "",
+                mainWrapper: "",
                 inputWrapper: [
-                  "backdrop-blur-md",
-                  "bg-white/40 dark:bg-white/10",
-                  "border-white/50 dark:border-white/20",
-                  "hover:bg-white/50 dark:hover:bg-white/15",
-                  "focus-within:bg-white/60 dark:focus-within:bg-white/20",
-                  "group-data-[focus=true]:bg-white/60 dark:group-data-[focus=true]:bg-white/20",
+                  "bg-gray-50 dark:bg-gray-700",
+                  "border-gray-200 dark:border-gray-600",
+                  "hover:bg-gray-100 dark:hover:bg-gray-600",
+                  "focus-within:bg-white dark:focus-within:bg-gray-600",
+                  "group-data-[focus=true]:bg-white dark:group-data-[focus=true]:bg-gray-600",
                   "rounded-xl",
-                  "shadow-lg",
+                  "shadow-sm",
                   "transition-all duration-300",
                 ],
                 input: [
@@ -123,7 +113,7 @@ export default function App() {
             <Button
               isDisabled={isLoading}
               type="submit"
-              className="w-full backdrop-blur-md bg-linear-to-r from-blue-500 via-sky-500 to-indigo-500 hover:from-blue-600 hover:via-sky-600 hover:to-indigo-600 text-white font-semibold rounded-xl shadow-lg border border-white/20 transition-all duration-300 hover:shadow-xl hover:scale-105 text-sm tracking-widest uppercase"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md border border-blue-700 transition-all duration-300 hover:shadow-lg hover:scale-105 text-sm tracking-widest uppercase"
             >
               {isLoading ? (
                 <Spinner
@@ -137,7 +127,7 @@ export default function App() {
             </Button>
 
             {state.message && !state.success && (
-              <div className="backdrop-blur-md bg-red-50/60 dark:bg-red-950/40 border border-red-200/50 dark:border-red-800/50 rounded-xl p-3 shadow-lg">
+              <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-xl p-3 shadow-sm">
                 <p className="text-sm text-center text-red-700 dark:text-red-300 font-medium tracking-widest uppercase">
                   {state.message}
                 </p>

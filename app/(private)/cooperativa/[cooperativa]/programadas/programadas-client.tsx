@@ -65,13 +65,13 @@ export default function ProgramadasClient({
   const getTipoViagemColor = (tipo: string) => {
     switch (tipo) {
       case "Apanha":
-        return "bg-blue-100/30 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300";
+        return "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300";
       case "Retorno":
-        return "bg-green-100/30 dark:bg-green-900/30 text-green-700 dark:text-green-300";
+        return "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300";
       case "APANHA_E_RETORNO":
-        return "bg-purple-100/30 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300";
+        return "bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300";
       default:
-        return "bg-gray-100/30 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300";
+        return "bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300";
     }
   };
 
@@ -102,7 +102,7 @@ export default function ProgramadasClient({
   return (
     <div className="w-full">
       {/* Search Input */}
-      <div className="backdrop-blur-md bg-white/20 dark:bg-white/10 border border-white/30 dark:border-white/20 rounded-2xl p-4 shadow-xl mb-6">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 shadow-md mb-6">
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <svg 
@@ -124,7 +124,7 @@ export default function ProgramadasClient({
             placeholder="Buscar por passageiro ou motorista..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-white/40 dark:bg-white/10 backdrop-blur-sm border border-white/30 dark:border-white/20 rounded-xl text-slate-800 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
+            className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-slate-800 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
           />
           {searchTerm && (
             <button
@@ -140,7 +140,7 @@ export default function ProgramadasClient({
       </div>
 
       {/* Tab Headers */}
-      <div className="backdrop-blur-md bg-white/20 dark:bg-white/10 border border-white/30 dark:border-white/20 rounded-2xl p-2 shadow-xl mb-8">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-2 shadow-md mb-8">
         <div className="flex">
           <button
             onClick={() => setActiveTab("sem-motorista")}

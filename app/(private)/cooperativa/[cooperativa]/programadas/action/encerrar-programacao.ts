@@ -31,8 +31,8 @@ export async function encerrarProgramacao({
     }
 
     const result = await response.text();
-    revalidateTag("programacoes-com-motorista");
-    revalidateTag("programacoes");
+    revalidateTag("programacoes-com-motorista", "");
+    revalidateTag("programacoes", "");
     
     return { 
       success: true, 

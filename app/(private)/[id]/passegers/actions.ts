@@ -34,7 +34,7 @@ export async function handleSubmit(
       };
     }
 
-    revalidateTag("getFuncionarios");
+    revalidateTag("getFuncionarios", "");
 
     return {
       success: true,
