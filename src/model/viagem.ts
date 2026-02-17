@@ -40,10 +40,10 @@ export interface ViagemRealTime {
   passageiros: Passageiro[];
   statusViagem: string;
   enderecoEmpresa: string;
-  latitudeOrigem: number;
-  longitudeOrigem: number;
-  latitudeDestino: number;
-  longitudeDestino: number;
+  latitudeOrigem?: number;
+  longitudeOrigem?: number;
+  latitudeDestino?: number;
+  longitudeDestino?: number;
   latitudeMotorista?: number;
   longitudeMotorista?: number;
   // Campos adicionais que podem estar disponíveis no Firebase

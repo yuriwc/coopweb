@@ -185,7 +185,9 @@ const Page = () => {
       viagensRef,
       (snapshot) => {
         if (snapshot.exists()) {
-          setViagem(snapshot.val());
+          const data = snapshot.val();
+          console.log("Dados da viagem (Firebase):", JSON.stringify(data, null, 2));
+          setViagem(data);
           setConnectionStatus("connected");
           setLastUpdate(new Date());
         } else {
@@ -482,21 +484,24 @@ const Page = () => {
                           attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
                         />
 
-                        <Polyline
-                          positions={[
-                            [
-                              viagem.latitudeMotorista,
-                              viagem.longitudeMotorista,
-                            ],
-                            [viagem.latitudeDestino, viagem.longitudeDestino],
-                          ]}
-                          pathOptions={{
-                            color: "#0070f3",
-                            dashArray: "8 12",
-                            weight: 4,
-                            opacity: 0.8,
-                          }}
-                        />
+                        {viagem.latitudeDestino != null &&
+                          viagem.longitudeDestino != null && (
+                          <Polyline
+                            positions={[
+                              [
+                                viagem.latitudeMotorista,
+                                viagem.longitudeMotorista,
+                              ],
+                              [viagem.latitudeDestino, viagem.longitudeDestino],
+                            ]}
+                            pathOptions={{
+                              color: "#0070f3",
+                              dashArray: "8 12",
+                              weight: 4,
+                              opacity: 0.8,
+                            }}
+                          />
+                        )}
 
                         <Marker
                           position={[
@@ -523,43 +528,49 @@ const Page = () => {
                           </Popup>
                         </Marker>
 
-                        <Marker
-                          position={[
-                            viagem.latitudeOrigem,
-                            viagem.longitudeOrigem,
-                          ]}
-                          icon={origemIcon}
-                        >
-                          <Popup className="text-sm">
-                            <div className="space-y-1">
-                              <div className="font-semibold text-success">
-                                📍 ORIGEM (GPS)
+                        {viagem.latitudeOrigem != null &&
+                          viagem.longitudeOrigem != null && (
+                          <Marker
+                            position={[
+                              viagem.latitudeOrigem,
+                              viagem.longitudeOrigem,
+                            ]}
+                            icon={origemIcon}
+                          >
+                            <Popup className="text-sm">
+                              <div className="space-y-1">
+                                <div className="font-semibold text-success">
+                                  📍 ORIGEM (GPS)
+                                </div>
+                                <div className="text-xs">
+                                  {viagem.enderecoEmpresa}
+                                </div>
                               </div>
-                              <div className="text-xs">
-                                {viagem.enderecoEmpresa}
-                              </div>
-                            </div>
-                          </Popup>
-                        </Marker>
+                            </Popup>
+                          </Marker>
+                        )}
 
-                        <Marker
-                          position={[
-                            viagem.latitudeDestino,
-                            viagem.longitudeDestino,
-                          ]}
-                          icon={destinoIcon}
-                        >
-                          <Popup className="text-sm">
-                            <div className="space-y-1">
-                              <div className="font-semibold text-warning">
-                                👤 DESTINO (PASSAGEIRO)
+                        {viagem.latitudeDestino != null &&
+                          viagem.longitudeDestino != null && (
+                          <Marker
+                            position={[
+                              viagem.latitudeDestino,
+                              viagem.longitudeDestino,
+                            ]}
+                            icon={destinoIcon}
+                          >
+                            <Popup className="text-sm">
+                              <div className="space-y-1">
+                                <div className="font-semibold text-warning">
+                                  👤 DESTINO (PASSAGEIRO)
+                                </div>
+                                <div className="text-xs">
+                                  {viagem.passageiros?.[0]?.cidade || "Destino"}
+                                </div>
                               </div>
-                              <div className="text-xs">
-                                {viagem.passageiros?.[0]?.cidade || "Destino"}
-                              </div>
-                            </div>
-                          </Popup>
-                        </Marker>
+                            </Popup>
+                          </Marker>
+                        )}
                       </MapContainer>
                     ) : (
                       <div className="flex items-center justify-center h-full">
