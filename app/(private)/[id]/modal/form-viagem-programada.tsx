@@ -23,7 +23,7 @@ import {
 import { Chip } from "@heroui/chip";
 import { Icon } from "@iconify/react";
 import { Avatar } from "@heroui/avatar";
-import { Select, SelectItem } from "@heroui/select";
+import { Input } from "@heroui/input";
 import ShowToast from "@/src/components/Toast";
 import PlacesAutocomplete from "../components/places-autocomplete";
 
@@ -37,26 +37,14 @@ interface PlaceDetails {
   };
   name: string;
   place_id: string;
-  address_components?: {
-    long_name: string;
-    short_name: string;
-    types: string[];
-  }[];
 }
 
-interface LocalDTO {
-  tipo: "PASSAGEIRO" | "EMPRESA" | "ALTERNATIVO";
-  empresaId?: string;
+interface LocationDTO {
+  lat: number;
+  lng: number;
+  name: string;
+  address: string;
   placeId?: string;
-  nome?: string;
-  rua?: string;
-  numero?: string;
-  bairro?: string;
-  cidade?: string;
-  estado?: string;
-  cep?: string;
-  latitude?: number;
-  longitude?: number;
 }
 
 interface Props {
@@ -66,16 +54,6 @@ interface Props {
   empresa: string;
   token: string;
 }
-
-const LOCATION_OPTIONS = [
-  { key: "EMPRESA", label: "Empresa", icon: "solar:buildings-3-linear" },
-  { key: "PASSAGEIRO", label: "Casa do Passageiro", icon: "solar:home-linear" },
-  {
-    key: "ALTERNATIVO",
-    label: "Local Personalizado",
-    icon: "solar:location-linear",
-  },
-];
 
 export default function ScheduledTripModal({
   isOpen,
@@ -97,113 +75,45 @@ export default function ScheduledTripModal({
     end: today(getLocalTimeZone()).add({ weeks: 4 }),
   });
 
-  // Estados para locais personalizados
-  const [isFlexibleTrip, setIsFlexibleTrip] = useState(false);
-  const [origemTipo, setOrigemTipo] = useState<string>("PASSAGEIRO");
-  const [destinoTipo, setDestinoTipo] = useState<string>("EMPRESA");
-  const [origemCustom, setOrigemCustom] = useState<PlaceDetails | null>(null);
-  const [destinoCustom, setDestinoCustom] = useState<PlaceDetails | null>(null);
+  // Locais da rota (opcionais — se omitidos, o backend usa endereços cadastrados)
+  const [useCustomRoute, setUseCustomRoute] = useState(false);
+  const [origin, setOrigin] = useState<PlaceDetails | null>(null);
+  const [destination, setDestination] = useState<PlaceDetails | null>(null);
+  const [intermediateStops, setIntermediateStops] = useState<
+    (PlaceDetails | null)[]
+  >([]);
+  const [centroCustoId, setCentroCustoId] = useState<string>("");
 
-  const createLocalDTO = (
-    tipo: string,
-    customPlace?: PlaceDetails | null
-  ): LocalDTO => {
-    const local: LocalDTO = { tipo: tipo as LocalDTO["tipo"] };
+  const placeToLocationDTO = (place: PlaceDetails): LocationDTO => ({
+    lat: place.geometry.location.lat,
+    lng: place.geometry.location.lng,
+    name: place.name,
+    address: place.formatted_address,
+    placeId: place.place_id,
+  });
 
-    if (tipo === "EMPRESA") {
-      local.empresaId = empresa;
-    } else if (tipo === "ALTERNATIVO" && customPlace) {
-      local.placeId = customPlace.place_id;
-      local.nome = customPlace.name;
-      local.latitude = customPlace.geometry.location.lat;
-      local.longitude = customPlace.geometry.location.lng;
-
-      // Usa componentes de endereço estruturados se disponíveis
-      if (customPlace.address_components) {
-        const getAddressComponent = (types: string[]) => {
-          const component = customPlace.address_components?.find((comp) =>
-            types.some((type) => comp.types.includes(type))
-          );
-          return component?.long_name || "";
-        };
-
-        const getShortAddressComponent = (types: string[]) => {
-          const component = customPlace.address_components?.find((comp) =>
-            types.some((type) => comp.types.includes(type))
-          );
-          return component?.short_name || "";
-        };
-
-        // Mapeia os componentes corretamente
-        local.rua =
-          getAddressComponent(["route"]) ||
-          getAddressComponent(["street_address"]);
-        local.numero = getAddressComponent(["street_number"]);
-        local.bairro = getAddressComponent([
-          "sublocality",
-          "sublocality_level_1",
-        ]);
-        local.cidade = getAddressComponent([
-          "locality",
-          "administrative_area_level_2",
-        ]);
-        local.estado = getShortAddressComponent([
-          "administrative_area_level_1",
-        ]);
-        local.cep = getAddressComponent(["postal_code"]);
-      } else {
-        // Fallback para parsing manual se não houver componentes estruturados
-        const addressParts = customPlace.formatted_address.split(", ");
-        if (addressParts.length >= 1) {
-          local.rua = addressParts[0];
-          if (addressParts.length >= 3) {
-            local.cidade = addressParts[addressParts.length - 3] || "";
-            local.estado =
-              addressParts[addressParts.length - 2]?.split(" ")[0] || "";
-            local.cep = addressParts[addressParts.length - 1] || "";
-          }
-        }
-      }
-    }
-
-    return local;
+  const addIntermediateStop = () => {
+    setIntermediateStops([...intermediateStops, null]);
   };
 
-  const isProgramacaoFlexivel = (): boolean => {
-    return isFlexibleTrip;
+  const removeIntermediateStop = (index: number) => {
+    setIntermediateStops(intermediateStops.filter((_, i) => i !== index));
   };
 
-  const validateFlexibleTrip = (): boolean => {
-    if (!isProgramacaoFlexivel()) return true;
-
-    if (origemTipo === "ALTERNATIVO" && !origemCustom) {
-      ShowToast({
-        color: "danger",
-        title: "Selecione o local de origem personalizado",
-      });
-      return false;
-    }
-
-    if (destinoTipo === "ALTERNATIVO" && !destinoCustom) {
-      ShowToast({
-        color: "danger",
-        title: "Selecione o local de destino personalizado",
-      });
-      return false;
-    }
-
-    return true;
+  const updateIntermediateStop = (
+    index: number,
+    place: PlaceDetails | null
+  ) => {
+    const updated = [...intermediateStops];
+    updated[index] = place;
+    setIntermediateStops(updated);
   };
 
-  // Função de validação
   function validate() {
     const cidades = passagers.map((passager) => passager.cidade);
 
     if (!selectedPlan) {
-      ShowToast({
-        color: "danger",
-        title: "Selecione um plano de viagem!",
-      });
+      ShowToast({ color: "danger", title: "Selecione um plano de viagem!" });
       return false;
     }
 
@@ -215,8 +125,25 @@ export default function ScheduledTripModal({
       return false;
     }
 
-    if (!validateFlexibleTrip()) {
-      return false;
+    if (useCustomRoute) {
+      if (!origin) {
+        ShowToast({ color: "danger", title: "Selecione o local de origem!" });
+        return false;
+      }
+
+      if (!destination) {
+        ShowToast({ color: "danger", title: "Selecione o local de destino!" });
+        return false;
+      }
+
+      if (intermediateStops.some((stop) => stop === null)) {
+        ShowToast({
+          color: "danger",
+          title:
+            "Preencha todas as paradas intermediárias ou remova as vazias!",
+        });
+        return false;
+      }
     }
 
     if (!horaViagem) {
@@ -231,17 +158,13 @@ export default function ScheduledTripModal({
     }
 
     if (selectedPlan === "APANHA_E_RETORNO" && !horaRetorno) {
-      ShowToast({
-        color: "danger",
-        title: "Informe a hora do retorno!",
-      });
+      ShowToast({ color: "danger", title: "Informe a hora do retorno!" });
       return false;
     }
 
     return true;
   }
 
-  // Função para gerar os dados do request
   function generateDataToRequest() {
     const passagersID = passagers.map((passager) => passager.id);
 
@@ -254,8 +177,10 @@ export default function ScheduledTripModal({
       dataFinal: DateValue | undefined;
       horaViagem: TimeInputValue | null;
       horaRetorno?: TimeInputValue | null;
-      origens?: LocalDTO[];
-      destinos?: LocalDTO[];
+      origin?: LocationDTO;
+      destination?: LocationDTO;
+      intermediateCoordinates?: LocationDTO[];
+      centroCustoId?: number;
     } = {
       empresaID: empresa,
       tipoViagem: selectedPlan,
@@ -268,42 +193,27 @@ export default function ScheduledTripModal({
         selectedPlan === "APANHA_E_RETORNO" ? horaRetorno : undefined,
     };
 
-    // Adiciona locais personalizados se for programação flexível
-    if (isProgramacaoFlexivel()) {
-      // Origens
-      const origens = [];
-      if (origemTipo === "EMPRESA") {
-        origens.push(createLocalDTO("EMPRESA"));
-      } else if (origemTipo === "ALTERNATIVO" && origemCustom) {
-        origens.push(createLocalDTO("ALTERNATIVO", origemCustom));
-      } else if (origemTipo === "PASSAGEIRO") {
-        // Para passageiros múltiplos, criamos uma origem para cada um
-        passagers.forEach(() => {
-          origens.push(createLocalDTO("PASSAGEIRO"));
-        });
-      }
+    if (useCustomRoute && origin) {
+      requestData.origin = placeToLocationDTO(origin);
+    }
 
-      // Destinos
-      const destinos = [];
-      if (destinoTipo === "EMPRESA") {
-        destinos.push(createLocalDTO("EMPRESA"));
-      } else if (destinoTipo === "ALTERNATIVO" && destinoCustom) {
-        destinos.push(createLocalDTO("ALTERNATIVO", destinoCustom));
-      } else if (destinoTipo === "PASSAGEIRO") {
-        // Para passageiros múltiplos, criamos um destino para cada um
-        passagers.forEach(() => {
-          destinos.push(createLocalDTO("PASSAGEIRO"));
-        });
-      }
+    if (useCustomRoute && destination) {
+      requestData.destination = placeToLocationDTO(destination);
+    }
 
-      requestData.origens = origens;
-      requestData.destinos = destinos;
+    if (useCustomRoute && intermediateStops.length > 0) {
+      requestData.intermediateCoordinates = (
+        intermediateStops.filter(Boolean) as PlaceDetails[]
+      ).map(placeToLocationDTO);
+    }
+
+    if (centroCustoId) {
+      requestData.centroCustoId = Number(centroCustoId);
     }
 
     return requestData;
   }
 
-  // Função para realizar a solicitação da viagem
   async function requestViagem() {
     setIsLoading(true);
     const data = generateDataToRequest();
@@ -312,7 +222,6 @@ export default function ScheduledTripModal({
 
     try {
       const url = `${process.env.NEXT_PUBLIC_SERVER}/api/v1/programacao/criar`;
-      console.log(`[Programação] POST para: ${url}`);
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -322,54 +231,31 @@ export default function ScheduledTripModal({
         body: JSON.stringify(data),
       });
 
-      console.log(
-        "[Programação] Status da resposta:",
-        response.status,
-        response.statusText
-      );
-      let responseBody = null;
       try {
-        responseBody = await response.clone().json();
+        const responseBody = await response.clone().json();
         console.log("[Programação] Body da resposta:", responseBody);
       } catch {
         try {
-          responseBody = await response.clone().text();
+          const responseBody = await response.clone().text();
           console.log("[Programação] Body da resposta (texto):", responseBody);
         } catch {
-          console.log(
-            "[Programação] Body da resposta: não foi possível ler o corpo."
-          );
+          console.log("[Programação] Não foi possível ler o corpo da resposta.");
         }
       }
 
       if (!response.ok) {
-        console.error("[Programação] Erro na resposta:", response.statusText);
         ShowToast({
           color: "danger",
           title: "Erro ao solicitar a viagem. Tente novamente mais tarde.",
         });
         return;
       }
-      // Se a resposta for bem-sucedida, faça algo com os dados retornados
-      if (response.ok) {
-        // fechar o modal
-        onOpen(false);
-        return ShowToast({
-          color: "success",
-          title: "Programação solicitada com sucesso!",
-        });
-      }
 
-      // Se a resposta não for bem-sucedida, trate o erro
-      console.error(
-        "[Programação] Erro ao solicitar a viagem:",
-        response.statusText
-      );
-      ShowToast({
-        color: "danger",
-        title: "Erro ao solicitar a viagem. Tente novamente mais tarde.",
+      onOpen(false);
+      return ShowToast({
+        color: "success",
+        title: "Programação solicitada com sucesso!",
       });
-      return null;
     } catch (error) {
       console.error("[Programação] Exceção:", error);
       ShowToast({
@@ -378,7 +264,6 @@ export default function ScheduledTripModal({
       });
     } finally {
       setIsLoading(false);
-      console.log("[Programação] Fim do ciclo de requisição POST.");
     }
   }
 
@@ -422,7 +307,6 @@ export default function ScheduledTripModal({
             <ModalBody className="space-y-6 overflow-y-auto max-h-[calc(90vh-180px)]">
               {/* Informações básicas */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Cooperativa */}
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     <Icon
@@ -438,7 +322,6 @@ export default function ScheduledTripModal({
                   />
                 </div>
 
-                {/* Tipo de Viagem */}
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     <Icon
@@ -481,103 +364,124 @@ export default function ScheduledTripModal({
                 </div>
               </div>
 
-              {/* Programação Personalizada */}
-              <div className="space-y-4">
+              {/* Rota */}
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="block text-sm font-medium">
                     <Icon
-                      icon="solar:settings-linear"
+                      icon="solar:route-linear"
                       className="w-4 h-4 inline mr-2"
                     />
-                    Programação Personalizada
+                    Rota Personalizada
                   </label>
                   <Button
                     size="sm"
-                    variant={isFlexibleTrip ? "solid" : "bordered"}
-                    color={isFlexibleTrip ? "primary" : "default"}
-                    onPress={() => setIsFlexibleTrip(!isFlexibleTrip)}
+                    variant={useCustomRoute ? "solid" : "bordered"}
+                    color={useCustomRoute ? "primary" : "default"}
+                    onPress={() => {
+                      setUseCustomRoute(!useCustomRoute);
+                      setOrigin(null);
+                      setDestination(null);
+                      setIntermediateStops([]);
+                    }}
                   >
-                    {isFlexibleTrip ? "Ativado" : "Desativado"}
+                    {useCustomRoute ? "Ativada" : "Desativada"}
                   </Button>
                 </div>
 
-                {isFlexibleTrip && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-default-50 rounded-lg border">
-                    {/* Origem */}
-                    <div>
-                      <Select
-                        label="Origem"
-                        placeholder="Selecione o tipo de origem"
-                        selectedKeys={new Set([origemTipo])}
-                        onSelectionChange={(keys) => {
-                          const selected = Array.from(keys)[0] as string;
-                          setOrigemTipo(selected);
-                          if (selected !== "ALTERNATIVO") {
-                            setOrigemCustom(null);
-                          }
-                        }}
-                        size="sm"
-                        variant="bordered"
-                      >
-                        {LOCATION_OPTIONS.map((option) => (
-                          <SelectItem key={option.key} textValue={option.label}>
-                            <div className="flex items-center gap-2">
-                              <Icon icon={option.icon} className="text-sm" />
-                              <span className="text-sm">{option.label}</span>
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </Select>
+                {!useCustomRoute && (
+                  <p className="text-xs text-default-400">
+                    <Icon
+                      icon="solar:info-circle-linear"
+                      className="w-3.5 h-3.5 inline mr-1"
+                    />
+                    O sistema usará automaticamente o endereço cadastrado dos
+                    passageiros e da empresa conforme o tipo de viagem.
+                  </p>
+                )}
 
-                      {origemTipo === "ALTERNATIVO" && (
-                        <div className="mt-2">
+                {useCustomRoute && (
+                  <div className="space-y-3 p-4 bg-default-50 rounded-lg border">
+                    {/* Origem */}
+                    <PlacesAutocomplete
+                      label="Origem"
+                      onPlaceSelect={setOrigin}
+                      placeholder="Buscar local de origem..."
+                    />
+
+                    {/* Paradas intermediárias */}
+                    {intermediateStops.map((_, index) => (
+                      <div key={index} className="flex gap-2 items-end">
+                        <div className="flex-1">
                           <PlacesAutocomplete
-                            label="Local de origem"
-                            onPlaceSelect={setOrigemCustom}
-                            placeholder="Buscar local de origem..."
+                            label={`Parada ${index + 1}`}
+                            onPlaceSelect={(place) =>
+                              updateIntermediateStop(index, place)
+                            }
+                            placeholder={`Buscar parada ${index + 1}...`}
                           />
                         </div>
-                      )}
-                    </div>
+                        <Button
+                          size="sm"
+                          variant="light"
+                          color="danger"
+                          isIconOnly
+                          onPress={() => removeIntermediateStop(index)}
+                          className="mb-0.5"
+                        >
+                          <Icon
+                            icon="solar:trash-bin-trash-linear"
+                            className="w-4 h-4"
+                          />
+                        </Button>
+                      </div>
+                    ))}
+
+                    <Button
+                      size="sm"
+                      variant="flat"
+                      color="primary"
+                      onPress={addIntermediateStop}
+                      startContent={
+                        <Icon
+                          icon="solar:add-circle-linear"
+                          className="w-4 h-4"
+                        />
+                      }
+                    >
+                      Adicionar parada intermediária
+                    </Button>
 
                     {/* Destino */}
-                    <div>
-                      <Select
-                        label="Destino"
-                        placeholder="Selecione o tipo de destino"
-                        selectedKeys={new Set([destinoTipo])}
-                        onSelectionChange={(keys) => {
-                          const selected = Array.from(keys)[0] as string;
-                          setDestinoTipo(selected);
-                          if (selected !== "ALTERNATIVO") {
-                            setDestinoCustom(null);
-                          }
-                        }}
-                        size="sm"
-                        variant="bordered"
-                      >
-                        {LOCATION_OPTIONS.map((option) => (
-                          <SelectItem key={option.key} textValue={option.label}>
-                            <div className="flex items-center gap-2">
-                              <Icon icon={option.icon} className="text-sm" />
-                              <span className="text-sm">{option.label}</span>
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </Select>
-
-                      {destinoTipo === "ALTERNATIVO" && (
-                        <div className="mt-2">
-                          <PlacesAutocomplete
-                            label="Local de destino"
-                            onPlaceSelect={setDestinoCustom}
-                            placeholder="Buscar local de destino..."
-                          />
-                        </div>
-                      )}
-                    </div>
+                    <PlacesAutocomplete
+                      label="Destino"
+                      onPlaceSelect={setDestination}
+                      placeholder="Buscar local de destino..."
+                    />
                   </div>
                 )}
+              </div>
+
+              {/* Centro de Custo */}
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  <Icon
+                    icon="solar:wallet-linear"
+                    className="w-4 h-4 inline mr-2"
+                  />
+                  Centro de Custo{" "}
+                  <span className="text-default-400 font-normal">
+                    (opcional)
+                  </span>
+                </label>
+                <Input
+                  type="number"
+                  variant="bordered"
+                  placeholder="ID do centro de custo"
+                  value={centroCustoId}
+                  onValueChange={setCentroCustoId}
+                  size="sm"
+                />
               </div>
 
               {/* Período e Horários */}
