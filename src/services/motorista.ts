@@ -1,4 +1,5 @@
 import { getTokenClient } from "../utils/token/get-token-client";
+import { extractErrorMessage } from "../utils/http-error";
 
 export interface Motorista {
   id: string;
@@ -35,11 +36,16 @@ export async function getMotoristas(
   }
 }
 
+export interface AssignMotoristaResult {
+  success: boolean;
+  message?: string;
+}
+
 export async function assignMotoristaToRide(
   cooperativaId: string,
   rideId: string,
   motoristaId: string
-): Promise<boolean> {
+): Promise<AssignMotoristaResult> {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_SERVER}/api/v1/cooperativa/${cooperativaId}/viagem/${rideId}/motorista/${motoristaId}`,
@@ -53,13 +59,14 @@ export async function assignMotoristaToRide(
     );
 
     if (!response.ok) {
+      const message = await extractErrorMessage(response);
       console.error("Erro ao atribuir motorista:", response.status, response.statusText);
-      return false;
+      return { success: false, message };
     }
 
-    return true;
+    return { success: true };
   } catch (error) {
     console.error("Erro ao atribuir motorista:", error);
-    return false;
+    return { success: false, message: "Erro ao conectar com o servidor" };
   }
 }
