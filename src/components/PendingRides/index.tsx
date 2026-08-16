@@ -165,11 +165,11 @@ export const PendingRides = ({
       )}
 
       {/* Rides Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="flex flex-wrap gap-6">
         {rides.map((ride) => (
           <div
             key={ride.id}
-            className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+            className="w-full sm:w-[360px] bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
           >
             {/* Ride Header */}
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">

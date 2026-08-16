@@ -11,6 +11,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroui/react": "^3.2.4",
     "@heroui/styles": "^3.2.4",
     "@react-aria/i18n": "^3.13.1",
     "@react-aria/ssr": "^3.10.1",

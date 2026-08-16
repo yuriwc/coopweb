@@ -149,9 +149,9 @@ export const FilasDisplay = ({
       )}
 
       {/* Queue Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="flex flex-wrap gap-6">
         {filasParaExibir.map((fila) => (
-          <div key={fila.id} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div key={fila.id} className="w-full sm:w-[340px] bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
             {/* Queue Header */}
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
