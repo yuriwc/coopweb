@@ -1,10 +1,10 @@
 "use client";
 
 import { RelatorioVouchersCompleto } from "@/src/model/relatorio-vouchers";
-import { Card, CardBody, CardHeader } from "@heroui/card";
-import { Chip } from "@heroui/chip";
+import { Card } from "@heroui/react";
+import { Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { Tabs, Tab } from "@heroui/tabs";
+import { Tabs } from "@heroui/react";
 import Link from "next/link";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { fetchComLog } from "@/src/utils/log-fetch";
@@ -142,7 +142,7 @@ export default function DashboardClient({
         <div className="text-center">
           <Icon
             icon="solar:refresh-linear"
-            className="w-8 h-8 animate-spin mx-auto mb-4 text-primary"
+            className="w-8 h-8 animate-spin mx-auto mb-4 text-accent"
           />
           <p className="text-gray-600 dark:text-gray-300">
             Carregando dashboard...
@@ -156,7 +156,7 @@ export default function DashboardClient({
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <Card className="max-w-md border border-gray-200 dark:border-gray-700">
-          <CardBody className="text-center p-8">
+          <Card.Content className="text-center p-8">
             <Icon
               icon="solar:danger-triangle-linear"
               className="w-16 h-16 mx-auto text-danger mb-4"
@@ -167,7 +167,7 @@ export default function DashboardClient({
             <p className="text-gray-600 dark:text-gray-300">
               Não foi possível carregar o relatório de vouchers.
             </p>
-          </CardBody>
+          </Card.Content>
         </Card>
       </div>
     );
@@ -226,7 +226,7 @@ export default function DashboardClient({
             <Link
               href={`/${empresaId}`}
               aria-label="Voltar"
-              className="inline-flex items-center justify-center rounded-medium bg-default-100 dark:bg-default-50 h-10 w-10 text-gray-700 dark:text-gray-300 hover:opacity-80 transition-opacity shrink-0"
+              className="inline-flex items-center justify-center rounded-md bg-default-100 dark:bg-default-50 h-10 w-10 text-gray-700 dark:text-gray-300 hover:opacity-80 transition-opacity shrink-0"
             >
               <Icon icon="solar:arrow-left-linear" className="w-5 h-5" />
             </Link>
@@ -242,7 +242,7 @@ export default function DashboardClient({
           </div>
           <Link
             href={`/${empresaId}/vouchers/resumo`}
-            className="inline-flex items-center gap-2 rounded-medium border border-primary-200 dark:border-primary-800 text-primary-600 dark:text-primary-400 px-4 h-10 text-small font-medium hover:opacity-80 transition-opacity shrink-0"
+            className="inline-flex items-center gap-2 rounded-md border border-accent dark:border-accent text-accent dark:text-accent px-4 h-10 text-sm font-medium hover:opacity-80 transition-opacity shrink-0"
           >
             <Icon icon="solar:chart-linear" className="w-4 h-4" />
             Ver Gráficos
@@ -250,16 +250,25 @@ export default function DashboardClient({
         </header>
 
         <Card className="border border-gray-200 dark:border-gray-700 mb-6">
-          <CardBody className="p-6 sm:p-8">
+          <Card.Content className="p-6 sm:p-8">
             <Tabs
               selectedKey={selectedMonth}
               onSelectionChange={(key) => handleMonthChange(key as string)}
-              variant="underlined"
-              color="primary"
               className="mb-6"
             >
+              <Tabs.ListContainer>
+                <Tabs.List aria-label="Selecionar mês">
+                  {monthsData.map((month, index) => (
+                    <Tabs.Tab key={month.key} id={month.key}>
+                      {index > 0 && <Tabs.Separator />}
+                      {month.label}
+                      <Tabs.Indicator />
+                    </Tabs.Tab>
+                  ))}
+                </Tabs.List>
+              </Tabs.ListContainer>
               {monthsData.map((month) => (
-                <Tab key={month.key} title={month.label} />
+                <Tabs.Panel key={month.key} id={month.key}>{null}</Tabs.Panel>
               ))}
             </Tabs>
 
@@ -267,7 +276,7 @@ export default function DashboardClient({
               {summaryCards.map((card) => (
                 <div
                   key={card.key}
-                  className="flex items-center gap-3 p-4 rounded-medium bg-gray-50 dark:bg-gray-800/50"
+                  className="flex items-center gap-3 p-4 rounded-md bg-gray-50 dark:bg-gray-800/50"
                 >
                   <div className={`p-2 rounded-lg ${card.iconClass}`}>
                     <Icon icon={card.icon} className="w-5 h-5" />
@@ -283,7 +292,7 @@ export default function DashboardClient({
                 </div>
               ))}
             </div>
-          </CardBody>
+          </Card.Content>
         </Card>
 
         <section className="space-y-6">
@@ -292,7 +301,7 @@ export default function DashboardClient({
               key={centro.codigoCentroCusto}
               className="border border-gray-200 dark:border-gray-700"
             >
-              <CardHeader className="pb-3">
+              <Card.Header className="pb-3">
                 <div className="flex justify-between items-start w-full flex-wrap gap-3">
                   <div>
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -308,21 +317,21 @@ export default function DashboardClient({
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Chip size="sm" color="success" variant="flat">
+                    <Chip size="sm" color="success" variant="tertiary">
                       Pago: {centro.distribuicaoStatus.PAGO}
                     </Chip>
-                    <Chip size="sm" color="warning" variant="flat">
+                    <Chip size="sm" color="warning" variant="tertiary">
                       Pendente: {centro.distribuicaoStatus.PENDENTE}
                     </Chip>
-                    <Chip size="sm" color="primary" variant="flat">
+                    <Chip size="sm" color="accent" variant="tertiary">
                       Aprovado: {centro.distribuicaoStatus.APROVADO}
                     </Chip>
                   </div>
                 </div>
-              </CardHeader>
-              <CardBody>
+              </Card.Header>
+              <Card.Content>
                 <VouchersTable vouchers={centro.vouchers || []} />
-              </CardBody>
+              </Card.Content>
             </Card>
           ))}
         </section>

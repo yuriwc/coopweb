@@ -1,15 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-} from "@heroui/modal";
-import { Form } from "@heroui/form";
-import { Input } from "@heroui/input";
-import { Button } from "@heroui/button";
+import { Modal } from "@heroui/react";
+import { Form } from "@heroui/react";
+import { TextField, Label, Input, InputGroup } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { aplicarDescontoVoucher } from "../action/aplicar-desconto-voucher";
 import { AplicarDescontoVoucherDto, VoucherCooperativa } from "../../../../../../src/model/relatorio-vouchers";
 
@@ -63,14 +58,17 @@ export default function AplicarDescontoModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="sm">
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              Aplicar desconto — {voucher?.numeroVoucher}
-            </ModalHeader>
-            <ModalBody>
+    <Modal>
+      <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpenChange}>
+        <Modal.Container size="sm">
+          <Modal.Dialog>
+            {({ close }) => (
+              <>
+                <Modal.CloseTrigger />
+                <Modal.Header>
+                  <Modal.Heading>Aplicar desconto — {voucher?.numeroVoucher}</Modal.Heading>
+                </Modal.Header>
+                <Modal.Body>
               {voucher ? (
                 <p className="text-sm text-default-600">
                   Valor bruto: <strong>{formatCurrency(voucher.valorTotal)}</strong>
@@ -83,23 +81,28 @@ export default function AplicarDescontoModal({
                   handleSubmit();
                 }}
               >
-                <Input
-                  label="Valor do desconto"
+                <TextField
                   type="number"
-                  min={0.01}
-                  step={0.01}
-                  startContent={<span className="text-default-400">R$</span>}
                   value={dados.valorDesconto ? String(dados.valorDesconto) : ""}
-                  onValueChange={(v) => setDados((prev) => ({ ...prev, valorDesconto: Number(v) || 0 }))}
+                  onChange={(v) => setDados((prev) => ({ ...prev, valorDesconto: Number(v) || 0 }))}
                   isRequired
-                />
-                <Input
-                  label="Motivo"
-                  placeholder="Ex.: corrida com atraso reportado pelo passageiro"
+                >
+                  <Label>Valor do desconto</Label>
+                  <InputGroup>
+                    <InputGroup.Prefix>
+                      <span className="text-default-400">R$</span>
+                    </InputGroup.Prefix>
+                    <InputGroup.Input min={0.01} step={0.01} />
+                  </InputGroup>
+                </TextField>
+                <TextField
                   value={dados.motivoDesconto}
-                  onValueChange={(v) => setDados((prev) => ({ ...prev, motivoDesconto: v }))}
+                  onChange={(v) => setDados((prev) => ({ ...prev, motivoDesconto: v }))}
                   isRequired
-                />
+                >
+                  <Label>Motivo</Label>
+                  <Input placeholder="Ex.: corrida com atraso reportado pelo passageiro" />
+                </TextField>
 
                 {erro ? (
                   <p className="text-sm text-danger" role="alert">
@@ -108,18 +111,20 @@ export default function AplicarDescontoModal({
                 ) : null}
 
                 <div className="flex gap-2 justify-end w-full pt-2">
-                  <Button variant="light" onPress={() => handleClose(onClose)} isDisabled={enviando}>
+                  <Button variant="tertiary" onPress={() => handleClose(close)} isDisabled={enviando}>
                     Cancelar
                   </Button>
-                  <Button color="primary" type="submit" isLoading={enviando}>
+                  <Button variant="primary" type="submit" isPending={enviando}>
                     Aplicar
                   </Button>
                 </div>
               </Form>
-            </ModalBody>
-          </>
-        )}
-      </ModalContent>
+                </Modal.Body>
+              </>
+            )}
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 }

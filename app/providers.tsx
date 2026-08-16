@@ -1,29 +1,24 @@
 "use client";
 
-import { ToastProvider } from "@heroui/toast";
+import { Toast } from "@heroui/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { RouterProvider } from "react-aria-components";
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return <div style={{ visibility: "hidden" }}>{children}</div>;
-  }
+  const router = useRouter();
 
   return (
-    <NextThemesProvider
-      attribute="class"
-      defaultTheme="light"
-      enableSystem={false}
-      storageKey="coopweb-theme"
-    >
-      <ToastProvider />
-      {children}
-    </NextThemesProvider>
+    <RouterProvider navigate={router.push}>
+      <NextThemesProvider
+        attribute="class"
+        defaultTheme="light"
+        enableSystem={false}
+        storageKey="coopweb-theme"
+      >
+        <Toast.Provider />
+        {children}
+      </NextThemesProvider>
+    </RouterProvider>
   );
 }

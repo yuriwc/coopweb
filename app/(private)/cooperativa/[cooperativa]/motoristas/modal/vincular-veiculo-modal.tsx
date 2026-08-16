@@ -1,16 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-} from "@heroui/modal";
-import { Form } from "@heroui/form";
-import { Input } from "@heroui/input";
-import { Select, SelectItem } from "@heroui/select";
-import { Button } from "@heroui/button";
+import { Modal } from "@heroui/react";
+import { Form } from "@heroui/react";
+import { TextField, Input, Select, Label, ListBox } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { vincularVeiculo } from "../action/vincular-veiculo";
 import {
@@ -77,14 +71,19 @@ export default function VincularVeiculoModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="lg">
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              {motorista?.veiculo ? "Substituir veículo" : "Vincular veículo"} — {motorista?.nome ?? motorista?.cpf}
-            </ModalHeader>
-            <ModalBody>
+    <Modal>
+      <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpenChange}>
+        <Modal.Container size="lg">
+          <Modal.Dialog>
+            {({ close }) => (
+              <>
+                <Modal.CloseTrigger />
+                <Modal.Header>
+                  <Modal.Heading>
+                    {motorista?.veiculo ? "Substituir veículo" : "Vincular veículo"} — {motorista?.nome ?? motorista?.cpf}
+                  </Modal.Heading>
+                </Modal.Header>
+                <Modal.Body>
               {motorista?.veiculo ? (
                 <div className="flex items-start gap-2 rounded-lg bg-warning-50 dark:bg-warning-950/30 border border-warning-200 dark:border-warning-800 p-3">
                   <Icon icon="solar:danger-triangle-linear" className="w-5 h-5 text-warning-600 shrink-0 mt-0.5" />
@@ -103,69 +102,97 @@ export default function VincularVeiculoModal({
                 }}
               >
                 <div className="grid grid-cols-2 gap-3 w-full">
-                  <Input
-                    label="Marca"
+                  <TextField
                     value={dados.marca}
-                    onValueChange={(v) => setDados((prev) => ({ ...prev, marca: v }))}
+                    onChange={(v) => setDados((prev) => ({ ...prev, marca: v }))}
                     isRequired
-                  />
-                  <Input
-                    label="Modelo"
+                  >
+                    <Label>Marca</Label>
+                    <Input />
+                  </TextField>
+                  <TextField
                     value={dados.modelo}
-                    onValueChange={(v) => setDados((prev) => ({ ...prev, modelo: v }))}
+                    onChange={(v) => setDados((prev) => ({ ...prev, modelo: v }))}
                     isRequired
-                  />
+                  >
+                    <Label>Modelo</Label>
+                    <Input />
+                  </TextField>
                 </div>
                 <div className="grid grid-cols-2 gap-3 w-full">
-                  <Input
-                    label="Placa"
+                  <TextField
                     value={dados.placa}
-                    onValueChange={(v) => setDados((prev) => ({ ...prev, placa: v }))}
+                    onChange={(v) => setDados((prev) => ({ ...prev, placa: v }))}
                     isRequired
-                  />
-                  <Input
-                    label="Cor"
+                  >
+                    <Label>Placa</Label>
+                    <Input />
+                  </TextField>
+                  <TextField
                     value={dados.cor}
-                    onValueChange={(v) => setDados((prev) => ({ ...prev, cor: v }))}
+                    onChange={(v) => setDados((prev) => ({ ...prev, cor: v }))}
                     isRequired
-                  />
+                  >
+                    <Label>Cor</Label>
+                    <Input />
+                  </TextField>
                 </div>
                 <div className="grid grid-cols-3 gap-3 w-full">
-                  <Input
-                    label="Capacidade"
+                  <TextField
                     type="number"
-                    min={1}
                     value={String(dados.capacidade)}
-                    onValueChange={(v) => setDados((prev) => ({ ...prev, capacidade: Number(v) || 0 }))}
+                    onChange={(v) => setDados((prev) => ({ ...prev, capacidade: Number(v) || 0 }))}
                     isRequired
-                  />
+                  >
+                    <Label>Capacidade</Label>
+                    <Input min={1} />
+                  </TextField>
                   <Select
-                    label="Categoria"
-                    selectedKeys={[dados.categoria]}
-                    onSelectionChange={(keys) => {
-                      const [selected] = Array.from(keys) as CategoriaVeiculo[];
-                      if (selected) setDados((prev) => ({ ...prev, categoria: selected }));
+                    value={dados.categoria}
+                    onChange={(key) => {
+                      if (key) {
+                        setDados((prev) => ({
+                          ...prev,
+                          categoria: key.toString() as CategoriaVeiculo,
+                        }));
+                      }
                     }}
                     isRequired
                   >
-                    {CATEGORIAS.map(([key, label]) => (
-                      <SelectItem key={key}>{label}</SelectItem>
-                    ))}
+                    <Label>Categoria</Label>
+                    <Select.Trigger>
+                      <Select.Value />
+                      <Select.Indicator />
+                    </Select.Trigger>
+                    <Select.Popover>
+                      <ListBox>
+                        {CATEGORIAS.map(([key, label]) => (
+                          <ListBox.Item key={key} id={key} textValue={label}>
+                            {label}
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
+                        ))}
+                      </ListBox>
+                    </Select.Popover>
                   </Select>
-                  <Input
-                    label="Ano"
+                  <TextField
                     type="number"
                     value={String(dados.ano)}
-                    onValueChange={(v) => setDados((prev) => ({ ...prev, ano: Number(v) || 0 }))}
+                    onChange={(v) => setDados((prev) => ({ ...prev, ano: Number(v) || 0 }))}
                     isRequired
-                  />
+                  >
+                    <Label>Ano</Label>
+                    <Input />
+                  </TextField>
                 </div>
-                <Input
-                  label="Chassi"
+                <TextField
                   value={dados.chassi}
-                  onValueChange={(v) => setDados((prev) => ({ ...prev, chassi: v }))}
+                  onChange={(v) => setDados((prev) => ({ ...prev, chassi: v }))}
                   isRequired
-                />
+                >
+                  <Label>Chassi</Label>
+                  <Input />
+                </TextField>
 
                 {erro ? (
                   <p className="text-sm text-danger" role="alert">
@@ -174,18 +201,20 @@ export default function VincularVeiculoModal({
                 ) : null}
 
                 <div className="flex gap-2 justify-end w-full pt-2">
-                  <Button variant="light" onPress={() => handleClose(onClose)} isDisabled={enviando}>
+                  <Button variant="tertiary" onPress={() => handleClose(close)} isDisabled={enviando}>
                     Cancelar
                   </Button>
-                  <Button color="primary" type="submit" isLoading={enviando}>
+                  <Button variant="primary" type="submit" isPending={enviando}>
                     {motorista?.veiculo ? "Substituir" : "Vincular"}
                   </Button>
                 </div>
               </Form>
-            </ModalBody>
-          </>
-        )}
-      </ModalContent>
+                </Modal.Body>
+              </>
+            )}
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 }

@@ -1,4 +1,4 @@
-import { Card } from "@heroui/card";
+import { Card } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 

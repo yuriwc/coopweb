@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Chip } from "@heroui/chip";
-import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
-import { Button } from "@heroui/button";
+import { Chip } from "@heroui/react";
+import { ComboBox, Input, ListBox } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { Icon as IconifyIcon } from "@iconify/react";
 import { useFirebaseRides, PendingRide } from "@/src/services/firebase-rides";
 import {
@@ -187,7 +187,7 @@ export const PendingRides = ({
                 </div>
                 <Chip
                   size="sm"
-                  variant="flat"
+                  variant="tertiary"
                   className="bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300"
                 >
                   {ride.category}
@@ -379,9 +379,7 @@ export const PendingRides = ({
 
                 {/* Motorista Assignment */}
                 <div className="pt-3 border-t border-gray-100 dark:border-gray-700 space-y-2">
-                  <Autocomplete
-                    size="sm"
-                    placeholder="Buscar motorista por nome"
+                  <ComboBox
                     aria-label="Buscar e selecionar motorista para a viagem"
                     selectedKey={selectedMotorista[ride.id] || null}
                     onSelectionChange={(key) => {
@@ -391,31 +389,31 @@ export const PendingRides = ({
                         [ride.id]: selected,
                       }));
                     }}
-                    classNames={{
-                      listbox: "max-h-32",
-                    }}
-                    inputProps={{
-                      classNames: {
-                        input: "text-xs",
-                        inputWrapper: "h-8 min-h-8",
-                      },
-                    }}
                   >
-                    {motoristas.map((motorista) => (
-                      <AutocompleteItem key={motorista.id}>
-                        {motorista.nome}
-                      </AutocompleteItem>
-                    ))}
-                  </Autocomplete>
+                    <ComboBox.InputGroup>
+                      <Input placeholder="Buscar motorista por nome" className="text-xs h-8" />
+                      <ComboBox.Trigger />
+                    </ComboBox.InputGroup>
+                    <ComboBox.Popover>
+                      <ListBox className="max-h-32">
+                        {motoristas.map((motorista) => (
+                          <ListBox.Item key={motorista.id} id={motorista.id} textValue={motorista.nome}>
+                            {motorista.nome}
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
+                        ))}
+                      </ListBox>
+                    </ComboBox.Popover>
+                  </ComboBox>
 
                   <Button
                     size="sm"
-                    color="primary"
+                    variant="primary"
                     className="w-full h-8"
                     isDisabled={
                       !selectedMotorista[ride.id] || assigning[ride.id]
                     }
-                    isLoading={assigning[ride.id]}
+                    isPending={assigning[ride.id]}
                     onPress={() => handleAssignMotorista(ride.id)}
                   >
                     {assigning[ride.id]

@@ -1,53 +1,18 @@
 "use client";
 
 import { Funcionario } from "@/src/model/funcionario";
-import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  getKeyValue,
-  Selection,
-} from "@heroui/table";
-import { Chip } from "@heroui/chip";
-import { Tooltip } from "@heroui/tooltip";
+import { Table, Checkbox } from "@heroui/react";
+import type { Selection } from "react-aria-components";
+import { Chip } from "@heroui/react";
+import { Tooltip } from "@heroui/react";
 import React, { useState, useCallback } from "react";
-import { Button } from "@heroui/button";
+import { Button } from "@heroui/react";
 import { usePathname, useRouter } from "next/navigation";
 import Icon from "@/src/components/icon";
 import FormViagemProgramada from "./modal/form-viagem-programada";
 import FormViagem from "./modal/form-viagem";
 import VincularCentroCustoModal from "./modal/form-vincular-centro-custo";
 import CentroCustoModal from "./modal/form-centro-custo";
-
-const columns = [
-  {
-    key: "name",
-    label: "Nome",
-  },
-  {
-    key: "phone",
-    label: "Telefone",
-  },
-  {
-    key: "cidade",
-    label: "Cidade",
-  },
-  {
-    key: "estado",
-    label: "Estado",
-  },
-  {
-    key: "centroCusto",
-    label: "Centro de Custo",
-  },
-  {
-    key: "acoes",
-    label: "Ações",
-  },
-];
 
 interface TablePassegersProps {
   funcionarios: Funcionario[];
@@ -97,97 +62,99 @@ const TablePassegers = ({
 
   return (
     <div className="flex flex-col gap-3">
-      <Table
-        aria-label="Tabela de funciários de uma empresa"
-        selectionMode="multiple"
-        onSelectionChange={handleSelectionChange}
-        classNames={{
-          wrapper: "bg-transparent shadow-none p-0",
-          th: "bg-gray-50 dark:bg-gray-800/50",
-        }}
-        topContent={
-          <div className="flex items-center gap-3 justify-end w-full">
-            <div className="flex flex-row items-center gap-4">
-              {/* Ações de Viagem */}
-              <div className="flex flex-row gap-2">
-                <Button
-                  onPress={() => setIsModalOpen(true)}
-                  variant="solid"
-                  color="primary"
-                  size="sm"
-                  startContent={<Icon icon="solar:car-linear" height={16} />}
-                  className="font-medium transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
-                  isDisabled={passagers.length === 0}
-                >
-                  Solicitar Viagem
-                </Button>
-                <Button
-                  onPress={() => setIsModalProgramadaOpen(true)}
-                  variant="bordered"
-                  color="primary"
-                  size="sm"
-                  startContent={<Icon icon="solar:calendar-linear" height={16} />}
-                  className="font-medium transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
-                  isDisabled={passagers.length === 0}
-                >
-                  Programar Viagem
-                </Button>
-              </div>
+      <Table className="bg-transparent shadow-none p-0">
+        <div className="flex items-center gap-3 justify-end w-full">
+          <div className="flex flex-row items-center gap-4">
+            {/* Ações de Viagem */}
+            <div className="flex flex-row gap-2">
+              <Button
+                onPress={() => setIsModalOpen(true)}
+                variant="primary"
+                size="sm"
+                className="font-medium"
+                isDisabled={passagers.length === 0}
+              >
+                <Icon icon="solar:car-linear" height={16} />
+                Solicitar Viagem
+              </Button>
+              <Button
+                onPress={() => setIsModalProgramadaOpen(true)}
+                variant="secondary"
+                size="sm"
+                className="font-medium"
+                isDisabled={passagers.length === 0}
+              >
+                <Icon icon="solar:calendar-linear" height={16} />
+                Programar Viagem
+              </Button>
+            </div>
 
-              {/* Separador visual */}
-              <div className="h-8 w-px bg-linear-to-b from-transparent via-gray-300/50 dark:via-gray-600/50 to-transparent" />
+            {/* Separador visual */}
+            <div className="h-8 w-px bg-linear-to-b from-transparent via-gray-300/50 dark:via-gray-600/50 to-transparent" />
 
-              {/* Gestão de Colaboradores */}
-              <div className="flex flex-row items-center gap-2">
-                <Button
-                  onPress={handleCreate}
-                  variant="flat"
-                  size="sm"
-                  startContent={<Icon icon="iconoir:plus" height={16} />}
-                >
-                  Novo Colaborador
-                </Button>
-                
-                <CentroCustoModal
-                  isOpen={isCentroCustoModalOpen}
-                  onOpen={setIsCentroCustoModalOpen}
-                  empresa={empresa}
-                  token={token}
-                  onSuccess={handleRefresh}
-                />
-              </div>
-              
-              {/* Modais (renderizados fora da estrutura visual) */}
-              <FormViagem
-                token={token}
-                isOpen={isModalOpen}
-                onOpen={setIsModalOpen}
-                passagers={passagers}
+            {/* Gestão de Colaboradores */}
+            <div className="flex flex-row items-center gap-2">
+              <Button onPress={handleCreate} variant="tertiary" size="sm">
+                <Icon icon="iconoir:plus" height={16} />
+                Novo Colaborador
+              </Button>
+
+              <CentroCustoModal
+                isOpen={isCentroCustoModalOpen}
+                onOpen={setIsCentroCustoModalOpen}
                 empresa={empresa}
-              />
-              <FormViagemProgramada
                 token={token}
-                isOpen={isModalProgramadaOpen}
-                onOpen={setIsModalProgramadaOpen}
-                passagers={passagers}
-                empresa={empresa}
+                onSuccess={handleRefresh}
               />
             </div>
+
+            {/* Modais (renderizados fora da estrutura visual) */}
+            <FormViagem
+              token={token}
+              isOpen={isModalOpen}
+              onOpen={setIsModalOpen}
+              passagers={passagers}
+              empresa={empresa}
+            />
+            <FormViagemProgramada
+              token={token}
+              isOpen={isModalProgramadaOpen}
+              onOpen={setIsModalProgramadaOpen}
+              passagers={passagers}
+              empresa={empresa}
+            />
           </div>
-        }
-      >
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn key={column.key}>{column.label}</TableColumn>
-          )}
-        </TableHeader>
-        <TableBody items={funcionarios}>
-          {(item) => (
-            <TableRow key={item.id}>
-              {(columnKey) => (
-                <TableCell>
-                  {columnKey === "centroCusto" ? (
-                    item.centroCustoCodigo ? (
+        </div>
+
+        <Table.ScrollContainer>
+          <Table.Content
+            aria-label="Tabela de funciários de uma empresa"
+            selectionMode="multiple"
+            onSelectionChange={handleSelectionChange}
+          >
+            <Table.Header>
+              <Table.Column className="bg-gray-50 dark:bg-gray-800/50">
+                <Checkbox slot="selection" />
+              </Table.Column>
+              <Table.Column className="bg-gray-50 dark:bg-gray-800/50">Nome</Table.Column>
+              <Table.Column className="bg-gray-50 dark:bg-gray-800/50">Telefone</Table.Column>
+              <Table.Column className="bg-gray-50 dark:bg-gray-800/50">Cidade</Table.Column>
+              <Table.Column className="bg-gray-50 dark:bg-gray-800/50">Estado</Table.Column>
+              <Table.Column className="bg-gray-50 dark:bg-gray-800/50">Centro de Custo</Table.Column>
+              <Table.Column className="bg-gray-50 dark:bg-gray-800/50">Ações</Table.Column>
+            </Table.Header>
+            <Table.Body items={funcionarios}>
+              {(item) => (
+                <Table.Row id={item.id}>
+                  <Table.Cell>
+                    <Checkbox slot="selection" />
+                  </Table.Cell>
+                  <Table.Cell>{item.name}</Table.Cell>
+                  <Table.Cell>{item.phone || <span className="text-gray-400">—</span>}</Table.Cell>
+                  <Table.Cell>{item.cidade || <span className="text-gray-400">—</span>}</Table.Cell>
+                  <Table.Cell>{item.estado || <span className="text-gray-400">—</span>}</Table.Cell>
+                  <Table.Cell>
+                    {item.centroCustoCodigo ? (
                       <div className="flex flex-col">
                         <span className="font-semibold text-sm">
                           {item.centroCustoCodigo}
@@ -197,41 +164,38 @@ const TablePassegers = ({
                         </span>
                       </div>
                     ) : (
-                      <Chip size="sm" variant="flat" color="default">
+                      <Chip size="sm" variant="tertiary" color="default">
                         Não vinculado
                       </Chip>
-                    )
-                  ) : columnKey === "acoes" ? (
-                    <Tooltip
-                      content={
-                        item.centroCustoCodigo
-                          ? "Alterar centro de custo"
-                          : "Vincular centro de custo"
-                      }
-                    >
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        variant="flat"
-                        color="primary"
-                        aria-label={`${item.centroCustoCodigo ? "Alterar" : "Vincular"} centro de custo de ${item.name}`}
-                        onPress={() => handleVincularCentroCusto(item)}
-                      >
-                        <Icon icon="solar:link-linear" height={16} />
-                      </Button>
+                    )}
+                  </Table.Cell>
+                  <Table.Cell>
+                    <Tooltip delay={0}>
+                      <Tooltip.Trigger>
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          variant="tertiary"
+                          aria-label={`${item.centroCustoCodigo ? "Alterar" : "Vincular"} centro de custo de ${item.name}`}
+                          onPress={() => handleVincularCentroCusto(item)}
+                        >
+                          <Icon icon="solar:link-linear" height={16} />
+                        </Button>
+                      </Tooltip.Trigger>
+                      <Tooltip.Content>
+                        <p>
+                          {item.centroCustoCodigo
+                            ? "Alterar centro de custo"
+                            : "Vincular centro de custo"}
+                        </p>
+                      </Tooltip.Content>
                     </Tooltip>
-                  ) : columnKey === "phone" || columnKey === "cidade" || columnKey === "estado" ? (
-                    getKeyValue(item, columnKey) || (
-                      <span className="text-gray-400">—</span>
-                    )
-                  ) : (
-                    getKeyValue(item, columnKey)
-                  )}
-                </TableCell>
+                  </Table.Cell>
+                </Table.Row>
               )}
-            </TableRow>
-          )}
-        </TableBody>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
       </Table>
 
       {selectedFuncionario && (

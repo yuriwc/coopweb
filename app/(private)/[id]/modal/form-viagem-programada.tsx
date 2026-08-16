@@ -1,37 +1,37 @@
 "use client";
 
 import { Funcionario } from "@/src/model/funcionario";
-import { Button } from "@heroui/button";
+import { Button } from "@heroui/react";
 import TipoViagem from "../tipoViagem";
 import { useState } from "react";
-import { DateValue, RangeCalendar, RangeValue } from "@heroui/calendar";
+import { DateValue, RangeCalendar, RangeValue } from "@heroui/react";
 import {
   today,
   getLocalTimeZone,
   isWeekend,
   getDayOfWeek,
 } from "@internationalized/date";
-import { Checkbox } from "@heroui/checkbox";
-import { Switch } from "@heroui/switch";
+import {
+  Checkbox,
+  TimeField,
+  Label,
+  type TimeValue,
+} from "@heroui/react";
+import { DateInputGroup } from "@heroui/react/date-input-group";
+import type { DateSegment } from "@react-stately/datepicker";
+import { Switch } from "@heroui/react";
 import { useLocale } from "@react-aria/i18n";
-import { TimeInput, TimeInputValue } from "@heroui/date-input";
 import SelectCooperativas from "../select/cooperativas";
 import SelectCentrosCusto from "../select/centros-custo";
 import LocationEntry, {
   EMPTY_LOCATION,
   LocationFormState,
 } from "../components/location-entry";
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-} from "@heroui/modal";
-import { Chip } from "@heroui/chip";
+import { Modal } from "@heroui/react";
+import { Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { Avatar } from "@heroui/avatar";
-import { Card, CardBody, CardHeader } from "@heroui/card";
+import { Avatar } from "@heroui/react";
+import { Card } from "@heroui/react";
 import ShowToast from "@/src/components/Toast";
 import { fetchComLog } from "@/src/utils/log-fetch";
 
@@ -71,8 +71,8 @@ export default function ScheduledTripModal({
   const [selectedPlan, setSelectedPlan] = useState<string>("");
   const [evitarFinsDeSemana, setEvitarFinsDeSemana] = useState(false);
   const [evitarDomingos, setEvitarDomingos] = useState(false);
-  const [horaViagem, setHoraViagem] = useState<TimeInputValue | null>(null);
-  const [horaRetorno, setHoraRetorno] = useState<TimeInputValue | null>(null);
+  const [horaViagem, setHoraViagem] = useState<TimeValue | null>(null);
+  const [horaRetorno, setHoraRetorno] = useState<TimeValue | null>(null);
   const [cooperativa, setCooperativa] = useState<string>("");
   const [centroCusto, setCentroCusto] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
@@ -189,8 +189,8 @@ export default function ScheduledTripModal({
       passageiros: string[];
       dataInicial: DateValue | undefined;
       dataFinal: DateValue | undefined;
-      horaViagem: TimeInputValue | null;
-      horaRetorno?: TimeInputValue | null;
+      horaViagem: TimeValue | null;
+      horaRetorno?: TimeValue | null;
       origin?: LocationDTO;
       destination?: LocationDTO;
       intermediateCoordinates?: LocationDTO[];
@@ -283,50 +283,47 @@ export default function ScheduledTripModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpen} size="2xl" scrollBehavior="inside">
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              Programar Viagem
-              <p className="text-sm text-default-500 font-normal">
-                Configure uma viagem recorrente para os passageiros selecionados
-              </p>
-            </ModalHeader>
+    <Modal>
+      <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpen}>
+        <Modal.Container size="lg" scroll="inside">
+          <Modal.Dialog>
+            {({ close }) => (
+              <>
+                <Modal.CloseTrigger />
+                <Modal.Header>
+                  <Modal.Heading>
+                    Programar Viagem
+                    <p className="text-sm text-default-500 font-normal">
+                      Configure uma viagem recorrente para os passageiros selecionados
+                    </p>
+                  </Modal.Heading>
+                </Modal.Header>
 
-            <ModalBody className="gap-6">
+                <Modal.Body className="gap-6">
               {/* Passageiros selecionados */}
               <Card>
-                <CardHeader>
+                <Card.Header>
                   <div className="flex items-center gap-2">
                     <Icon icon="solar:users-group-rounded-linear" className="text-lg" />
                     <span className="text-sm font-medium">
                       Passageiros ({passagers.length})
                     </span>
                   </div>
-                </CardHeader>
-                <CardBody className="pt-0">
+                </Card.Header>
+                <Card.Content className="pt-0">
                   <div className="flex flex-wrap gap-2">
                     {passagers.map((passager) => (
-                      <Chip
-                        key={passager.id}
-                        avatar={
-                          <Avatar
-                            name={passager.name}
-                            size="sm"
-                            getInitials={(name) =>
-                              name.split(" ").map((n) => n[0]).join("").slice(0, 2)
-                            }
-                          />
-                        }
-                        variant="flat"
-                        color="primary"
-                      >
+                      <Chip key={passager.id} variant="tertiary" color="accent">
+                        <Avatar size="sm">
+                          <Avatar.Fallback>
+                            {passager.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                          </Avatar.Fallback>
+                        </Avatar>
                         {passager.name}
                       </Chip>
                     ))}
                   </div>
-                </CardBody>
+                </Card.Content>
               </Card>
 
               {/* Cooperativa e tipo de viagem */}
@@ -349,9 +346,15 @@ export default function ScheduledTripModal({
                 </div>
                 <Switch
                   isSelected={isFlexibleTrip}
-                  onValueChange={setIsFlexibleTrip}
+                  onChange={setIsFlexibleTrip}
                   aria-label="Ativar viagem personalizada"
-                />
+                >
+                  <Switch.Content>
+                    <Switch.Control>
+                      <Switch.Thumb />
+                    </Switch.Control>
+                  </Switch.Content>
+                </Switch>
               </div>
 
               {!isFlexibleTrip ? (
@@ -396,12 +399,11 @@ export default function ScheduledTripModal({
 
                   <Button
                     size="sm"
-                    variant="flat"
-                    color="default"
-                    startContent={<Icon icon="solar:add-circle-linear" />}
+                    variant="tertiary"
                     onPress={addIntermediateStop}
                     className="w-full"
                   >
+                    <Icon icon="solar:add-circle-linear" />
                     Adicionar parada intermediária
                   </Button>
 
@@ -440,22 +442,46 @@ export default function ScheduledTripModal({
                         (evitarFinsDeSemana && isWeekend(date, locale)) ||
                         (evitarDomingos && getDayOfWeek(date, locale) === 0)
                       }
-                      classNames={{ content: "w-full", base: "w-full" }}
-                    />
+                      className="w-full"
+                    >
+                      <RangeCalendar.Header>
+                        <RangeCalendar.Heading />
+                        <RangeCalendar.NavButton slot="previous" />
+                        <RangeCalendar.NavButton slot="next" />
+                      </RangeCalendar.Header>
+                      <RangeCalendar.Grid className="w-full">
+                        <RangeCalendar.GridHeader>
+                          {(day) => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+                        </RangeCalendar.GridHeader>
+                        <RangeCalendar.GridBody>
+                          {(date) => <RangeCalendar.Cell date={date} />}
+                        </RangeCalendar.GridBody>
+                      </RangeCalendar.Grid>
+                    </RangeCalendar>
                     <div className="space-y-2">
                       <Checkbox
+                        id="evitar-fins-de-semana"
                         onChange={() => setEvitarFinsDeSemana(!evitarFinsDeSemana)}
                         isSelected={evitarFinsDeSemana}
-                        size="sm"
                       >
-                        <span className="text-sm">Evitar fins de semana</span>
+                        <Checkbox.Content>
+                          <Checkbox.Control>
+                            <Checkbox.Indicator />
+                          </Checkbox.Control>
+                          <span className="text-sm">Evitar fins de semana</span>
+                        </Checkbox.Content>
                       </Checkbox>
                       <Checkbox
+                        id="evitar-domingos"
                         onChange={() => setEvitarDomingos(!evitarDomingos)}
                         isSelected={evitarDomingos}
-                        size="sm"
                       >
-                        <span className="text-sm">Evitar domingos</span>
+                        <Checkbox.Content>
+                          <Checkbox.Control>
+                            <Checkbox.Indicator />
+                          </Checkbox.Control>
+                          <span className="text-sm">Evitar domingos</span>
+                        </Checkbox.Content>
                       </Checkbox>
                     </div>
                   </div>
@@ -466,53 +492,63 @@ export default function ScheduledTripModal({
                     Horários
                   </h3>
                   <div className="space-y-4">
-                    <TimeInput
-                      variant="bordered"
+                    <TimeField
                       hourCycle={24}
                       isRequired
-                      label={
-                        selectedPlan === "RETORNO"
+                      onChange={setHoraViagem}
+                      value={horaViagem}
+                    >
+                      <Label>
+                        {selectedPlan === "RETORNO"
                           ? "Hora do retorno"
                           : selectedPlan === "APANHA_E_RETORNO"
                             ? "Hora da apanha"
-                            : "Hora da viagem"
-                      }
-                      onChange={setHoraViagem}
-                      value={horaViagem}
-                    />
+                            : "Hora da viagem"}
+                      </Label>
+                      <DateInputGroup variant="secondary">
+                        <DateInputGroup.Input>
+                          {(segment: DateSegment) => <DateInputGroup.Segment segment={segment} />}
+                        </DateInputGroup.Input>
+                      </DateInputGroup>
+                    </TimeField>
                     {selectedPlan === "APANHA_E_RETORNO" && (
-                      <TimeInput
-                        variant="bordered"
+                      <TimeField
                         hourCycle={24}
                         isRequired
-                        label="Hora do retorno"
                         onChange={setHoraRetorno}
                         value={horaRetorno}
-                      />
+                      >
+                        <Label>Hora do retorno</Label>
+                        <DateInputGroup variant="secondary">
+                          <DateInputGroup.Input>
+                            {(segment: DateSegment) => <DateInputGroup.Segment segment={segment} />}
+                          </DateInputGroup.Input>
+                        </DateInputGroup>
+                      </TimeField>
                     )}
                   </div>
                 </div>
               </div>
-            </ModalBody>
+                </Modal.Body>
 
-            <ModalFooter>
-              <Button variant="light" onPress={onClose} isDisabled={isLoading}>
-                Cancelar
-              </Button>
-              <Button
-                color="primary"
-                onPress={handleSolicitarViagem}
-                isLoading={isLoading}
-                startContent={
-                  !isLoading && <Icon icon="solar:calendar-add-linear" className="w-4 h-4" />
-                }
-              >
-                {isLoading ? "Programando..." : "Programar Viagem"}
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
+                <Modal.Footer>
+                  <Button variant="tertiary" onPress={close} isDisabled={isLoading}>
+                    Cancelar
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onPress={handleSolicitarViagem}
+                    isPending={isLoading}
+                  >
+                    {!isLoading && <Icon icon="solar:calendar-add-linear" className="w-4 h-4" />}
+                    {isLoading ? "Programando..." : "Programar Viagem"}
+                  </Button>
+                </Modal.Footer>
+              </>
+            )}
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 }

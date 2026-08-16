@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Chip } from "@heroui/chip";
-import { ScrollShadow } from "@heroui/scroll-shadow";
+import { Chip } from "@heroui/react";
+import { ScrollShadow } from "@heroui/react";
 import { Icon as IconifyIcon } from "@iconify/react";
 import { useFirebaseQueues, Fila, MotoristaFila } from "@/src/services/firebase-queue";
 import { formatTimestampToTime } from "@/src/utils/date";
@@ -175,7 +175,7 @@ export const FilasDisplay = ({
                 </div>
                 <Chip
                   size="sm"
-                  variant="flat"
+                  variant="tertiary"
                   className="bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
                 >
                   {fila.motoristas.length}

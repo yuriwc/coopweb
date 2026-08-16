@@ -1,26 +1,13 @@
 "use client";
 
 import React from "react";
-import { Pagination } from "@heroui/pagination";
-import { Button } from "@heroui/button";
-import { Input } from "@heroui/input";
-import { Chip, ChipProps } from "@heroui/chip";
-import {
-  DropdownTrigger,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/dropdown";
-import {
-  SortDescriptor,
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  Selection,
-} from "@heroui/table";
+import { Pagination } from "@heroui/react";
+import { Button } from "@heroui/react";
+import { TextField, InputGroup, CloseButton } from "@heroui/react";
+import { Chip } from "@heroui/react";
+import { Dropdown, Label } from "@heroui/react";
+import { Table } from "@heroui/react";
+import type { Selection, SortDescriptor } from "react-aria-components";
 import { Icon } from "@iconify/react";
 import { Viagem } from "@/src/model/viagem";
 import { formatDateBR } from "@/src/utils/date";
@@ -46,9 +33,12 @@ const statusOptions = [
   { name: "Agendada", uid: "Agendada" },
 ];
 
-const statusColorMap: Record<string, ChipProps["color"]> = {
+const statusColorMap: Record<
+  string,
+  "default" | "accent" | "success" | "warning" | "danger"
+> = {
   Finalizada: "success",
-  "Em Andamento": "primary",
+  "Em Andamento": "accent",
   Cancelada: "danger",
   Agendada: "warning",
 };
@@ -243,7 +233,7 @@ export default function ViagemTable({ viagens }: Props) {
               className="capitalize"
               color={statusColorMap[viagem.status] || "default"}
               size="sm"
-              variant="flat"
+              variant="tertiary"
             >
               {viagem.status}
             </Chip>
@@ -253,14 +243,13 @@ export default function ViagemTable({ viagens }: Props) {
             <div className="flex justify-end items-center">
               <Button
                 size="sm"
-                variant="flat"
-                color="primary"
-                startContent={<Icon icon="solar:eye-linear" />}
+                variant="tertiary"
                 onPress={() => {
                   setSelectedTrip(viagem);
                   setIsModalOpen(true);
                 }}
               >
+                <Icon icon="solar:eye-linear" />
                 Detalhes
               </Button>
             </div>
@@ -310,70 +299,80 @@ export default function ViagemTable({ viagens }: Props) {
     return (
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-3 items-end">
-          <Input
-            isClearable
+          <TextField
             className="w-full sm:max-w-[44%]"
-            placeholder="Buscar por passageiro, motorista, origem ou destino..."
-            startContent={<Icon icon="solar:magnifer-linear" className="text-default-400" />}
             value={filterValue}
-            onClear={() => onClear()}
-            onValueChange={onSearchChange}
-            variant="bordered"
-          />
+            onChange={onSearchChange}
+            aria-label="Buscar por passageiro, motorista, origem ou destino"
+          >
+            <InputGroup>
+              <InputGroup.Prefix>
+                <Icon icon="solar:magnifer-linear" className="text-default-400" />
+              </InputGroup.Prefix>
+              <InputGroup.Input placeholder="Buscar por passageiro, motorista, origem ou destino..." />
+              {filterValue && (
+                <InputGroup.Suffix>
+                  <CloseButton aria-label="Limpar busca" onPress={() => onClear()} />
+                </InputGroup.Suffix>
+              )}
+            </InputGroup>
+          </TextField>
           <div className="flex gap-3">
             <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button endContent={<Icon icon="solar:alt-arrow-down-linear" />} variant="flat">
-                  Status
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {status.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
+              <Button variant="tertiary" className="hidden sm:flex">
+                Status
+                <Icon icon="solar:alt-arrow-down-linear" />
+              </Button>
+              <Dropdown.Popover>
+                <Dropdown.Menu
+                  disallowEmptySelection
+                  aria-label="Filtrar por status"
+                  selectedKeys={statusFilter}
+                  selectionMode="multiple"
+                  onSelectionChange={setStatusFilter}
+                >
+                  {statusOptions.map((status) => (
+                    <Dropdown.Item key={status.uid} id={status.uid} textValue={status.name} className="capitalize">
+                      <Dropdown.ItemIndicator />
+                      <Label>{status.name}</Label>
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown.Popover>
             </Dropdown>
             <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button endContent={<Icon icon="solar:alt-arrow-down-linear" />} variant="flat">
-                  Colunas
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
-              >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {column.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
+              <Button variant="tertiary" className="hidden sm:flex">
+                Colunas
+                <Icon icon="solar:alt-arrow-down-linear" />
+              </Button>
+              <Dropdown.Popover>
+                <Dropdown.Menu
+                  disallowEmptySelection
+                  aria-label="Colunas visíveis"
+                  selectedKeys={visibleColumns}
+                  selectionMode="multiple"
+                  onSelectionChange={setVisibleColumns}
+                >
+                  {columns.map((column) => (
+                    <Dropdown.Item key={column.uid} id={column.uid} textValue={column.name} className="capitalize">
+                      <Dropdown.ItemIndicator />
+                      <Label>{column.name}</Label>
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown.Popover>
             </Dropdown>
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">
+          <span className="text-default-400 text-sm">
             Total de {filteredItems.length}
             {filteredItems.length !== 1 ? " viagens" : " viagem"}
           </span>
-          <label className="flex items-center text-default-400 text-small">
+          <label className="flex items-center text-default-400 text-sm">
             Linhas por página:
             <select
-              className="bg-transparent outline-none text-default-400 text-small ml-2"
+              className="bg-transparent outline-none text-default-400 text-sm ml-2"
               onChange={onRowsPerPageChange}
               value={rowsPerPage}
             >
@@ -400,23 +399,33 @@ export default function ViagemTable({ viagens }: Props) {
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-small text-default-400">
+        <span className="w-[30%] text-sm text-default-400">
           {filteredItems.length} {filteredItems.length !== 1 ? "viagens" : "viagem"}
         </span>
-        <Pagination
-          isCompact
-          showControls
-          showShadow
-          color="primary"
-          page={page}
-          total={pages}
-          onChange={setPage}
-        />
+        <Pagination>
+          <Pagination.Content>
+            <Pagination.Item>
+              <Pagination.Previous isDisabled={page === 1} onPress={onPreviousPage}>
+                <Pagination.PreviousIcon />
+              </Pagination.Previous>
+            </Pagination.Item>
+            <Pagination.Item>
+              <span className="px-2 text-sm text-default-500">
+                {page} / {pages}
+              </span>
+            </Pagination.Item>
+            <Pagination.Item>
+              <Pagination.Next isDisabled={page === pages} onPress={onNextPage}>
+                <Pagination.NextIcon />
+              </Pagination.Next>
+            </Pagination.Item>
+          </Pagination.Content>
+        </Pagination>
         <div className="hidden sm:flex w-[30%] justify-end gap-2">
           <Button
             isDisabled={pages === 1}
             size="sm"
-            variant="flat"
+            variant="tertiary"
             onPress={onPreviousPage}
           >
             Anterior
@@ -424,7 +433,7 @@ export default function ViagemTable({ viagens }: Props) {
           <Button
             isDisabled={pages === 1}
             size="sm"
-            variant="flat"
+            variant="tertiary"
             onPress={onNextPage}
           >
             Próximo
@@ -450,41 +459,45 @@ export default function ViagemTable({ viagens }: Props) {
           setSelectedTrip(null);
         }}
       />
-      <Table
-      isHeaderSticky
-      aria-label="Tabela de viagens com paginação e filtros"
-      bottomContent={bottomContent}
-      bottomContentPlacement="outside"
-      classNames={{
-        wrapper: "max-h-[calc(100vh-300px)] bg-transparent shadow-none p-0",
-        th: "bg-gray-50 dark:bg-gray-800/50",
-      }}
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
-            allowsSorting={column.sortable}
+      <Table className="bg-transparent shadow-none p-0">
+        {topContent}
+        <Table.ScrollContainer className="max-h-[calc(100vh-300px)]">
+          <Table.Content
+            aria-label="Tabela de viagens com paginação e filtros"
+            sortDescriptor={sortDescriptor}
+            onSortChange={setSortDescriptor}
           >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody emptyContent={"Nenhuma viagem encontrada"} items={sortedItems}>
-        {(item) => (
-          <TableRow key={`${item.dataInicio}-${item.motorista}`}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+            <Table.Header columns={headerColumns}>
+              {(column) => (
+                <Table.Column
+                  id={column.uid}
+                  allowsSorting={column.sortable}
+                  className={`sticky top-0 z-10 bg-gray-50 dark:bg-gray-800/50 ${column.uid === "actions" ? "text-center" : "text-start"}`}
+                >
+                  {column.name}
+                </Table.Column>
+              )}
+            </Table.Header>
+            <Table.Body
+              items={sortedItems}
+              renderEmptyState={() => (
+                <p className="text-center py-4">Nenhuma viagem encontrada</p>
+              )}
+            >
+              {(item) => (
+                <Table.Row id={`${item.dataInicio}-${item.motorista}`}>
+                  {headerColumns.map((column) => (
+                    <Table.Cell key={column.uid}>
+                      {renderCell(item, column.uid)}
+                    </Table.Cell>
+                  ))}
+                </Table.Row>
+              )}
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+        <Table.Footer>{bottomContent}</Table.Footer>
+      </Table>
     </>
   );
 }

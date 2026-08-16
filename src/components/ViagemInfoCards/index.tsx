@@ -2,9 +2,9 @@
 
 import React from "react";
 import { Icon } from "@iconify/react";
-import { Card } from "@heroui/card";
-import { Chip } from "@heroui/chip";
-import { cn } from "@heroui/theme";
+import { Card } from "@heroui/react";
+import { Chip } from "@heroui/react";
+import { cn } from "@heroui/react";
 import { ViagemRealTime } from "@/src/model/viagem";
 
 // Tipo para as cores aceitas pelos componentes HeroUI
@@ -15,6 +15,17 @@ type ChipColorType =
   | "primary"
   | "default"
   | "secondary";
+
+// ChipColorType também dirige classes Tailwind geradas pelo plugin v2 do HeroUI
+// (bg-accent-*, etc); só a cor passada para o componente Chip (v3) precisa do
+// mapeamento primary->accent / secondary->default.
+function toChipColor(
+  color: ChipColorType
+): "success" | "warning" | "danger" | "accent" | "default" {
+  if (color === "primary") return "accent";
+  if (color === "secondary") return "default";
+  return color;
+}
 
 interface ViagemInfoCardsProps {
   viagem: ViagemRealTime;
@@ -41,9 +52,9 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
       return {
         color: "primary" as ChipColorType,
         icon: "solar:check-circle-linear",
-        bgClass: "bg-primary-50",
-        borderClass: "border-primary-200",
-        textClass: "text-primary",
+        bgClass: "bg-accent-soft",
+        borderClass: "border-accent",
+        textClass: "text-accent",
         change: "Concluída",
         changeType: "neutral" as const,
       };
@@ -451,9 +462,9 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
                       "bg-warning-100 text-warning-600":
                         item.color === "warning",
                       "bg-danger-100 text-danger-600": item.color === "danger",
-                      "bg-primary-100 text-primary-600":
+                      "bg-accent-soft text-accent":
                         item.color === "primary",
-                      "bg-secondary-100 text-secondary-600":
+                      "bg-default text-accent":
                         item.color === "secondary",
                       "bg-default-100 text-default-600":
                         item.color === "default",
@@ -475,28 +486,18 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
               {/* Chip de status */}
               <div className="flex justify-end">
                 <Chip
-                  classNames={{
-                    base: "h-5",
-                    content: "font-medium text-xs px-2",
-                  }}
-                  color={item.color}
-                  radius="full"
+                  className="h-5 rounded-full"
+                  color={toChipColor(item.color)}
                   size="sm"
-                  startContent={
-                    item.changeType === "positive" ? (
-                      <Icon height={8} icon="solar:arrow-up-linear" width={8} />
-                    ) : item.changeType === "negative" ? (
-                      <Icon
-                        height={8}
-                        icon="solar:arrow-down-linear"
-                        width={8}
-                      />
-                    ) : (
-                      <Icon height={8} icon="solar:minus-linear" width={8} />
-                    )
-                  }
-                  variant="flat"
+                  variant="tertiary"
                 >
+                  {item.changeType === "positive" ? (
+                    <Icon height={8} icon="solar:arrow-up-linear" width={8} />
+                  ) : item.changeType === "negative" ? (
+                    <Icon height={8} icon="solar:arrow-down-linear" width={8} />
+                  ) : (
+                    <Icon height={8} icon="solar:minus-linear" width={8} />
+                  )}
                   {item.change}
                 </Chip>
               </div>
@@ -510,35 +511,21 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
                       .map((nome, passengerIndex) => (
                         <Chip
                           key={passengerIndex}
-                          classNames={{
-                            base: "h-5",
-                            content: "font-medium text-xs px-1",
-                          }}
-                          color="primary"
-                          radius="full"
+                          className="h-5 rounded-full"
+                          color="accent"
                           size="sm"
-                          variant="flat"
-                          startContent={
-                            <Icon
-                              height={8}
-                              icon="solar:user-circle-linear"
-                              width={8}
-                            />
-                          }
+                          variant="tertiary"
                         >
+                          <Icon height={8} icon="solar:user-circle-linear" width={8} />
                           {nome.split(" ")[0]}
                         </Chip>
                       ))}
                     {item.passageiros.length > 2 && (
                       <Chip
-                        classNames={{
-                          base: "h-5",
-                          content: "font-medium text-xs px-1",
-                        }}
+                        className="h-5 rounded-full"
                         color="default"
-                        radius="full"
                         size="sm"
-                        variant="flat"
+                        variant="tertiary"
                       >
                         +{item.passageiros.length - 2}
                       </Chip>
@@ -555,7 +542,7 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
       {viagem.latitudeMotorista && viagem.longitudeMotorista && getDestinoCoordinates(viagem) && (
         <div>
           <div className="mb-3">
-            <h3 className="text-sm font-semibold text-foreground-600 flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-muted flex items-center gap-2">
               <Icon icon="solar:chart-linear" className="w-4 h-4" />
               Estimativas da Viagem
             </h3>
@@ -577,7 +564,7 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
                         item.color === "warning",
                       "bg-linear-to-r from-danger-200 to-danger-300":
                         item.color === "danger",
-                      "bg-linear-to-r from-primary-200 to-primary-300":
+                      "bg-linear-to-r from-accent to-accent":
                         item.color === "primary",
                     }
                   )}
@@ -597,7 +584,7 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
                             item.color === "warning",
                           "bg-danger-100 text-danger-600":
                             item.color === "danger",
-                          "bg-primary-100 text-primary-600":
+                          "bg-accent-soft text-accent":
                             item.color === "primary",
                         }
                       )}
@@ -617,36 +604,18 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
                   {/* Chip de status */}
                   <div className="flex justify-end">
                     <Chip
-                      classNames={{
-                        base: "h-5",
-                        content: "font-medium text-xs px-2",
-                      }}
-                      color={item.color}
-                      radius="full"
+                      className="h-5 rounded-full"
+                      color={toChipColor(item.color)}
                       size="sm"
-                      startContent={
-                        item.changeType === "positive" ? (
-                          <Icon
-                            height={8}
-                            icon="solar:arrow-up-linear"
-                            width={8}
-                          />
-                        ) : item.changeType === "negative" ? (
-                          <Icon
-                            height={8}
-                            icon="solar:arrow-down-linear"
-                            width={8}
-                          />
-                        ) : (
-                          <Icon
-                            height={8}
-                            icon="solar:minus-linear"
-                            width={8}
-                          />
-                        )
-                      }
-                      variant="flat"
+                      variant="tertiary"
                     >
+                      {item.changeType === "positive" ? (
+                        <Icon height={8} icon="solar:arrow-up-linear" width={8} />
+                      ) : item.changeType === "negative" ? (
+                        <Icon height={8} icon="solar:arrow-down-linear" width={8} />
+                      ) : (
+                        <Icon height={8} icon="solar:minus-linear" width={8} />
+                      )}
                       {item.change}
                     </Chip>
                   </div>

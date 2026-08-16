@@ -1,15 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-} from "@heroui/modal";
-import { Form } from "@heroui/form";
-import { Input } from "@heroui/input";
-import { Button } from "@heroui/button";
+import { Modal } from "@heroui/react";
+import { Form } from "@heroui/react";
+import { TextField, Label, Input } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { bloquearMotorista } from "../action/bloquear-motorista";
 import { MotoristaCooperativa } from "../../../../../../src/model/motorista";
 
@@ -57,14 +52,17 @@ export default function BloquearMotoristaModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="md">
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              Bloquear {motorista?.nome ?? motorista?.cpf}
-            </ModalHeader>
-            <ModalBody>
+    <Modal>
+      <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpenChange}>
+        <Modal.Container size="md">
+          <Modal.Dialog>
+            {({ close }) => (
+              <>
+                <Modal.CloseTrigger />
+                <Modal.Header>
+                  <Modal.Heading>Bloquear {motorista?.nome ?? motorista?.cpf}</Modal.Heading>
+                </Modal.Header>
+                <Modal.Body>
               <Form
                 className="flex flex-col gap-4"
                 onSubmit={(e) => {
@@ -72,13 +70,10 @@ export default function BloquearMotoristaModal({
                   handleSubmit();
                 }}
               >
-                <Input
-                  label="Motivo"
-                  placeholder="Ex.: CNH vencida desde 01/08/2026"
-                  value={motivo}
-                  onValueChange={setMotivo}
-                  isRequired
-                />
+                <TextField value={motivo} onChange={setMotivo} isRequired>
+                  <Label>Motivo</Label>
+                  <Input placeholder="Ex.: CNH vencida desde 01/08/2026" />
+                </TextField>
 
                 {erro ? (
                   <p className="text-sm text-danger" role="alert">
@@ -87,18 +82,20 @@ export default function BloquearMotoristaModal({
                 ) : null}
 
                 <div className="flex gap-2 justify-end w-full pt-2 pb-2">
-                  <Button variant="light" onPress={() => handleClose(onClose)} isDisabled={enviando}>
+                  <Button variant="tertiary" onPress={() => handleClose(close)} isDisabled={enviando}>
                     Cancelar
                   </Button>
-                  <Button color="danger" type="submit" isLoading={enviando}>
+                  <Button variant="danger" type="submit" isPending={enviando}>
                     Bloquear
                   </Button>
                 </div>
               </Form>
-            </ModalBody>
-          </>
-        )}
-      </ModalContent>
+                </Modal.Body>
+              </>
+            )}
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 }

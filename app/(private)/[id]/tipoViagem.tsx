@@ -1,28 +1,30 @@
-import { Radio, RadioGroup } from "@heroui/radio";
-import { cn } from "@heroui/theme";
+import { Radio, RadioGroup, Label } from "@heroui/react";
+import { cn } from "@heroui/react";
 import { Dispatch, SetStateAction } from "react";
 
 interface Props {
-  description: string;
   value: string;
   children: React.ReactNode;
 }
 
 export const CustomRadio = (props: Props) => {
-  const { children, ...otherProps } = props;
+  const { children, value } = props;
 
   return (
     <Radio
-      {...otherProps}
-      classNames={{
-        base: cn(
-          "inline-flex m-0 bg-content1 hover:bg-content2",
-          "flex-row max-w-[300px] cursor-pointer rounded-lg gap-4 p-4 border-2 border-transparent",
-          "data-[selected=true]:border-primary"
-        ),
-      }}
+      value={value}
+      className={cn(
+        "inline-flex m-0 bg-surface hover:bg-surface-secondary",
+        "flex-row max-w-[300px] cursor-pointer rounded-lg gap-4 p-4 border-2 border-transparent",
+        "data-[selected=true]:border-accent"
+      )}
     >
-      {children}
+      <Radio.Content>
+        <Radio.Control>
+          <Radio.Indicator />
+        </Radio.Control>
+        {children}
+      </Radio.Content>
     </Radio>
   );
 };
@@ -36,20 +38,14 @@ export default function App({ selectedPlan, setSelectedPlan }: RadioGroupProps) 
   return (
     <RadioGroup
       value={selectedPlan}
-      onValueChange={(e) => {
-        setSelectedPlan(e);
+      onChange={(value) => {
+        setSelectedPlan(value);
       }}
-      label="Selecione o plano de viagem"
     >
-      <CustomRadio description="" value="Apanha">
-        Apanha
-      </CustomRadio>
-      <CustomRadio description="" value="Retorno">
-        Retorno
-      </CustomRadio>
-      <CustomRadio description="" value="APANHA_E_RETORNO">
-        Apanha e Retorno
-      </CustomRadio>
+      <Label>Selecione o plano de viagem</Label>
+      <CustomRadio value="Apanha">Apanha</CustomRadio>
+      <CustomRadio value="Retorno">Retorno</CustomRadio>
+      <CustomRadio value="APANHA_E_RETORNO">Apanha e Retorno</CustomRadio>
     </RadioGroup>
   );
 }

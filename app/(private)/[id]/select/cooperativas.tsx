@@ -1,8 +1,8 @@
 "use client";
 
 import { ISelect } from "@/src/interface/ISelect";
-import { Select, SelectItem } from "@heroui/select";
-import { Spinner } from "@heroui/spinner";
+import { Select, Label, ListBox } from "@heroui/react";
+import { Spinner } from "@heroui/react/spinner";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { fetchComLog } from "@/src/utils/log-fetch";
 
@@ -62,16 +62,16 @@ export default function SelectCooperativas({
     fetchCooperativas();
   }, [empresa, token, setCooperativa]);
 
-  const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setValue(e.target.value);
-    setCooperativa(e.target.value);
+  const handleSelectionChange = (key: string | number | null) => {
+    const selected = key?.toString() || "";
+    setValue(selected);
+    setCooperativa(selected);
   };
 
   return (
     <Select
-      variant="underlined"
+      variant="secondary"
       className="max-w-xs"
-      label="Cooperativa"
       placeholder={
         isLoading
           ? "Carregando..."
@@ -80,13 +80,25 @@ export default function SelectCooperativas({
             : "Selecione"
       }
       isDisabled={isLoading || cooperativas.length === 0}
-      startContent={isLoading ? <Spinner size="sm" /> : null}
-      selectedKeys={new Set([value])}
+      value={value || null}
       onChange={handleSelectionChange}
     >
-      {cooperativas.map((coop) => (
-        <SelectItem key={coop.value}>{coop.label}</SelectItem>
-      ))}
+      <Label>Cooperativa</Label>
+      <Select.Trigger>
+        {isLoading && <Spinner size="sm" />}
+        <Select.Value />
+        <Select.Indicator />
+      </Select.Trigger>
+      <Select.Popover>
+        <ListBox>
+          {cooperativas.map((coop) => (
+            <ListBox.Item key={coop.value} id={coop.value} textValue={coop.label}>
+              {coop.label}
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          ))}
+        </ListBox>
+      </Select.Popover>
     </Select>
   );
 }

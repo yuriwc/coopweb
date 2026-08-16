@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { Card, CardBody, CardFooter } from "@heroui/card";
-import { Chip } from "@heroui/chip";
-import { Button } from "@heroui/button";
+import { Card } from "@heroui/react";
+import { Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { usePathname } from "next/navigation";
 import { ViagemRealTime } from "@/src/model/viagem";
@@ -19,13 +18,7 @@ type Viagem = Pick<
 >;
 
 // Tipo para as cores aceitas pelos componentes HeroUI
-type ChipColorType =
-  | "success"
-  | "warning"
-  | "danger"
-  | "primary"
-  | "default"
-  | "secondary";
+type ChipColorType = "success" | "warning" | "danger" | "accent" | "default";
 
 export default function ViagemCard({
   viagem,
@@ -62,7 +55,7 @@ export default function ViagemCard({
 
     if (status === "finalizada") {
       return {
-        color: "primary" as ChipColorType,
+        color: "accent" as ChipColorType,
         icon: "solar:check-circle-linear",
         label: "Finalizada",
       };
@@ -99,11 +92,11 @@ export default function ViagemCard({
 
   return (
     <Card className="border border-transparent dark:border-default-100 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
-      <CardBody className="p-6 space-y-5">
+      <Card.Content className="p-6 space-y-5">
         {/* Header com ID da viagem e status */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-100 text-primary-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-soft text-accent">
               <Icon icon="solar:route-linear" width={18} />
             </div>
             <div>
@@ -115,28 +108,13 @@ export default function ViagemCard({
           </div>
 
           <div className="flex items-center gap-2">
-            <Chip
-              color={statusInfo.color}
-              variant="flat"
-              size="sm"
-              startContent={<Icon icon={statusInfo.icon} width={14} />}
-              classNames={{
-                base: "h-7",
-                content: "font-medium text-xs px-2",
-              }}
-            >
+            <Chip color={statusInfo.color} variant="tertiary" size="sm" className="h-7">
+              <Icon icon={statusInfo.icon} width={14} />
               {statusInfo.label}
             </Chip>
             {temLocalizacao && (
-              <Chip
-                color="success"
-                variant="dot"
-                size="sm"
-                classNames={{
-                  base: "h-6",
-                  content: "font-medium text-xs px-2",
-                }}
-              >
+              <Chip color="success" variant="tertiary" size="sm" className="h-6">
+                <Icon icon="gravity-ui:circle-fill" width={6} />
                 Online
               </Chip>
             )}
@@ -159,13 +137,10 @@ export default function ViagemCard({
                 </span>
               </div>
               <Chip
-                color="secondary"
-                variant="flat"
+                color="default"
+                variant="tertiary"
                 size="sm"
-                classNames={{
-                  base: "h-6 min-w-unit-6",
-                  content: "font-bold text-xs px-1",
-                }}
+                className="h-6 min-w-6 font-bold"
               >
                 {nomesPassageiros.length}
               </Chip>
@@ -175,13 +150,10 @@ export default function ViagemCard({
                 nomesPassageiros.slice(0, 3).map((nome, index) => (
                   <Chip
                     key={index}
-                    color="primary"
-                    variant="flat"
+                    color="accent"
+                    variant="tertiary"
                     size="sm"
-                    classNames={{
-                      base: "h-6",
-                      content: "font-medium text-xs px-2",
-                    }}
+                    className="h-6"
                   >
                     {nome}
                   </Chip>
@@ -192,15 +164,7 @@ export default function ViagemCard({
                 </span>
               )}
               {nomesPassageiros.length > 3 && (
-                <Chip
-                  color="default"
-                  variant="flat"
-                  size="sm"
-                  classNames={{
-                    base: "h-6",
-                    content: "font-medium text-xs px-2",
-                  }}
-                >
+                <Chip color="default" variant="tertiary" size="sm" className="h-6">
                   +{nomesPassageiros.length - 3}
                 </Chip>
               )}
@@ -213,7 +177,7 @@ export default function ViagemCard({
               <Icon
                 icon="solar:routing-linear"
                 width={16}
-                className="text-primary-500"
+                className="text-accent"
               />
               <span className="text-sm font-medium text-default-600">Rota</span>
             </div>
@@ -254,21 +218,17 @@ export default function ViagemCard({
             </div>
           </div>
         </div>
-      </CardBody>
+      </Card.Content>
 
-      <CardFooter className="px-6 py-4 bg-default-50 dark:bg-default-100/50">
-        <Button
-          as={Link}
+      <Card.Footer className="px-6 py-4 bg-default-50 dark:bg-default-100/50">
+        <Link
           href={getMonitoramentoLink()}
-          color="primary"
-          variant="solid"
-          fullWidth
-          startContent={<Icon icon="solar:eye-linear" width={16} />}
-          className="font-medium"
+          className="inline-flex items-center justify-center gap-2 w-full rounded-md bg-accent text-white h-10 px-4 text-sm font-medium hover:opacity-90 transition-opacity"
         >
+          <Icon icon="solar:eye-linear" width={16} />
           Acompanhar Viagem
-        </Button>
-      </CardFooter>
+        </Link>
+      </Card.Footer>
     </Card>
   );
 }

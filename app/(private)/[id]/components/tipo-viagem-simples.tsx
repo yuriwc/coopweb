@@ -1,28 +1,30 @@
-import { Radio, RadioGroup } from "@heroui/radio";
-import { cn } from "@heroui/theme";
+import { Radio, RadioGroup, Label } from "@heroui/react";
+import { cn } from "@heroui/react";
 import { Dispatch, SetStateAction } from "react";
 
 interface Props {
-  description: string;
   value: string;
   children: React.ReactNode;
 }
 
 export const CustomRadio = (props: Props) => {
-  const { children, ...otherProps } = props;
+  const { children, value } = props;
 
   return (
     <Radio
-      {...otherProps}
-      classNames={{
-        base: cn(
-          "inline-flex m-0 bg-content1 hover:bg-content2",
-          "flex-row cursor-pointer rounded-lg gap-4 p-3 border-2 border-transparent",
-          "data-[selected=true]:border-primary"
-        ),
-      }}
+      value={value}
+      className={cn(
+        "inline-flex m-0 bg-surface hover:bg-surface-secondary",
+        "flex-row cursor-pointer rounded-lg gap-4 p-3 border-2 border-transparent",
+        "data-[selected=true]:border-accent"
+      )}
     >
-      {children}
+      <Radio.Content>
+        <Radio.Control>
+          <Radio.Indicator />
+        </Radio.Control>
+        {children}
+      </Radio.Content>
     </Radio>
   );
 };
@@ -36,21 +38,15 @@ export default function TipoViagemSimples({ selectedPlan, setSelectedPlan }: Rad
   return (
     <RadioGroup
       value={selectedPlan}
-      onValueChange={(e) => {
-        setSelectedPlan(e);
+      onChange={(value) => {
+        setSelectedPlan(value);
       }}
-      label="Selecione o tipo de viagem"
       orientation="horizontal"
-      classNames={{
-        wrapper: "flex flex-row gap-3"
-      }}
+      className="gap-3"
     >
-      <CustomRadio description="" value="Apanha">
-        Apanha
-      </CustomRadio>
-      <CustomRadio description="" value="Retorno">
-        Retorno
-      </CustomRadio>
+      <Label>Selecione o tipo de viagem</Label>
+      <CustomRadio value="Apanha">Apanha</CustomRadio>
+      <CustomRadio value="Retorno">Retorno</CustomRadio>
     </RadioGroup>
   );
 }

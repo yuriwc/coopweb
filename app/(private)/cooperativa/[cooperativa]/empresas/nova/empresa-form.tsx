@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@heroui/button";
-import { Card, CardHeader, CardBody } from "@heroui/card";
-import { Form } from "@heroui/form";
-import { Input } from "@heroui/input";
+import { Button } from "@heroui/react";
+import { Card } from "@heroui/react";
+import { Form } from "@heroui/react";
+import { TextField, Label, Description, Input } from "@heroui/react";
 import ShowToast from "../../../../../../src/components/Toast";
 import { cadastrarEmpresa } from "./action/cadastrar-empresa";
 import { CadastroEmpresaDto } from "../../../../../../src/model/empresa";
@@ -64,7 +64,7 @@ export default function EmpresaForm({ cooperativaId, token }: EmpresaFormProps) 
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto p-4 sm:p-8 max-w-3xl">
         <header className="flex items-center gap-4 mb-6">
-          <Button variant="bordered" onPress={() => router.back()}>
+          <Button variant="secondary" onPress={() => router.back()}>
             ← Voltar
           </Button>
           <div>
@@ -78,10 +78,10 @@ export default function EmpresaForm({ cooperativaId, token }: EmpresaFormProps) 
         </header>
 
         <Card>
-          <CardHeader>
+          <Card.Header>
             <p className="text-md font-semibold">Dados da empresa</p>
-          </CardHeader>
-          <CardBody>
+          </Card.Header>
+          <Card.Content>
             <Form
               className="flex flex-col gap-4"
               onSubmit={(e) => {
@@ -89,93 +89,75 @@ export default function EmpresaForm({ cooperativaId, token }: EmpresaFormProps) 
                 handleSubmit();
               }}
             >
-              <Input
-                label="Nome da empresa"
-                value={dados.nome}
-                onValueChange={(v) => updateCampo("nome", v)}
-                isRequired
-              />
-              <Input
-                label="CNPJ"
-                placeholder="00.000.000/0000-00"
-                value={dados.cnpj}
-                onValueChange={(v) => updateCampo("cnpj", v)}
-                isRequired
-              />
-              <Input
-                label="Dia de fechamento"
+              <TextField value={dados.nome} onChange={(v) => updateCampo("nome", v)} isRequired>
+                <Label>Nome da empresa</Label>
+                <Input />
+              </TextField>
+              <TextField value={dados.cnpj} onChange={(v) => updateCampo("cnpj", v)} isRequired>
+                <Label>CNPJ</Label>
+                <Input placeholder="00.000.000/0000-00" />
+              </TextField>
+              <TextField
                 type="number"
-                min={1}
-                max={31}
-                description="Dia do mês em que o ciclo de faturamento fecha (1-31)"
                 value={String(dados.dataFechamento)}
-                onValueChange={(v) => updateCampo("dataFechamento", Number(v) || 10)}
+                onChange={(v) => updateCampo("dataFechamento", Number(v) || 10)}
                 isRequired
-              />
+              >
+                <Label>Dia de fechamento</Label>
+                <Input min={1} max={31} />
+                <Description>Dia do mês em que o ciclo de faturamento fecha (1-31)</Description>
+              </TextField>
 
               <div className="grid grid-cols-3 gap-3 w-full">
-                <Input
+                <TextField
                   className="col-span-2"
-                  label="Rua"
                   value={dados.rua}
-                  onValueChange={(v) => updateCampo("rua", v)}
+                  onChange={(v) => updateCampo("rua", v)}
                   isRequired
-                />
-                <Input
-                  label="Número"
-                  value={dados.numero}
-                  onValueChange={(v) => updateCampo("numero", v)}
-                  isRequired
-                />
+                >
+                  <Label>Rua</Label>
+                  <Input />
+                </TextField>
+                <TextField value={dados.numero} onChange={(v) => updateCampo("numero", v)} isRequired>
+                  <Label>Número</Label>
+                  <Input />
+                </TextField>
               </div>
 
               <div className="grid grid-cols-3 gap-3 w-full">
-                <Input
-                  label="Bairro"
-                  value={dados.bairro}
-                  onValueChange={(v) => updateCampo("bairro", v)}
-                  isRequired
-                />
-                <Input
-                  label="Cidade"
-                  value={dados.cidade}
-                  onValueChange={(v) => updateCampo("cidade", v)}
-                  isRequired
-                />
-                <Input
-                  label="Estado"
-                  maxLength={2}
-                  value={dados.estado}
-                  onValueChange={(v) => updateCampo("estado", v)}
-                  isRequired
-                />
+                <TextField value={dados.bairro} onChange={(v) => updateCampo("bairro", v)} isRequired>
+                  <Label>Bairro</Label>
+                  <Input />
+                </TextField>
+                <TextField value={dados.cidade} onChange={(v) => updateCampo("cidade", v)} isRequired>
+                  <Label>Cidade</Label>
+                  <Input />
+                </TextField>
+                <TextField value={dados.estado} onChange={(v) => updateCampo("estado", v)} isRequired>
+                  <Label>Estado</Label>
+                  <Input maxLength={2} />
+                </TextField>
               </div>
 
               <div className="grid grid-cols-2 gap-3 w-full">
-                <Input
-                  label="CEP"
-                  value={dados.cep}
-                  onValueChange={(v) => updateCampo("cep", v)}
-                  isRequired
-                />
-                <Input
-                  label="Telefone"
-                  value={dados.telefone}
-                  onValueChange={(v) => updateCampo("telefone", v)}
-                  isRequired
-                />
+                <TextField value={dados.cep} onChange={(v) => updateCampo("cep", v)} isRequired>
+                  <Label>CEP</Label>
+                  <Input />
+                </TextField>
+                <TextField value={dados.telefone} onChange={(v) => updateCampo("telefone", v)} isRequired>
+                  <Label>Telefone</Label>
+                  <Input />
+                </TextField>
               </div>
 
-              <Input
-                label="E-mail (opcional)"
-                value={dados.email}
-                onValueChange={(v) => updateCampo("email", v)}
-              />
-              <Input
-                label="Referência (opcional)"
-                value={dados.referencia}
-                onValueChange={(v) => updateCampo("referencia", v)}
-              />
+              <TextField value={dados.email} onChange={(v) => updateCampo("email", v)}>
+                <Label>E-mail (opcional)</Label>
+                <Input />
+              </TextField>
+              <TextField value={dados.referencia} onChange={(v) => updateCampo("referencia", v)}>
+                <Label>Referência (opcional)</Label>
+                <Input />
+              </TextField>
 
               {erro ? (
                 <p className="text-sm text-danger" role="alert">
@@ -184,15 +166,15 @@ export default function EmpresaForm({ cooperativaId, token }: EmpresaFormProps) 
               ) : null}
 
               <div className="flex gap-2 justify-end w-full pt-2">
-                <Button variant="light" onPress={() => router.back()} isDisabled={enviando}>
+                <Button variant="tertiary" onPress={() => router.back()} isDisabled={enviando}>
                   Cancelar
                 </Button>
-                <Button color="primary" type="submit" isLoading={enviando}>
+                <Button variant="primary" type="submit" isPending={enviando}>
                   Cadastrar empresa
                 </Button>
               </div>
             </Form>
-          </CardBody>
+          </Card.Content>
         </Card>
       </div>
     </div>

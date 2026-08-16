@@ -1,15 +1,9 @@
 "use client";
 
 import React from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
-import { Button } from "@heroui/button";
-import { Chip } from "@heroui/chip";
+import { Modal } from "@heroui/react";
+import { Button } from "@heroui/react";
+import { Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { Viagem } from "@/src/model/viagem";
 import { parseISO, isValid, differenceInMinutes } from "date-fns";
@@ -21,10 +15,10 @@ interface Props {
   onClose: () => void;
 }
 
-const statusColorMap: Record<string, "success" | "primary" | "danger" | "warning" | "default"> = {
+const statusColorMap: Record<string, "success" | "accent" | "danger" | "warning" | "default"> = {
   Finalizada: "success",
-  "Em Andamento": "primary",
-  Iniciada: "primary",
+  "Em Andamento": "accent",
+  Iniciada: "accent",
   Cancelada: "danger",
   Agendada: "warning",
 };
@@ -75,22 +69,23 @@ export default function TripDetailsModal({ viagem, isOpen, onClose }: Props) {
   ].filter((step) => Boolean(step.time));
 
   const stats = [
-    { label: "Status", value: <Chip color={statusColorMap[viagem.status] || "default"} size="sm" variant="flat" className="capitalize">{viagem.status}</Chip> },
+    { label: "Status", value: <Chip color={statusColorMap[viagem.status] || "default"} size="sm" variant="tertiary" className="capitalize">{viagem.status}</Chip> },
     { label: "Valor", value: formatarValor(viagem.preco) },
     { label: "Atendimento", value: calcularTempo(viagem.horaSolicitacao, viagem.horaChegadaOrigem) ?? "—" },
     { label: "Espera", value: calcularTempo(viagem.horaChegadaOrigem, viagem.horaInicioPercurso) ?? "—" },
   ];
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl" scrollBehavior="inside">
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              Detalhes da Viagem
-            </ModalHeader>
+    <Modal>
+      <Modal.Backdrop isOpen={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+        <Modal.Container size="lg" scroll="inside">
+          <Modal.Dialog>
+            <Modal.CloseTrigger />
+            <Modal.Header>
+              <Modal.Heading>Detalhes da Viagem</Modal.Heading>
+            </Modal.Header>
 
-            <ModalBody className="gap-6 pb-6">
+            <Modal.Body className="gap-6 pb-6">
               {/* Estatísticas */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {stats.map((stat) => (
@@ -117,8 +112,8 @@ export default function TripDetailsModal({ viagem, isOpen, onClose }: Props) {
                     {timelineSteps.map((step, index) => (
                       <React.Fragment key={step.key}>
                         <div className="flex flex-col items-center text-center w-24 shrink-0">
-                          <div className="w-9 h-9 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center shrink-0">
-                            <Icon icon={step.icon} className="w-4 h-4 text-primary-600 dark:text-primary-400" />
+                          <div className="w-9 h-9 rounded-full bg-accent-soft dark:bg-accent-soft flex items-center justify-center shrink-0">
+                            <Icon icon={step.icon} className="w-4 h-4 text-accent dark:text-accent" />
                           </div>
                           <p className="text-xs font-semibold text-gray-900 dark:text-white mt-2">
                             {step.label}
@@ -178,16 +173,16 @@ export default function TripDetailsModal({ viagem, isOpen, onClose }: Props) {
                   </div>
                 </div>
               </div>
-            </ModalBody>
+            </Modal.Body>
 
-            <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+            <Modal.Footer>
+              <Button variant="danger-soft" onPress={onClose}>
                 Fechar
               </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 }

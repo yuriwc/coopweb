@@ -1,12 +1,10 @@
 "use client";
 
 import React, { useActionState, useEffect } from "react";
-import { Button } from "@heroui/button";
-import { Form } from "@heroui/form";
-import { Input } from "@heroui/input";
-import { Spinner } from "@heroui/spinner";
-import { Spacer } from "@heroui/spacer";
-import { addToast } from "@heroui/toast";
+import { Button, TextField, Label, InputGroup } from "@heroui/react";
+import { Form } from "@heroui/react";
+import { Spinner } from "@heroui/react/spinner";
+import { toast } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { handleSubmit } from "./actions";
 
@@ -24,11 +22,9 @@ export default function App() {
 
   useEffect(() => {
     if (state.success && state.redirect) {
-      addToast({
-        title: "Sucesso",
+      toast("Sucesso", {
         description: "Login efetuado com sucesso",
-        variant: "solid",
-        color: "success",
+        variant: "success",
       });
 
       router.push(state.redirect);
@@ -55,72 +51,28 @@ export default function App() {
             className="space-y-6"
             validationBehavior="native"
           >
-            <Input
-              name="username"
-              label="Usuário"
-              defaultValue={state.data.username}
-              isRequired
-              variant="bordered"
-              classNames={{
-                base: "",
-                mainWrapper: "",
-                inputWrapper: [
-                  "bg-gray-50 dark:bg-gray-700",
-                  "border-gray-200 dark:border-gray-600",
-                  "hover:bg-gray-100 dark:hover:bg-gray-600",
-                  "focus-within:bg-white dark:focus-within:bg-gray-600",
-                  "group-data-[focus=true]:bg-white dark:group-data-[focus=true]:bg-gray-600",
-                  "rounded-xl",
-                  "shadow-sm",
-                  "transition-all duration-300",
-                ],
-                input: [
-                  "text-slate-800 dark:text-slate-200",
-                  "placeholder:text-slate-500 dark:placeholder:text-slate-400",
-                ],
-                label: "text-slate-700 dark:text-slate-300 font-medium",
-              }}
-            />
-            <Spacer x={2} />
-            <Input
-              name="password"
-              type="password"
-              label="Senha"
-              defaultValue={state.data.password}
-              isRequired
-              variant="bordered"
-              classNames={{
-                base: "",
-                mainWrapper: "",
-                inputWrapper: [
-                  "bg-gray-50 dark:bg-gray-700",
-                  "border-gray-200 dark:border-gray-600",
-                  "hover:bg-gray-100 dark:hover:bg-gray-600",
-                  "focus-within:bg-white dark:focus-within:bg-gray-600",
-                  "group-data-[focus=true]:bg-white dark:group-data-[focus=true]:bg-gray-600",
-                  "rounded-xl",
-                  "shadow-sm",
-                  "transition-all duration-300",
-                ],
-                input: [
-                  "text-slate-800 dark:text-slate-200",
-                  "placeholder:text-slate-500 dark:placeholder:text-slate-400",
-                ],
-                label: "text-slate-700 dark:text-slate-300 font-medium",
-              }}
-            />
+            <TextField name="username" defaultValue={state.data.username} isRequired>
+              <Label className="text-slate-700 dark:text-slate-300 font-medium">Usuário</Label>
+              <InputGroup className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 focus-within:bg-white dark:focus-within:bg-gray-600 rounded-xl shadow-sm transition-all duration-300">
+                <InputGroup.Input className="text-slate-800 dark:text-slate-200 placeholder:text-slate-500 dark:placeholder:text-slate-400" />
+              </InputGroup>
+            </TextField>
+            <div className="w-2" />
+            <TextField name="password" type="password" defaultValue={state.data.password} isRequired>
+              <Label className="text-slate-700 dark:text-slate-300 font-medium">Senha</Label>
+              <InputGroup className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 focus-within:bg-white dark:focus-within:bg-gray-600 rounded-xl shadow-sm transition-all duration-300">
+                <InputGroup.Input className="text-slate-800 dark:text-slate-200 placeholder:text-slate-500 dark:placeholder:text-slate-400" />
+              </InputGroup>
+            </TextField>
 
             <Button
+              variant="primary"
               isDisabled={isLoading}
               type="submit"
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md border border-blue-700 transition-all duration-300 hover:shadow-lg hover:scale-105 text-sm tracking-widest uppercase"
             >
               {isLoading ? (
-                <Spinner
-                  classNames={{ label: "text-white" }}
-                  variant="wave"
-                  color="white"
-                />
+                <Spinner color="current" />
               ) : (
                 "Entrar"
               )}

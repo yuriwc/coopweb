@@ -1,4 +1,4 @@
-import { Spinner } from "@heroui/spinner";
+import { Spinner } from "@heroui/react/spinner";
 
 const Loading = () => {
   return (
@@ -8,14 +8,7 @@ const Loading = () => {
         <div className="flex items-center justify-center min-h-[600px]">
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 shadow-xl">
             <div className="flex flex-col items-center gap-4">
-              <Spinner
-                size="lg"
-                color="primary"
-                classNames={{
-                  circle1: "border-b-blue-500",
-                  circle2: "border-b-sky-500",
-                }}
-              />
+              <Spinner size="lg" color="accent" />
               <div className="text-center">
                 <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">
                   Carregando viagens...

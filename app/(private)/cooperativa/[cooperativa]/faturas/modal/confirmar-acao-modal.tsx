@@ -1,14 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
-import { Button } from "@heroui/button";
+import { Modal } from "@heroui/react";
+import { Button } from "@heroui/react";
 
 interface ConfirmarAcaoModalProps {
   isOpen: boolean;
@@ -50,30 +44,37 @@ export default function ConfirmarAcaoModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="sm">
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">{titulo}</ModalHeader>
-            <ModalBody>
-              <p className="text-sm text-default-600">{descricao}</p>
-              {erro ? (
-                <p className="text-sm text-danger" role="alert">
-                  {erro}
-                </p>
-              ) : null}
-            </ModalBody>
-            <ModalFooter>
-              <Button variant="light" onPress={onClose} isDisabled={enviando}>
-                Cancelar
-              </Button>
-              <Button color={corConfirmar} isLoading={enviando} onPress={handleConfirm}>
-                {rotuloConfirmar}
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
+    <Modal>
+      <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpenChange}>
+        <Modal.Container size="sm">
+          <Modal.Dialog>
+            {({ close }) => (
+              <>
+                <Modal.CloseTrigger />
+                <Modal.Header>
+                  <Modal.Heading>{titulo}</Modal.Heading>
+                </Modal.Header>
+                <Modal.Body>
+                  <p className="text-sm text-default-600">{descricao}</p>
+                  {erro ? (
+                    <p className="text-sm text-danger" role="alert">
+                      {erro}
+                    </p>
+                  ) : null}
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="tertiary" onPress={close} isDisabled={enviando}>
+                    Cancelar
+                  </Button>
+                  <Button variant={corConfirmar} isPending={enviando} onPress={handleConfirm}>
+                    {rotuloConfirmar}
+                  </Button>
+                </Modal.Footer>
+              </>
+            )}
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 }

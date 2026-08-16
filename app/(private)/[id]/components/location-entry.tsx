@@ -1,10 +1,10 @@
 "use client";
 
-import { Button } from "@heroui/button";
+import { Button } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { Card, CardBody, CardHeader } from "@heroui/card";
-import { Chip } from "@heroui/chip";
-import { Input, Textarea } from "@heroui/input";
+import { Card } from "@heroui/react";
+import { Chip } from "@heroui/react";
+import { TextField, Label, Input, InputGroup } from "@heroui/react";
 import PlacesAutocomplete from "./places-autocomplete";
 
 export interface PlaceDetails {
@@ -71,18 +71,17 @@ export default function LocationEntry({
 }: Props) {
   return (
     <Card>
-      <CardHeader className="pb-2">
+      <Card.Header className="pb-2">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-2">
-            <Icon icon={icon} className="text-lg text-primary" />
+            <Icon icon={icon} className="text-lg text-accent" />
             <span className="text-sm font-medium">{label}</span>
           </div>
           {onRemove && (
             <Button
               isIconOnly
               size="sm"
-              variant="light"
-              color="danger"
+              variant="danger-soft"
               onPress={onRemove}
               aria-label={`Remover ${label}`}
             >
@@ -90,8 +89,8 @@ export default function LocationEntry({
             </Button>
           )}
         </div>
-      </CardHeader>
-      <CardBody className="pt-0 gap-3">
+      </Card.Header>
+      <Card.Content className="pt-0 gap-3">
         <PlacesAutocomplete
           label={label}
           onPlaceSelect={onPlaceSelect}
@@ -99,83 +98,69 @@ export default function LocationEntry({
         />
 
         {location.place && (
-          <Chip
-            variant="flat"
-            color="success"
-            startContent={<Icon icon="solar:map-point-linear" className="text-sm" />}
-          >
+          <Chip variant="tertiary" color="success">
+            <Icon icon="solar:map-point-linear" className="text-sm" />
             {location.place.name}
           </Chip>
         )}
 
         <Button
           size="sm"
-          variant="light"
-          color="primary"
-          startContent={
-            <Icon
-              icon={
-                location.showContactFields
-                  ? "solar:minimize-square-linear"
-                  : "solar:user-plus-rounded-linear"
-              }
-            />
-          }
+          variant="tertiary"
           onPress={() => onUpdate({ showContactFields: !location.showContactFields })}
           className="self-start"
         >
+          <Icon
+            icon={
+              location.showContactFields
+                ? "solar:minimize-square-linear"
+                : "solar:user-plus-rounded-linear"
+            }
+          />
           {location.showContactFields ? "Ocultar contato" : "Adicionar contato"}
         </Button>
 
         {location.showContactFields && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3 bg-default-50 rounded-lg">
-            <Input
-              label="Nome do contato"
-              placeholder="Nome de quem recebe"
-              value={location.nome}
-              onChange={(e) => onUpdate({ nome: e.target.value })}
-              variant="bordered"
-              size="sm"
-              startContent={
-                <Icon icon="solar:user-linear" className="w-4 h-4 text-default-400" />
-              }
-            />
-            <Input
-              label="WhatsApp"
-              placeholder="(00) 00000-0000"
+            <TextField value={location.nome} onChange={(v) => onUpdate({ nome: v })}>
+              <Label>Nome do contato</Label>
+              <InputGroup>
+                <InputGroup.Prefix>
+                  <Icon icon="solar:user-linear" className="w-4 h-4 text-default-400" />
+                </InputGroup.Prefix>
+                <InputGroup.Input placeholder="Nome de quem recebe" />
+              </InputGroup>
+            </TextField>
+            <TextField
               value={location.whatsapp}
-              onChange={(e) => onUpdate({ whatsapp: formatPhone(e.target.value) })}
-              variant="bordered"
-              size="sm"
-              startContent={
-                <Icon icon="solar:chat-round-dots-linear" className="w-4 h-4 text-default-400" />
-              }
-            />
-            <Input
-              label="Email"
-              placeholder="contato@email.com"
-              value={location.email}
-              onChange={(e) => onUpdate({ email: e.target.value })}
-              variant="bordered"
-              size="sm"
-              type="email"
-              startContent={
-                <Icon icon="solar:letter-linear" className="w-4 h-4 text-default-400" />
-              }
-            />
-            <Textarea
-              label="Observações"
-              placeholder="Informações adicionais..."
-              value={location.observacoes}
-              onChange={(e) => onUpdate({ observacoes: e.target.value })}
-              variant="bordered"
-              size="sm"
-              minRows={2}
-              maxRows={3}
-            />
+              onChange={(v) => onUpdate({ whatsapp: formatPhone(v) })}
+            >
+              <Label>WhatsApp</Label>
+              <InputGroup>
+                <InputGroup.Prefix>
+                  <Icon icon="solar:chat-round-dots-linear" className="w-4 h-4 text-default-400" />
+                </InputGroup.Prefix>
+                <InputGroup.Input placeholder="(00) 00000-0000" />
+              </InputGroup>
+            </TextField>
+            <TextField type="email" value={location.email} onChange={(v) => onUpdate({ email: v })}>
+              <Label>Email</Label>
+              <InputGroup>
+                <InputGroup.Prefix>
+                  <Icon icon="solar:letter-linear" className="w-4 h-4 text-default-400" />
+                </InputGroup.Prefix>
+                <InputGroup.Input placeholder="contato@email.com" />
+              </InputGroup>
+            </TextField>
+            <TextField value={location.observacoes} onChange={(v) => onUpdate({ observacoes: v })}>
+              <Label>Observações</Label>
+              <InputGroup>
+                <InputGroup.TextArea placeholder="Informações adicionais..." rows={2} />
+              </InputGroup>
+            </TextField>
           </div>
         )}
-      </CardBody>
+      </Card.Content>
     </Card>
   );
 }

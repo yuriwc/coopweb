@@ -1,7 +1,7 @@
 "use client";
 
 import { CentroCustoResumo } from "@/src/model/relatorio-vouchers";
-import { Card, CardBody, CardHeader } from "@heroui/card";
+import { Card } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import {
   BarChart,
@@ -104,7 +104,7 @@ export default function VouchersCharts({ data }: Props) {
       {/* Gráfico de Barras - Comparação de Vouchers */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="border border-gray-200 dark:border-gray-700">
-          <CardHeader className="pb-2">
+          <Card.Header className="pb-2">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-blue-50 dark:bg-blue-900 rounded-lg">
                 <Icon
@@ -121,8 +121,8 @@ export default function VouchersCharts({ data }: Props) {
                 </p>
               </div>
             </div>
-          </CardHeader>
-          <CardBody>
+          </Card.Header>
+          <Card.Content>
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={barChartData}>
@@ -138,11 +138,11 @@ export default function VouchersCharts({ data }: Props) {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          </CardBody>
+          </Card.Content>
         </Card>
 
         <Card className="border border-gray-200 dark:border-gray-700">
-          <CardHeader className="pb-2">
+          <Card.Header className="pb-2">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-emerald-50 dark:bg-emerald-900 rounded-lg">
                 <Icon
@@ -159,8 +159,8 @@ export default function VouchersCharts({ data }: Props) {
                 </p>
               </div>
             </div>
-          </CardHeader>
-          <CardBody>
+          </Card.Header>
+          <Card.Content>
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -191,14 +191,14 @@ export default function VouchersCharts({ data }: Props) {
                 </PieChart>
               </ResponsiveContainer>
             </div>
-          </CardBody>
+          </Card.Content>
         </Card>
       </section>
 
       {/* Gráfico de Área - Valores por Status */}
       <section>
         <Card className="border border-gray-200 dark:border-gray-700">
-          <CardHeader className="pb-2">
+          <Card.Header className="pb-2">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-purple-50 dark:bg-purple-900 rounded-lg">
                 <Icon
@@ -215,8 +215,8 @@ export default function VouchersCharts({ data }: Props) {
                 </p>
               </div>
             </div>
-          </CardHeader>
-          <CardBody>
+          </Card.Header>
+          <Card.Content>
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={statusData}>
@@ -250,14 +250,14 @@ export default function VouchersCharts({ data }: Props) {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-          </CardBody>
+          </Card.Content>
         </Card>
       </section>
 
       {/* Gráfico de Linha - Taxa de Pagamento */}
       <section>
         <Card className="border border-gray-200 dark:border-gray-700">
-          <CardHeader className="pb-2">
+          <Card.Header className="pb-2">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-cyan-50 dark:bg-cyan-900 rounded-lg">
                 <Icon
@@ -274,8 +274,8 @@ export default function VouchersCharts({ data }: Props) {
                 </p>
               </div>
             </div>
-          </CardHeader>
-          <CardBody>
+          </Card.Header>
+          <Card.Content>
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={barChartData}>
@@ -304,7 +304,7 @@ export default function VouchersCharts({ data }: Props) {
                 </LineChart>
               </ResponsiveContainer>
             </div>
-          </CardBody>
+          </Card.Content>
         </Card>
       </section>
     </div>

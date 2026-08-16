@@ -2,12 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@heroui/button";
-import { Card, CardBody } from "@heroui/card";
-import { Input } from "@heroui/input";
-import { Tooltip } from "@heroui/tooltip";
+import { Button } from "@heroui/react";
+import { Card } from "@heroui/react";
+import { TextField, InputGroup, CloseButton } from "@heroui/react";
+import { Tooltip } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { useDisclosure } from "@heroui/modal";
+import { useOverlayState } from "@heroui/react";
 import ShowToast from "../../../../../src/components/Toast";
 import { MotoristaCooperativa } from "../../../../../src/model/motorista";
 import MotoristasTable from "./motoristas-table";
@@ -31,7 +31,7 @@ export default function MotoristasClient({
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const novoMotoristaDisclosure = useDisclosure();
+  const novoMotoristaDisclosure = useOverlayState();
   const [motoristaVeiculo, setMotoristaVeiculo] = useState<MotoristaCooperativa | null>(null);
   const [motoristaBloqueio, setMotoristaBloqueio] = useState<MotoristaCooperativa | null>(null);
   const [motoristaReativacao, setMotoristaReativacao] = useState<MotoristaCooperativa | null>(null);
@@ -47,7 +47,7 @@ export default function MotoristasClient({
   }, [motoristasIniciais, searchTerm]);
 
   function handleCadastroManualSucesso() {
-    novoMotoristaDisclosure.onClose();
+    novoMotoristaDisclosure.close();
     ShowToast({ color: "success", title: "Motorista cadastrado com sucesso" });
     router.refresh();
   }
@@ -84,7 +84,7 @@ export default function MotoristasClient({
       <div className="container mx-auto p-4 sm:p-8 max-w-7xl">
         <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div className="flex items-center gap-4">
-            <Button variant="bordered" onPress={() => router.back()}>
+            <Button variant="secondary" onPress={() => router.back()}>
               ← Voltar
             </Button>
             <div>
@@ -97,52 +97,59 @@ export default function MotoristasClient({
             </div>
           </div>
 
-          <Tooltip
-            content="Não foi possível carregar o código da cooperativa — recarregue a página"
-            isDisabled={cooperativaCodigo !== null}
-          >
-            <span>
-              <Button
-                color="primary"
-                startContent={<Icon icon="solar:user-plus-linear" />}
-                isDisabled={cooperativaCodigo === null}
-                onPress={novoMotoristaDisclosure.onOpen}
-              >
-                Novo motorista
-              </Button>
-            </span>
+          <Tooltip delay={0} isDisabled={cooperativaCodigo !== null}>
+            <Tooltip.Trigger>
+              <span>
+                <Button
+                  variant="primary"
+                  isDisabled={cooperativaCodigo === null}
+                  onPress={novoMotoristaDisclosure.open}
+                >
+                  <Icon icon="solar:user-plus-linear" />
+                  Novo motorista
+                </Button>
+              </span>
+            </Tooltip.Trigger>
+            <Tooltip.Content>
+              <p>Não foi possível carregar o código da cooperativa — recarregue a página</p>
+            </Tooltip.Content>
           </Tooltip>
         </header>
 
         <Card className="mb-6">
-          <CardBody>
-            <Input
-              placeholder="Buscar por nome ou CPF..."
-              value={searchTerm}
-              onValueChange={setSearchTerm}
-              startContent={<Icon icon="solar:magnifer-linear" className="text-default-400" />}
-              isClearable
-              onClear={() => setSearchTerm("")}
-            />
-          </CardBody>
+          <Card.Content>
+            <TextField value={searchTerm} onChange={setSearchTerm} aria-label="Buscar por nome ou CPF">
+              <InputGroup>
+                <InputGroup.Prefix>
+                  <Icon icon="solar:magnifer-linear" className="text-default-400" />
+                </InputGroup.Prefix>
+                <InputGroup.Input placeholder="Buscar por nome ou CPF..." />
+                {searchTerm && (
+                  <InputGroup.Suffix>
+                    <CloseButton aria-label="Limpar busca" onPress={() => setSearchTerm("")} />
+                  </InputGroup.Suffix>
+                )}
+              </InputGroup>
+            </TextField>
+          </Card.Content>
         </Card>
 
         <Card>
-          <CardBody>
+          <Card.Content>
             <MotoristasTable
               motoristas={motoristasFiltrados}
               onVincularVeiculo={setMotoristaVeiculo}
               onBloquear={setMotoristaBloqueio}
               onReativar={setMotoristaReativacao}
             />
-          </CardBody>
+          </Card.Content>
         </Card>
       </div>
 
       {cooperativaCodigo ? (
         <NovoMotoristaModal
           isOpen={novoMotoristaDisclosure.isOpen}
-          onOpenChange={novoMotoristaDisclosure.onOpenChange}
+          onOpenChange={novoMotoristaDisclosure.setOpen}
           cooperativaCodigo={cooperativaCodigo}
           token={token}
           onCadastroManualSucesso={handleCadastroManualSucesso}

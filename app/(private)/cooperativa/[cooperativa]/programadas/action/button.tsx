@@ -1,6 +1,5 @@
 "use client";
 
-import { Spacer } from "@heroui/spacer";
 import Confirm from "../modal/confirm";
 import Motorista from "../select/motorista";
 import { useState } from "react";
@@ -54,7 +53,7 @@ export default function ActionButton({
   return (
     <div className="flex flex-row border-t-[0.5px] border-black p-3 justify-center items-center gap-2">
       <Motorista motoristas={motoristas} setMotorista={setSelectedMotorista} />
-      <Spacer />
+      <div className="w-1" />
       <Confirm
         name={selectedMotorista?.nome || ""}
         onCancel={async () => {}}

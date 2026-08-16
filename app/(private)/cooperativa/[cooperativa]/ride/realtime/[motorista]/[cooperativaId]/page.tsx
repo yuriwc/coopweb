@@ -11,11 +11,11 @@ import L from "leaflet";
 import { ViagemRealTime } from "@/src/model/viagem";
 import ViagemInfoCards from "@/src/components/ViagemInfoCards";
 import type { Map } from "leaflet";
-import { Button } from "@heroui/button";
-import { Chip } from "@heroui/chip";
+import { Button } from "@heroui/react";
+import { Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { Spinner } from "@heroui/spinner";
-import { cn } from "@heroui/theme";
+import { Spinner } from "@heroui/react/spinner";
+import { cn } from "@heroui/react";
 
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
@@ -296,16 +296,14 @@ const Page = () => {
                 <div className="flex items-center gap-4">
                   <div className="bg-white/10 dark:bg-white/5 backdrop-blur-xl border border-blue-200/40 dark:border-white/20 rounded-xl p-3 transition-all duration-300 hover:bg-white/20 dark:hover:bg-white/10">
                     <Button
-                      variant="light"
-                      startContent={
-                        <Icon
-                          icon="solar:arrow-left-linear"
-                          className="text-gray-700 dark:text-gray-300"
-                        />
-                      }
+                      variant="tertiary"
                       onPress={() => router.back()}
                       className="font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                     >
+                      <Icon
+                        icon="solar:arrow-left-linear"
+                        className="text-gray-700 dark:text-gray-300"
+                      />
                       Voltar
                     </Button>
                   </div>
@@ -328,20 +326,18 @@ const Page = () => {
                 <div className="flex items-center gap-3">
                   <div className="bg-white/10 dark:bg-white/5 backdrop-blur-xl border border-blue-200/30 dark:border-white/10 rounded-xl px-3 py-2">
                     <Chip
-                      startContent={
-                        <Icon
-                          icon={connectionInfo.icon}
-                          className={cn(
-                            "w-4 h-4",
-                            connectionInfo.pulse && "animate-spin"
-                          )}
-                        />
-                      }
                       color={connectionInfo.color}
-                      variant="flat"
+                      variant="tertiary"
                       size="sm"
                       className="bg-transparent"
                     >
+                      <Icon
+                        icon={connectionInfo.icon}
+                        className={cn(
+                          "w-4 h-4",
+                          connectionInfo.pulse && "animate-spin"
+                        )}
+                      />
                       {connectionInfo.text}
                     </Chip>
                   </div>
@@ -349,7 +345,7 @@ const Page = () => {
                   {lastUpdate && connectionStatus === "connected" && (
                     <div className="bg-white/10 dark:bg-white/5 backdrop-blur-xl border border-blue-200/30 dark:border-white/10 rounded-xl px-3 py-2">
                       <Chip
-                        variant="flat"
+                        variant="tertiary"
                         color="default"
                         size="sm"
                         className="bg-transparent"
@@ -416,7 +412,7 @@ const Page = () => {
             <div className="relative">
               <div className="absolute inset-0 bg-white/15 dark:bg-white/2 backdrop-blur-xl rounded-3xl border border-blue-200/25 dark:border-white/5" />
               <div className="relative p-12 rounded-3xl text-center">
-                <Spinner size="lg" color="primary" className="mb-4" />
+                <Spinner size="lg" color="accent" className="mb-4" />
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
                   Carregando dados da viagem...
                 </h3>
@@ -454,7 +450,7 @@ const Page = () => {
                       <Button
                         isIconOnly
                         size="sm"
-                        variant="light"
+                        variant="tertiary"
                         onPress={centerOnDriver}
                         className="min-w-8 h-8 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white"
                         isDisabled={!viagem.latitudeMotorista}
@@ -464,7 +460,7 @@ const Page = () => {
                       <Button
                         isIconOnly
                         size="sm"
-                        variant="light"
+                        variant="tertiary"
                         onPress={zoomIn}
                         className="min-w-8 h-8 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white"
                       >
@@ -476,7 +472,7 @@ const Page = () => {
                       <Button
                         isIconOnly
                         size="sm"
-                        variant="light"
+                        variant="tertiary"
                         onPress={zoomOut}
                         className="min-w-8 h-8 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white"
                       >
@@ -488,7 +484,7 @@ const Page = () => {
                       <Button
                         isIconOnly
                         size="sm"
-                        variant="light"
+                        variant="tertiary"
                         onPress={toggleFullScreen}
                         className="min-w-8 h-8 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white"
                       >
@@ -554,10 +550,10 @@ const Page = () => {
                         >
                           <Popup className="text-sm">
                             <div className="space-y-1">
-                              <div className="font-semibold text-primary">
+                              <div className="font-semibold text-accent">
                                 🧭 MOTORISTA
                               </div>
-                              <div className="text-xs text-foreground-500">
+                              <div className="text-xs text-muted">
                                 {viagem.latitudeMotorista.toFixed(6)},{" "}
                                 {viagem.longitudeMotorista.toFixed(6)}
                               </div>
@@ -619,7 +615,7 @@ const Page = () => {
                           >
                             <Popup className="text-sm">
                               <div className="space-y-1">
-                                <div className="font-semibold text-primary">
+                                <div className="font-semibold text-accent">
                                   🚏 PARADA {index + 1}
                                 </div>
                                 <div className="text-xs font-medium">
@@ -643,7 +639,7 @@ const Page = () => {
                     ) : (
                       <div className="flex items-center justify-center h-full">
                         <div className="text-center space-y-4">
-                          <Spinner size="lg" color="primary" />
+                          <Spinner size="lg" color="accent" />
                           <div>
                             <h4 className="font-semibold text-gray-800 dark:text-white">
                               Aguardando localização
@@ -681,25 +677,23 @@ const Page = () => {
 
                     <div className="flex items-center gap-2 bg-white/10 dark:bg-white/5 backdrop-blur-xl rounded-xl px-3 py-1.5">
                       <Chip
-                        startContent={
-                          <div
-                            className={cn(
-                              "w-2 h-2 rounded-full",
-                              connectionStatus === "connected"
-                                ? "bg-success animate-pulse"
-                                : "bg-danger"
-                            )}
-                          />
-                        }
                         color={
                           connectionStatus === "connected"
                             ? "success"
                             : "danger"
                         }
-                        variant="flat"
+                        variant="tertiary"
                         size="sm"
                         className="bg-transparent"
                       >
+                        <div
+                          className={cn(
+                            "w-2 h-2 rounded-full",
+                            connectionStatus === "connected"
+                              ? "bg-success animate-pulse"
+                              : "bg-danger"
+                          )}
+                        />
                         {connectionStatus === "connected"
                           ? "ONLINE"
                           : "OFFLINE"}
@@ -786,12 +780,11 @@ const Page = () => {
                 </p>
                 <div className="bg-white/10 dark:bg-white/5 backdrop-blur-xl rounded-xl p-3 inline-block">
                   <Button
-                    color="primary"
-                    variant="flat"
-                    startContent={<Icon icon="solar:refresh-linear" />}
+                    variant="tertiary"
                     onPress={() => router.refresh()}
                     className="bg-transparent"
                   >
+                    <Icon icon="solar:refresh-linear" />
                     Tentar Novamente
                   </Button>
                 </div>

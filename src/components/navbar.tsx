@@ -1,8 +1,6 @@
 "use client";
 
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/navbar";
-import { Link } from "@heroui/link";
-import { Avatar } from "@heroui/avatar";
+import { Link, Avatar } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { useState, useRef, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -33,18 +31,16 @@ function NavLinkItem({ link, pathname }: { link: NavLink; pathname: string }) {
   const active = link.exact ? pathname === link.href : pathname.startsWith(link.href);
 
   return (
-    <NavbarItem>
-      <Link
-        href={link.href}
-        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-          active
-            ? "bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400"
-            : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-        }`}
-      >
-        {link.label}
-      </Link>
-    </NavbarItem>
+    <Link
+      href={link.href}
+      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+        active
+          ? "bg-accent-soft text-accent dark:bg-accent-soft/30 dark:text-accent"
+          : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+      }`}
+    >
+      {link.label}
+    </Link>
   );
 }
 
@@ -125,15 +121,15 @@ export default function App() {
   const links = isCooperativaRoute ? cooperativaLinks : empresaLinks;
 
   return (
-    <Navbar className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm rounded-none px-6">
-      <NavbarBrand>
+    <nav className="fixed top-0 left-0 right-0 z-50 h-16 flex items-center bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm px-6">
+      <div className="flex items-center shrink-0">
         <CoopGoLogo />
-        <span className="text-base sm:text-lg font-bold tracking-[0.1em] uppercase text-primary-600 dark:text-primary-400 ml-3">
+        <span className="text-base sm:text-lg font-bold tracking-[0.1em] uppercase text-accent dark:text-accent ml-3">
           CoopGo
         </span>
-      </NavbarBrand>
+      </div>
 
-      <NavbarContent className="hidden sm:flex gap-1" justify="center">
+      <div className="hidden sm:flex items-center gap-1 flex-1 justify-center">
         {links.map((link) => (
           <NavLinkItem key={link.label} link={link} pathname={pathname} />
         ))}
@@ -141,26 +137,24 @@ export default function App() {
           link={{ label: "Manual", href: "/docs/webgo.html" }}
           pathname={pathname}
         />
-      </NavbarContent>
+      </div>
 
-      <NavbarContent as="div" justify="end" className="gap-3">
+      <div className="flex items-center gap-3 shrink-0">
         {isCooperativaRoute && cooperativaId && (
-          <NavbarItem>
-            <PendingRidesNotification cooperativaId={cooperativaId} />
-          </NavbarItem>
+          <PendingRidesNotification cooperativaId={cooperativaId} />
         )}
-        <NavbarItem>
-          <ThemeSwitcher />
-        </NavbarItem>
+        <ThemeSwitcher />
         <div className="relative" ref={menuRef}>
-          <Avatar
-            as="button"
+          <button
+            type="button"
             className="cursor-pointer"
-            color="secondary"
-            name="U"
-            size="md"
+            aria-label="Menu do usuário"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-          />
+          >
+            <Avatar size="md" color="default">
+              <Avatar.Fallback>U</Avatar.Fallback>
+            </Avatar>
+          </button>
 
           {isMenuOpen && (
             <div className="absolute right-0 top-full mt-3 w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden">
@@ -174,7 +168,7 @@ export default function App() {
             </div>
           )}
         </div>
-      </NavbarContent>
-    </Navbar>
+      </div>
+    </nav>
   );
 }

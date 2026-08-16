@@ -1,14 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
-import { Button } from "@heroui/button";
+import { Modal } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { reativarMotorista } from "../action/reativar-motorista";
 import { MotoristaCooperativa } from "../../../../../../src/model/motorista";
 
@@ -48,34 +42,39 @@ export default function ReativarMotoristaModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="sm">
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              Reativar {motorista?.nome ?? motorista?.cpf}
-            </ModalHeader>
-            <ModalBody>
-              <p className="text-sm text-default-600">
-                O motorista volta a poder aceitar corridas, entrar na fila e receber disparo direto.
-              </p>
-              {erro ? (
-                <p className="text-sm text-danger" role="alert">
-                  {erro}
-                </p>
-              ) : null}
-            </ModalBody>
-            <ModalFooter>
-              <Button variant="light" onPress={onClose} isDisabled={enviando}>
-                Cancelar
-              </Button>
-              <Button color="primary" isLoading={enviando} onPress={handleConfirm}>
-                Reativar
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
+    <Modal>
+      <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpenChange}>
+        <Modal.Container size="sm">
+          <Modal.Dialog>
+            {({ close }) => (
+              <>
+                <Modal.CloseTrigger />
+                <Modal.Header>
+                  <Modal.Heading>Reativar {motorista?.nome ?? motorista?.cpf}</Modal.Heading>
+                </Modal.Header>
+                <Modal.Body>
+                  <p className="text-sm text-default-600">
+                    O motorista volta a poder aceitar corridas, entrar na fila e receber disparo direto.
+                  </p>
+                  {erro ? (
+                    <p className="text-sm text-danger" role="alert">
+                      {erro}
+                    </p>
+                  ) : null}
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="tertiary" onPress={close} isDisabled={enviando}>
+                    Cancelar
+                  </Button>
+                  <Button variant="primary" isPending={enviando} onPress={handleConfirm}>
+                    Reativar
+                  </Button>
+                </Modal.Footer>
+              </>
+            )}
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 }

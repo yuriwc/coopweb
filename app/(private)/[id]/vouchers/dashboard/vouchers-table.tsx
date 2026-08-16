@@ -1,24 +1,7 @@
 "use client";
 
-import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-} from "@heroui/table";
-import { Chip } from "@heroui/chip";
-
-const columns = [
-  { key: "voucher", label: "VOUCHER" },
-  { key: "data", label: "DATA" },
-  { key: "motorista", label: "MOTORISTA" },
-  { key: "passageiro", label: "PASSAGEIRO" },
-  { key: "valor", label: "VALOR" },
-  { key: "status", label: "STATUS" },
-  { key: "trajeto", label: "TRAJETO" },
-];
+import { Table } from "@heroui/react";
+import { Chip } from "@heroui/react";
 
 interface VouchersTableProps {
   vouchers: {
@@ -49,7 +32,7 @@ export default function VouchersTable({ vouchers }: VouchersTableProps) {
       case "PENDENTE":
         return "warning";
       case "APROVADO":
-        return "primary";
+        return "accent";
       default:
         return "default";
     }
@@ -63,27 +46,27 @@ export default function VouchersTable({ vouchers }: VouchersTableProps) {
   }
 
   return (
-    <Table
-      aria-label="Tabela de vouchers do centro de custo"
-      classNames={{
-        wrapper: "bg-transparent shadow-none p-0",
-        th: "bg-gray-50 dark:bg-gray-800/50",
-      }}
-    >
-      <TableHeader columns={columns}>
-        {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
-      </TableHeader>
-      <TableBody items={vouchers}>
-        {(voucher) => (
-          <TableRow key={voucher.id || voucher.numeroVoucher}>
-            {(columnKey) => (
-              <TableCell>
-                {columnKey === "voucher" && (
+    <Table className="bg-transparent shadow-none p-0">
+      <Table.ScrollContainer>
+        <Table.Content aria-label="Tabela de vouchers do centro de custo">
+          <Table.Header>
+            <Table.Column className="bg-gray-50 dark:bg-gray-800/50">VOUCHER</Table.Column>
+            <Table.Column className="bg-gray-50 dark:bg-gray-800/50">DATA</Table.Column>
+            <Table.Column className="bg-gray-50 dark:bg-gray-800/50">MOTORISTA</Table.Column>
+            <Table.Column className="bg-gray-50 dark:bg-gray-800/50">PASSAGEIRO</Table.Column>
+            <Table.Column className="bg-gray-50 dark:bg-gray-800/50">VALOR</Table.Column>
+            <Table.Column className="bg-gray-50 dark:bg-gray-800/50">STATUS</Table.Column>
+            <Table.Column className="bg-gray-50 dark:bg-gray-800/50">TRAJETO</Table.Column>
+          </Table.Header>
+          <Table.Body items={vouchers}>
+            {(voucher) => (
+              <Table.Row id={voucher.id || voucher.numeroVoucher}>
+                <Table.Cell>
                   <div className="font-mono text-sm">
                     {voucher.numeroVoucher || "-"}
                   </div>
-                )}
-                {columnKey === "data" && (
+                </Table.Cell>
+                <Table.Cell>
                   <div className="text-sm">
                     {voucher.dataEmissao
                       ? new Date(voucher.dataEmissao).toLocaleDateString(
@@ -91,21 +74,21 @@ export default function VouchersTable({ vouchers }: VouchersTableProps) {
                         )
                       : "-"}
                   </div>
-                )}
-                {columnKey === "motorista" && (
+                </Table.Cell>
+                <Table.Cell>
                   <div className="text-sm">{voucher.nomeMotorista || "-"}</div>
-                )}
-                {columnKey === "passageiro" && (
+                </Table.Cell>
+                <Table.Cell>
                   <div className="text-sm">{voucher.nomePassageiro || "-"}</div>
-                )}
-                {columnKey === "valor" && (
+                </Table.Cell>
+                <Table.Cell>
                   <div className="font-semibold">
                     {voucher.valorTotal
                       ? formatCurrency(voucher.valorTotal)
                       : "-"}
                   </div>
-                )}
-                {columnKey === "status" && (
+                </Table.Cell>
+                <Table.Cell>
                   <Chip
                     size="sm"
                     color={
@@ -113,12 +96,12 @@ export default function VouchersTable({ vouchers }: VouchersTableProps) {
                         ? getStatusColor(voucher.status)
                         : "default"
                     }
-                    variant="flat"
+                    variant="tertiary"
                   >
                     {voucher.status || "N/A"}
                   </Chip>
-                )}
-                {columnKey === "trajeto" && (
+                </Table.Cell>
+                <Table.Cell>
                   <div className="text-xs max-w-xs">
                     <div className="truncate text-gray-600">
                       De: {voucher.origemViagem || "-"}
@@ -127,12 +110,12 @@ export default function VouchersTable({ vouchers }: VouchersTableProps) {
                       Para: {voucher.destinoViagem || "-"}
                     </div>
                   </div>
-                )}
-              </TableCell>
+                </Table.Cell>
+              </Table.Row>
             )}
-          </TableRow>
-        )}
-      </TableBody>
+          </Table.Body>
+        </Table.Content>
+      </Table.ScrollContainer>
     </Table>
   );
 }

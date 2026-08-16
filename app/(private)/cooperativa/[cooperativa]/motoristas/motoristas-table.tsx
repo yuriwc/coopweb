@@ -1,26 +1,10 @@
 "use client";
 
-import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-} from "@heroui/table";
-import { Chip } from "@heroui/chip";
-import { Button } from "@heroui/button";
+import { Table } from "@heroui/react";
+import { Chip } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { isCadastroCompleto, MotoristaCooperativa } from "../../../../../src/model/motorista";
-
-const columns = [
-  { key: "nome", label: "NOME" },
-  { key: "cpf", label: "CPF" },
-  { key: "cadastro", label: "CADASTRO" },
-  { key: "veiculo", label: "VEÍCULO" },
-  { key: "status", label: "STATUS" },
-  { key: "acoes", label: "AÇÕES" },
-];
 
 interface MotoristasTableProps {
   motoristas: MotoristaCooperativa[];
@@ -49,30 +33,37 @@ export default function MotoristasTable({
 
   return (
     <div className="overflow-x-auto">
-      <Table aria-label="Tabela de motoristas da cooperativa">
-        <TableHeader columns={columns}>
-          {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
-        </TableHeader>
-        <TableBody items={motoristas}>
-          {(motorista) => (
-            <TableRow key={motorista.id}>
-              {(columnKey) => (
-                <TableCell>
-                  {columnKey === "nome" && (
+      <Table>
+        <Table.ScrollContainer>
+          <Table.Content aria-label="Tabela de motoristas da cooperativa">
+            <Table.Header>
+              <Table.Column>NOME</Table.Column>
+              <Table.Column>CPF</Table.Column>
+              <Table.Column>CADASTRO</Table.Column>
+              <Table.Column>VEÍCULO</Table.Column>
+              <Table.Column>STATUS</Table.Column>
+              <Table.Column>AÇÕES</Table.Column>
+            </Table.Header>
+            <Table.Body items={motoristas}>
+              {(motorista) => (
+                <Table.Row id={motorista.id}>
+                  <Table.Cell>
                     <span className="text-sm font-medium">
                       {motorista.nome ?? <span className="text-default-400 italic">Não informado</span>}
                     </span>
-                  )}
+                  </Table.Cell>
 
-                  {columnKey === "cpf" && <span className="text-sm">{motorista.cpf}</span>}
+                  <Table.Cell>
+                    <span className="text-sm">{motorista.cpf}</span>
+                  </Table.Cell>
 
-                  {columnKey === "cadastro" && (
-                    <Chip size="sm" variant="bordered">
+                  <Table.Cell>
+                    <Chip size="sm" variant="secondary">
                       {isCadastroCompleto(motorista) ? "Completo" : "Mínimo"}
                     </Chip>
-                  )}
+                  </Table.Cell>
 
-                  {columnKey === "veiculo" && (
+                  <Table.Cell>
                     <span className="text-sm">
                       {motorista.veiculo ? (
                         motorista.veiculo.placa
@@ -80,19 +71,19 @@ export default function MotoristasTable({
                         <span className="text-default-400 italic">sem veículo</span>
                       )}
                     </span>
-                  )}
+                  </Table.Cell>
 
-                  {columnKey === "status" && (
-                    <Chip size="sm" color={motorista.ativo ? "success" : "danger"} variant="flat">
+                  <Table.Cell>
+                    <Chip size="sm" color={motorista.ativo ? "success" : "danger"} variant="tertiary">
                       {motorista.ativo ? "Ativo" : "Bloqueado"}
                     </Chip>
-                  )}
+                  </Table.Cell>
 
-                  {columnKey === "acoes" && (
+                  <Table.Cell>
                     <div className="flex gap-2 justify-end">
                       <Button
                         size="sm"
-                        variant="flat"
+                        variant="tertiary"
                         aria-label={`${motorista.veiculo ? "Substituir" : "Vincular"} veículo de ${motorista.nome ?? motorista.cpf}`}
                         onPress={() => onVincularVeiculo(motorista)}
                       >
@@ -101,8 +92,7 @@ export default function MotoristasTable({
                       {motorista.ativo ? (
                         <Button
                           size="sm"
-                          variant="flat"
-                          color="danger"
+                          variant="danger-soft"
                           aria-label={`Bloquear ${motorista.nome ?? motorista.cpf}`}
                           onPress={() => onBloquear(motorista)}
                         >
@@ -111,8 +101,8 @@ export default function MotoristasTable({
                       ) : (
                         <Button
                           size="sm"
-                          variant="flat"
-                          color="success"
+                          variant="tertiary"
+                          className="text-success"
                           aria-label={`Reativar ${motorista.nome ?? motorista.cpf}`}
                           onPress={() => onReativar(motorista)}
                         >
@@ -120,12 +110,12 @@ export default function MotoristasTable({
                         </Button>
                       )}
                     </div>
-                  )}
-                </TableCell>
+                  </Table.Cell>
+                </Table.Row>
               )}
-            </TableRow>
-          )}
-        </TableBody>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
       </Table>
     </div>
   );

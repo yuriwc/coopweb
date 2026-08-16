@@ -1,16 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@heroui/button";
-import { Input, Textarea } from "@heroui/input";
+import { Button } from "@heroui/react";
+import { TextField, Label, Input, InputGroup } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
+import { Modal } from "@heroui/react";
 import ShowToast from "@/src/components/Toast";
 import { fetchComLog } from "@/src/utils/log-fetch";
 
@@ -111,67 +105,63 @@ export default function CentroCustoModal({
 
   return (
     <>
-      <Button
-        variant="flat"
-        onPress={() => onOpen(true)}
-        startContent={
-          <Icon icon="solar:buildings-3-linear" className="w-4 h-4" />
-        }
-        size="sm"
-      >
+      <Button variant="tertiary" onPress={() => onOpen(true)} size="sm">
+        <Icon icon="solar:buildings-3-linear" className="w-4 h-4" />
         Centro de Custo
       </Button>
 
-      <Modal isOpen={isOpen} onOpenChange={onOpen} size="md">
-        <ModalContent>
-          {() => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Cadastrar Centro de Custo
-              </ModalHeader>
+      <Modal>
+        <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpen}>
+          <Modal.Container size="md">
+            <Modal.Dialog>
+              <Modal.CloseTrigger />
+              <Modal.Header>
+                <Modal.Heading>Cadastrar Centro de Custo</Modal.Heading>
+              </Modal.Header>
 
-              <ModalBody className="gap-4">
-                <Input
-                  label="Código"
-                  placeholder="Ex: CC001, ADM, VENDAS"
+              <Modal.Body className="gap-4">
+                <TextField
                   value={formData.codigo}
-                  onChange={(e) => handleInputChange("codigo", e.target.value)}
+                  onChange={(v) => handleInputChange("codigo", v)}
                   isRequired
-                  variant="bordered"
-                />
+                >
+                  <Label>Código</Label>
+                  <Input placeholder="Ex: CC001, ADM, VENDAS" />
+                </TextField>
 
-                <Textarea
-                  label="Descrição"
-                  placeholder="Ex: Administrativo, Recursos Humanos, Vendas..."
+                <TextField
                   value={formData.descricao}
-                  onChange={(e) => handleInputChange("descricao", e.target.value)}
+                  onChange={(v) => handleInputChange("descricao", v)}
                   isRequired
-                  variant="bordered"
-                  minRows={3}
-                  maxRows={5}
-                />
-              </ModalBody>
+                >
+                  <Label>Descrição</Label>
+                  <InputGroup>
+                    <InputGroup.TextArea
+                      placeholder="Ex: Administrativo, Recursos Humanos, Vendas..."
+                      rows={3}
+                    />
+                  </InputGroup>
+                </TextField>
+              </Modal.Body>
 
-              <ModalFooter>
-                <Button variant="light" onPress={handleClose} isDisabled={isLoading}>
+              <Modal.Footer>
+                <Button variant="tertiary" onPress={handleClose} isDisabled={isLoading}>
                   Cancelar
                 </Button>
                 <Button
-                  color="primary"
+                  variant="primary"
                   onPress={handleSubmit}
-                  isLoading={isLoading}
-                  startContent={
-                    !isLoading && (
-                      <Icon icon="solar:check-circle-linear" className="w-4 h-4" />
-                    )
-                  }
+                  isPending={isLoading}
                 >
+                  {!isLoading && (
+                    <Icon icon="solar:check-circle-linear" className="w-4 h-4" />
+                  )}
                   Cadastrar
                 </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
+              </Modal.Footer>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
       </Modal>
     </>
   );

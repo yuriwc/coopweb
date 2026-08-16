@@ -4,8 +4,8 @@ import { Funcionario } from "@/src/model/funcionario";
 import { getToken } from "@/src/utils/token/get-token";
 import { fetchComLog } from "@/src/utils/log-fetch";
 import { Empresa } from "@/src/model/empresa";
-import { Card, CardHeader, CardBody } from "@heroui/card";
-import { Tooltip } from "@heroui/tooltip";
+import { Card } from "@heroui/react";
+import { Tooltip } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
 /* ------------------------------------------------------------------ */
@@ -55,44 +55,54 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
           </div>
 
           <div className="flex items-center gap-2">
-            <Tooltip content="Monitoramento em tempo real">
-              <Link
-                href={`/${params.id}/ride/realtime`}
-                aria-label="Monitoramento em tempo real"
-                className="inline-flex items-center justify-center rounded-medium bg-default-100 dark:bg-default-50 h-10 w-10 text-gray-700 dark:text-gray-300 hover:opacity-80 transition-opacity"
-              >
-                <Icon icon="solar:gps-linear" className="w-4 h-4" />
-              </Link>
+            <Tooltip delay={0}>
+              <Tooltip.Trigger>
+                <Link
+                  href={`/${params.id}/ride/realtime`}
+                  aria-label="Monitoramento em tempo real"
+                  className="inline-flex items-center justify-center rounded-md bg-default-100 dark:bg-default-50 h-10 w-10 text-gray-700 dark:text-gray-300 hover:opacity-80 transition-opacity"
+                >
+                  <Icon icon="solar:gps-linear" className="w-4 h-4" />
+                </Link>
+              </Tooltip.Trigger>
+              <Tooltip.Content>
+                <p>Monitoramento em tempo real</p>
+              </Tooltip.Content>
             </Tooltip>
-            <Tooltip content="Configurações da empresa">
-              <Link
-                href={`/${params.id}/configuracoes`}
-                aria-label="Configurações da empresa"
-                className="inline-flex items-center justify-center rounded-medium bg-default-100 dark:bg-default-50 h-10 w-10 text-gray-700 dark:text-gray-300 hover:opacity-80 transition-opacity"
-              >
-                <Icon icon="solar:settings-linear" className="w-4 h-4" />
-              </Link>
+            <Tooltip delay={0}>
+              <Tooltip.Trigger>
+                <Link
+                  href={`/${params.id}/configuracoes`}
+                  aria-label="Configurações da empresa"
+                  className="inline-flex items-center justify-center rounded-md bg-default-100 dark:bg-default-50 h-10 w-10 text-gray-700 dark:text-gray-300 hover:opacity-80 transition-opacity"
+                >
+                  <Icon icon="solar:settings-linear" className="w-4 h-4" />
+                </Link>
+              </Tooltip.Trigger>
+              <Tooltip.Content>
+                <p>Configurações da empresa</p>
+              </Tooltip.Content>
             </Tooltip>
           </div>
         </header>
 
         {/* Superfície única: colaboradores + ações de viagem */}
         <Card className="border border-gray-200 dark:border-gray-700">
-          <CardHeader className="flex-col items-start px-6 sm:px-8 pt-6 sm:pt-8 pb-0">
+          <Card.Header className="flex-col items-start px-6 sm:px-8 pt-6 sm:pt-8 pb-0">
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
               Colaboradores
             </h2>
             <p className="text-gray-600 dark:text-gray-300 mt-1">
               Peça uma viagem ou gerencie o quadro de funcionários da empresa
             </p>
-          </CardHeader>
-          <CardBody className="p-6 sm:p-8">
+          </Card.Header>
+          <Card.Content className="p-6 sm:p-8">
             <TablePassegers
               funcionarios={funcionarios}
               empresa={params.id}
               token={token}
             />
-          </CardBody>
+          </Card.Content>
         </Card>
       </div>
     </div>

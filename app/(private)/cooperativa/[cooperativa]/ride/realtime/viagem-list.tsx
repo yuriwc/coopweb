@@ -6,7 +6,7 @@ import { database } from "../../../../../../scripts/firebase-config";
 import ViagemCard from "../../../../../../src/components/ViagemCard";
 import { useRouter } from "next/navigation";
 import { Passageiro, ViagemRealTime } from "../../../../../../src/model/viagem";
-import { Button } from "@heroui/button";
+import { Button } from "@heroui/react";
 
 interface Props {
   cooperativaId: string;
@@ -110,7 +110,7 @@ export default function ViagemList({ cooperativaId }: Props) {
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
               <div className="flex items-center gap-4">
                 <Button
-                  variant="bordered"
+                  variant="secondary"
                   onPress={() => router.back()}
                   className="bg-white/10 dark:bg-white/5 backdrop-blur-xl border-blue-200/40 dark:border-white/20 text-gray-700 dark:text-gray-300 hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-300 uppercase tracking-widest text-xs"
                 >

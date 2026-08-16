@@ -1,36 +1,15 @@
 "use client";
 
-import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-} from "@heroui/table";
-import { Chip } from "@heroui/chip";
-import { Tooltip } from "@heroui/tooltip";
-import { Button } from "@heroui/button";
+import { Table } from "@heroui/react";
+import { Chip } from "@heroui/react";
+import { Tooltip } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import {
   STATUS_VOUCHER_LABEL,
   StatusVoucher,
   VoucherCooperativa,
 } from "../../../../../src/model/relatorio-vouchers";
-
-const columns = [
-  { key: "voucher", label: "VOUCHER" },
-  { key: "empresa", label: "EMPRESA" },
-  { key: "dataEmissao", label: "EMISSÃO" },
-  { key: "dataVencimento", label: "VENCIMENTO" },
-  { key: "motorista", label: "MOTORISTA" },
-  { key: "passageiro", label: "PASSAGEIRO" },
-  { key: "valor", label: "VALOR" },
-  { key: "status", label: "STATUS" },
-  { key: "trajeto", label: "TRAJETO" },
-  { key: "pagamento", label: "PAGAMENTO" },
-  { key: "acoes", label: "AÇÕES" },
-];
 
 interface VouchersCooperativaTableProps {
   vouchers: VoucherCooperativa[];
@@ -82,7 +61,7 @@ export default function VouchersCooperativaTable({
       case "PENDENTE":
         return "warning";
       case "APROVADO":
-        return "primary";
+        return "accent";
       case "CANCELADO":
         return "danger";
       default:
@@ -134,52 +113,56 @@ export default function VouchersCooperativaTable({
 
   return (
     <div className="overflow-x-auto">
-      <Table 
-        aria-label="Tabela de vouchers da cooperativa"
-        classNames={{
-          wrapper: "bg-transparent shadow-none",
-          th: "bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold",
-          td: "py-3",
-        }}
-      >
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn key={column.key} className="uppercase tracking-wide">
-              {column.label}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody items={vouchers}>
-          {(voucher) => (
-            <TableRow 
-              key={voucher.id}
-              className="hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors"
-            >
-              {(columnKey) => (
-                <TableCell>
-                  {columnKey === "voucher" && (
+      <Table className="bg-transparent shadow-none">
+        <Table.ScrollContainer>
+          <Table.Content aria-label="Tabela de vouchers da cooperativa">
+            <Table.Header>
+              <Table.Column className="bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold uppercase tracking-wide">VOUCHER</Table.Column>
+              <Table.Column className="bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold uppercase tracking-wide">EMPRESA</Table.Column>
+              <Table.Column className="bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold uppercase tracking-wide">EMISSÃO</Table.Column>
+              <Table.Column className="bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold uppercase tracking-wide">VENCIMENTO</Table.Column>
+              <Table.Column className="bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold uppercase tracking-wide">MOTORISTA</Table.Column>
+              <Table.Column className="bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold uppercase tracking-wide">PASSAGEIRO</Table.Column>
+              <Table.Column className="bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold uppercase tracking-wide">VALOR</Table.Column>
+              <Table.Column className="bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold uppercase tracking-wide">STATUS</Table.Column>
+              <Table.Column className="bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold uppercase tracking-wide">TRAJETO</Table.Column>
+              <Table.Column className="bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold uppercase tracking-wide">PAGAMENTO</Table.Column>
+              <Table.Column className="bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold uppercase tracking-wide">AÇÕES</Table.Column>
+            </Table.Header>
+            <Table.Body items={vouchers}>
+              {(voucher) => (
+                <Table.Row
+                  id={voucher.id}
+                  className="hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors"
+                >
+                  <Table.Cell className="py-3">
                     <div className="font-mono text-sm font-medium text-blue-600 dark:text-blue-400">
                       {voucher.numeroVoucher}
                     </div>
-                  )}
-                  
-                  {columnKey === "empresa" && (
+                  </Table.Cell>
+
+                  <Table.Cell className="py-3">
                     <div className="text-sm font-medium max-w-[150px]">
-                      <Tooltip content={voucher.nomeEmpresa}>
-                        <div className="truncate">
-                          {voucher.nomeEmpresa}
-                        </div>
+                      <Tooltip delay={0}>
+                        <Tooltip.Trigger>
+                          <div className="truncate">
+                            {voucher.nomeEmpresa}
+                          </div>
+                        </Tooltip.Trigger>
+                        <Tooltip.Content>
+                          <p>{voucher.nomeEmpresa}</p>
+                        </Tooltip.Content>
                       </Tooltip>
                     </div>
-                  )}
-                  
-                  {columnKey === "dataEmissao" && (
+                  </Table.Cell>
+
+                  <Table.Cell className="py-3">
                     <div className="text-sm">
                       {formatDate(voucher.dataEmissao)}
                     </div>
-                  )}
-                  
-                  {columnKey === "dataVencimento" && (
+                  </Table.Cell>
+
+                  <Table.Cell className="py-3">
                     <div className="flex items-center gap-1">
                       <span className={`text-sm ${isVencido(voucher.dataVencimento) ? 'text-red-600 font-semibold' : ''}`}>
                         {formatDate(voucher.dataVencimento)}
@@ -188,72 +171,86 @@ export default function VouchersCooperativaTable({
                         <Icon icon="solar:danger-triangle-linear" className="w-4 h-4 text-red-500" />
                       )}
                     </div>
-                  )}
-                  
-                  {columnKey === "motorista" && (
+                  </Table.Cell>
+
+                  <Table.Cell className="py-3">
                     <div className="text-sm max-w-[120px]">
-                      <Tooltip content={voucher.nomeMotorista}>
-                        <div className="truncate">
-                          {voucher.nomeMotorista}
-                        </div>
+                      <Tooltip delay={0}>
+                        <Tooltip.Trigger>
+                          <div className="truncate">
+                            {voucher.nomeMotorista}
+                          </div>
+                        </Tooltip.Trigger>
+                        <Tooltip.Content>
+                          <p>{voucher.nomeMotorista}</p>
+                        </Tooltip.Content>
                       </Tooltip>
                     </div>
-                  )}
-                  
-                  {columnKey === "passageiro" && (
+                  </Table.Cell>
+
+                  <Table.Cell className="py-3">
                     <div className="text-sm max-w-[120px]">
-                      <Tooltip content={voucher.nomePassageiro}>
-                        <div className="truncate">
-                          {voucher.nomePassageiro}
-                        </div>
+                      <Tooltip delay={0}>
+                        <Tooltip.Trigger>
+                          <div className="truncate">
+                            {voucher.nomePassageiro}
+                          </div>
+                        </Tooltip.Trigger>
+                        <Tooltip.Content>
+                          <p>{voucher.nomePassageiro}</p>
+                        </Tooltip.Content>
                       </Tooltip>
                     </div>
-                  )}
-                  
-                  {columnKey === "valor" && (
+                  </Table.Cell>
+
+                  <Table.Cell className="py-3">
                     <div className="font-semibold text-green-600 dark:text-green-400">
                       {formatCurrency(voucher.valorTotal)}
                     </div>
-                  )}
-                  
-                  {columnKey === "status" && (
-                    <Chip
-                      size="sm"
-                      color={getStatusColor(voucher.status)}
-                      variant="flat"
-                      startContent={
-                        <Icon icon={getStatusIcon(voucher.status)} className="w-3 h-3" />
-                      }
-                    >
+                  </Table.Cell>
+
+                  <Table.Cell className="py-3">
+                    <Chip size="sm" color={getStatusColor(voucher.status)} variant="tertiary">
+                      <Icon icon={getStatusIcon(voucher.status)} className="w-3 h-3" />
                       {STATUS_VOUCHER_LABEL[voucher.status]}
                     </Chip>
-                  )}
-                  
-                  {columnKey === "trajeto" && (
+                  </Table.Cell>
+
+                  <Table.Cell className="py-3">
                     <div className="text-xs max-w-[200px] space-y-1">
                       <div className="flex items-start gap-1">
                         <Icon icon="solar:map-point-linear" className="w-3 h-3 text-green-500 mt-0.5 shrink-0" />
-                        <Tooltip content={voucher.origemViagem}>
-                          <div className="truncate text-gray-600 dark:text-gray-400">
-                            {voucher.origemViagem}
-                          </div>
+                        <Tooltip delay={0}>
+                          <Tooltip.Trigger>
+                            <div className="truncate text-gray-600 dark:text-gray-400">
+                              {voucher.origemViagem}
+                            </div>
+                          </Tooltip.Trigger>
+                          <Tooltip.Content>
+                            <p>{voucher.origemViagem}</p>
+                          </Tooltip.Content>
                         </Tooltip>
                       </div>
                       <div className="flex items-start gap-1">
                         <Icon icon="solar:map-point-favourite-linear" className="w-3 h-3 text-red-500 mt-0.5 shrink-0" />
-                        <Tooltip content={voucher.destinoViagem}>
-                          <div className="truncate text-gray-600 dark:text-gray-400">
-                            {voucher.destinoViagem}
-                          </div>
+                        <Tooltip delay={0}>
+                          <Tooltip.Trigger>
+                            <div className="truncate text-gray-600 dark:text-gray-400">
+                              {voucher.destinoViagem}
+                            </div>
+                          </Tooltip.Trigger>
+                          <Tooltip.Content>
+                            <p>{voucher.destinoViagem}</p>
+                          </Tooltip.Content>
                         </Tooltip>
                       </div>
                     </div>
-                  )}
-                  
-                  {columnKey === "pagamento" && (
+                  </Table.Cell>
+
+                  <Table.Cell className="py-3">
                     <div className="text-xs">
                       {voucher.formaPagamento ? (
-                        <Chip size="sm" variant="bordered" color="secondary">
+                        <Chip size="sm" variant="secondary" color="default">
                           {voucher.formaPagamento}
                         </Chip>
                       ) : (
@@ -261,24 +258,28 @@ export default function VouchersCooperativaTable({
                       )}
                       {voucher.observacao && (
                         <div className="mt-1">
-                          <Tooltip content={voucher.observacao}>
-                            <div className="flex items-center gap-1 text-gray-500">
-                              <Icon icon="solar:info-circle-linear" className="w-3 h-3" />
-                              <span className="text-xs">Obs.</span>
-                            </div>
+                          <Tooltip delay={0}>
+                            <Tooltip.Trigger>
+                              <div className="flex items-center gap-1 text-gray-500">
+                                <Icon icon="solar:info-circle-linear" className="w-3 h-3" />
+                                <span className="text-xs">Obs.</span>
+                              </div>
+                            </Tooltip.Trigger>
+                            <Tooltip.Content>
+                              <p>{voucher.observacao}</p>
+                            </Tooltip.Content>
                           </Tooltip>
                         </div>
                       )}
                     </div>
-                  )}
+                  </Table.Cell>
 
-                  {columnKey === "acoes" && (
+                  <Table.Cell className="py-3">
                     <div className="flex items-center gap-1.5">
                       {voucher.status === "PENDENTE" && (
                         <Button
                           size="sm"
-                          variant="flat"
-                          color="primary"
+                          variant="tertiary"
                           aria-label={`Aprovar voucher ${voucher.numeroVoucher}`}
                           isDisabled={vouchersProcessando.has(voucher.id)}
                           onPress={() => onAprovar(voucher)}
@@ -289,7 +290,7 @@ export default function VouchersCooperativaTable({
                       {(voucher.status === "PENDENTE" || voucher.status === "APROVADO") && (
                         <Button
                           size="sm"
-                          variant="flat"
+                          variant="tertiary"
                           aria-label={`Confirmar pagamento do voucher ${voucher.numeroVoucher}`}
                           isDisabled={vouchersProcessando.has(voucher.id)}
                           onPress={() => onAbrirPagamento(voucher)}
@@ -300,7 +301,7 @@ export default function VouchersCooperativaTable({
                       {(voucher.status === "PENDENTE" || voucher.status === "APROVADO") && (
                         <Button
                           size="sm"
-                          variant="flat"
+                          variant="tertiary"
                           aria-label={`Aplicar desconto no voucher ${voucher.numeroVoucher}`}
                           isDisabled={vouchersProcessando.has(voucher.id)}
                           onPress={() => onAbrirDesconto(voucher)}
@@ -311,8 +312,7 @@ export default function VouchersCooperativaTable({
                       {(voucher.status === "PENDENTE" || voucher.status === "APROVADO") && (
                         <Button
                           size="sm"
-                          variant="flat"
-                          color="danger"
+                          variant="danger-soft"
                           className="ml-1.5"
                           aria-label={`Cancelar voucher ${voucher.numeroVoucher}`}
                           isDisabled={vouchersProcessando.has(voucher.id)}
@@ -322,12 +322,12 @@ export default function VouchersCooperativaTable({
                         </Button>
                       )}
                     </div>
-                  )}
-                </TableCell>
+                  </Table.Cell>
+                </Table.Row>
               )}
-            </TableRow>
-          )}
-        </TableBody>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
       </Table>
     </div>
   );

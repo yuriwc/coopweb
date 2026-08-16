@@ -1,15 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-} from "@heroui/modal";
-import { Form } from "@heroui/form";
-import { Input } from "@heroui/input";
-import { Button } from "@heroui/button";
+import { Modal } from "@heroui/react";
+import { Form } from "@heroui/react";
+import { TextField, Label, Input } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { pagarVoucher } from "../action/pagar-voucher";
 import { PagarVoucherDto, VoucherCooperativa } from "../../../../../../src/model/relatorio-vouchers";
 
@@ -59,14 +54,17 @@ export default function ConfirmarPagamentoModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="sm">
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              Confirmar pagamento — {voucher?.numeroVoucher}
-            </ModalHeader>
-            <ModalBody>
+    <Modal>
+      <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpenChange}>
+        <Modal.Container size="sm">
+          <Modal.Dialog>
+            {({ close }) => (
+              <>
+                <Modal.CloseTrigger />
+                <Modal.Header>
+                  <Modal.Heading>Confirmar pagamento — {voucher?.numeroVoucher}</Modal.Heading>
+                </Modal.Header>
+                <Modal.Body>
               <Form
                 className="flex flex-col gap-4 pb-4"
                 onSubmit={(e) => {
@@ -74,20 +72,22 @@ export default function ConfirmarPagamentoModal({
                   handleSubmit();
                 }}
               >
-                <Input
-                  label="Forma de pagamento"
-                  placeholder="Ex.: PIX"
+                <TextField
                   value={dados.formaPagamento}
-                  onValueChange={(v) => setDados((prev) => ({ ...prev, formaPagamento: v }))}
+                  onChange={(v) => setDados((prev) => ({ ...prev, formaPagamento: v }))}
                   isRequired
-                />
-                <Input
-                  label="Referência"
-                  placeholder="Ex.: código da transação"
+                >
+                  <Label>Forma de pagamento</Label>
+                  <Input placeholder="Ex.: PIX" />
+                </TextField>
+                <TextField
                   value={dados.referenciaPagamento}
-                  onValueChange={(v) => setDados((prev) => ({ ...prev, referenciaPagamento: v }))}
+                  onChange={(v) => setDados((prev) => ({ ...prev, referenciaPagamento: v }))}
                   isRequired
-                />
+                >
+                  <Label>Referência</Label>
+                  <Input placeholder="Ex.: código da transação" />
+                </TextField>
 
                 {erro ? (
                   <p className="text-sm text-danger" role="alert">
@@ -96,18 +96,20 @@ export default function ConfirmarPagamentoModal({
                 ) : null}
 
                 <div className="flex gap-2 justify-end w-full pt-2">
-                  <Button variant="light" onPress={() => handleClose(onClose)} isDisabled={enviando}>
+                  <Button variant="tertiary" onPress={() => handleClose(close)} isDisabled={enviando}>
                     Cancelar
                   </Button>
-                  <Button color="primary" type="submit" isLoading={enviando}>
+                  <Button variant="primary" type="submit" isPending={enviando}>
                     Confirmar
                   </Button>
                 </div>
               </Form>
-            </ModalBody>
-          </>
-        )}
-      </ModalContent>
+                </Modal.Body>
+              </>
+            )}
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 }

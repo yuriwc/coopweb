@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@heroui/button";
-import { Card, CardBody, CardHeader } from "@heroui/card";
-import { Chip } from "@heroui/chip";
+import { Button } from "@heroui/react";
+import { Card } from "@heroui/react";
+import { Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
-import { Spinner } from "@heroui/spinner";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@heroui/modal";
+import { ComboBox, Input, ListBox, Label } from "@heroui/react";
+import { Spinner } from "@heroui/react/spinner";
+import { Modal, useOverlayState } from "@heroui/react";
 import { RelatorioCooperativaMes, VoucherCooperativa, EmpresaLabelValue } from "../../../../../src/model/relatorio-vouchers";
 import ShowToast from "../../../../../src/components/Toast";
 import VouchersCooperativaTable from "./vouchers-cooperativa-table";
@@ -17,6 +17,11 @@ import { cancelarVoucher } from "./action/cancelar-voucher";
 import ConfirmarAcaoModal from "./modal/confirmar-acao-modal";
 import ConfirmarPagamentoModal from "./modal/confirmar-pagamento-modal";
 import AplicarDescontoModal from "./modal/aplicar-desconto-modal";
+
+interface LabelValue {
+  value: string;
+  label: string;
+}
 
 interface FaturasClientProps {
   cooperativaId: string;
@@ -75,7 +80,7 @@ export default function FaturasClient({
   const [statusFiltro, setStatusFiltro] = useState<string>("TODOS");
   
   // Modal para relatório mensal
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, open, close } = useOverlayState();
   const [mesRelatorio, setMesRelatorio] = useState<string>(mesAtual.toString());
   const [anoRelatorio, setAnoRelatorio] = useState<string>(anoAtual.toString());
   const [loadingRelatorio, setLoadingRelatorio] = useState(false);
@@ -271,7 +276,7 @@ export default function FaturasClient({
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
-        onClose();
+        close();
       } else {
         setError(`Erro ao gerar relatório: ${response.status}`);
       }
@@ -349,7 +354,7 @@ export default function FaturasClient({
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
               <div className="flex items-center gap-4">
                 <Button
-                  variant="bordered"
+                  variant="secondary"
                   onPress={() => router.back()}
                   className="bg-white/10 dark:bg-white/5 backdrop-blur-xl border-blue-200/40 dark:border-white/20 text-gray-700 dark:text-gray-300 hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-300 uppercase tracking-widest text-xs"
                 >
@@ -367,13 +372,12 @@ export default function FaturasClient({
 
               <div className="flex items-center gap-2 text-xs">
                 <Button
-                  color="warning"
-                  variant="flat"
+                  variant="tertiary"
                   size="sm"
-                  onPress={onOpen}
-                  startContent={<Icon icon="solar:file-chart-linear" />}
+                  onPress={open}
                   className="bg-white/10 dark:bg-white/5 backdrop-blur-xl border border-orange-200/40 dark:border-orange-400/20 text-orange-700 dark:text-orange-300 hover:bg-orange-50/20 dark:hover:bg-orange-950/20"
                 >
+                  <Icon icon="solar:file-chart-linear" />
                   Relatório Mensal
                 </Button>
                 <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 dark:bg-white/5 backdrop-blur-xl rounded-full border border-blue-200/30 dark:border-white/10">
@@ -393,9 +397,7 @@ export default function FaturasClient({
           <div className="relative p-6 rounded-2xl">
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">
-                <Autocomplete
-                  label="Mês"
-                  placeholder="Buscar mês"
+                <ComboBox
                   selectedKey={mesSelecionado}
                   onSelectionChange={(key) => {
                     if (key) {
@@ -403,17 +405,26 @@ export default function FaturasClient({
                     }
                   }}
                   className="max-w-xs"
-                  size="sm"
                   defaultItems={MESES}
                 >
-                  {(mes) => (
-                    <AutocompleteItem key={mes.value}>{mes.label}</AutocompleteItem>
-                  )}
-                </Autocomplete>
+                  <Label>Mês</Label>
+                  <ComboBox.InputGroup>
+                    <Input placeholder="Buscar mês" />
+                    <ComboBox.Trigger />
+                  </ComboBox.InputGroup>
+                  <ComboBox.Popover>
+                    <ListBox>
+                      {(mes: LabelValue) => (
+                        <ListBox.Item id={mes.value} textValue={mes.label}>
+                          {mes.label}
+                          <ListBox.ItemIndicator />
+                        </ListBox.Item>
+                      )}
+                    </ListBox>
+                  </ComboBox.Popover>
+                </ComboBox>
 
-                <Autocomplete
-                  label="Ano"
-                  placeholder="Buscar ano"
+                <ComboBox
                   selectedKey={anoSelecionado}
                   onSelectionChange={(key) => {
                     if (key) {
@@ -421,17 +432,26 @@ export default function FaturasClient({
                     }
                   }}
                   className="max-w-xs"
-                  size="sm"
                   defaultItems={ANOS}
                 >
-                  {(ano) => (
-                    <AutocompleteItem key={ano.value}>{ano.label}</AutocompleteItem>
-                  )}
-                </Autocomplete>
+                  <Label>Ano</Label>
+                  <ComboBox.InputGroup>
+                    <Input placeholder="Buscar ano" />
+                    <ComboBox.Trigger />
+                  </ComboBox.InputGroup>
+                  <ComboBox.Popover>
+                    <ListBox>
+                      {(ano: LabelValue) => (
+                        <ListBox.Item id={ano.value} textValue={ano.label}>
+                          {ano.label}
+                          <ListBox.ItemIndicator />
+                        </ListBox.Item>
+                      )}
+                    </ListBox>
+                  </ComboBox.Popover>
+                </ComboBox>
 
-                <Autocomplete
-                  label="Empresa"
-                  placeholder="Buscar empresa"
+                <ComboBox
                   selectedKey={empresaSelecionada}
                   onSelectionChange={(key) => {
                     if (key) {
@@ -439,17 +459,26 @@ export default function FaturasClient({
                     }
                   }}
                   className="max-w-xs"
-                  size="sm"
                   defaultItems={opcoesEmpresas}
                 >
-                  {(empresa) => (
-                    <AutocompleteItem key={empresa.value}>{empresa.label}</AutocompleteItem>
-                  )}
-                </Autocomplete>
+                  <Label>Empresa</Label>
+                  <ComboBox.InputGroup>
+                    <Input placeholder="Buscar empresa" />
+                    <ComboBox.Trigger />
+                  </ComboBox.InputGroup>
+                  <ComboBox.Popover>
+                    <ListBox>
+                      {(empresa: LabelValue) => (
+                        <ListBox.Item id={empresa.value} textValue={empresa.label}>
+                          {empresa.label}
+                          <ListBox.ItemIndicator />
+                        </ListBox.Item>
+                      )}
+                    </ListBox>
+                  </ComboBox.Popover>
+                </ComboBox>
 
-                <Autocomplete
-                  label="Status"
-                  placeholder="Buscar status"
+                <ComboBox
                   selectedKey={statusFiltro}
                   onSelectionChange={(key) => {
                     if (key) {
@@ -457,23 +486,33 @@ export default function FaturasClient({
                     }
                   }}
                   className="max-w-xs"
-                  size="sm"
                   defaultItems={STATUS_OPTIONS}
                 >
-                  {(status) => (
-                    <AutocompleteItem key={status.value}>{status.label}</AutocompleteItem>
-                  )}
-                </Autocomplete>
+                  <Label>Status</Label>
+                  <ComboBox.InputGroup>
+                    <Input placeholder="Buscar status" />
+                    <ComboBox.Trigger />
+                  </ComboBox.InputGroup>
+                  <ComboBox.Popover>
+                    <ListBox>
+                      {(status: LabelValue) => (
+                        <ListBox.Item id={status.value} textValue={status.label}>
+                          {status.label}
+                          <ListBox.ItemIndicator />
+                        </ListBox.Item>
+                      )}
+                    </ListBox>
+                  </ComboBox.Popover>
+                </ComboBox>
               </div>
 
               <Button
-                color="primary"
-                variant="solid"
+                variant="primary"
                 onPress={() => buscarDados()}
-                isLoading={loading}
-                startContent={!loading && <Icon icon="solar:refresh-linear" />}
+                isPending={loading}
                 className="self-end"
               >
+                {!loading && <Icon icon="solar:refresh-linear" />}
                 Atualizar
               </Button>
             </div>
@@ -486,78 +525,78 @@ export default function FaturasClient({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Total Geral */}
               <Card className="border border-transparent dark:border-default-100">
-                <CardHeader className="pb-2">
+                <Card.Header className="pb-2">
                   <div className="flex items-center gap-2">
                     <Icon icon="solar:calculator-linear" className="w-5 h-5 text-blue-500" />
                     <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Geral</span>
                   </div>
-                </CardHeader>
-                <CardBody className="pt-0">
+                </Card.Header>
+                <Card.Content className="pt-0">
                   <div className="text-2xl font-bold text-gray-800 dark:text-white">
                     {formatCurrency(relatorio.vouchers.reduce((acc, v) => acc + v.valorTotal, 0))}
                   </div>
                   <p className="text-xs text-gray-500">{relatorio.total} vouchers</p>
-                </CardBody>
+                </Card.Content>
               </Card>
 
               {/* Pendentes */}
               <Card className="border border-transparent dark:border-default-100">
-                <CardHeader className="pb-2">
+                <Card.Header className="pb-2">
                   <div className="flex items-center gap-2">
                     <Icon icon="solar:clock-circle-linear" className="w-5 h-5 text-yellow-500" />
                     <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Pendentes</span>
                   </div>
-                </CardHeader>
-                <CardBody className="pt-0">
+                </Card.Header>
+                <Card.Content className="pt-0">
                   <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
                     {formatCurrency(valorStats.PENDENTE || 0)}
                   </div>
                   <div className="flex items-center gap-2">
-                    <Chip size="sm" color="warning" variant="flat">
+                    <Chip size="sm" color="warning" variant="tertiary">
                       {statusStats.PENDENTE} vouchers
                     </Chip>
                   </div>
-                </CardBody>
+                </Card.Content>
               </Card>
 
               {/* Aprovados */}
               <Card className="border border-transparent dark:border-default-100">
-                <CardHeader className="pb-2">
+                <Card.Header className="pb-2">
                   <div className="flex items-center gap-2">
                     <Icon icon="solar:check-circle-linear" className="w-5 h-5 text-blue-500" />
                     <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Aprovados</span>
                   </div>
-                </CardHeader>
-                <CardBody className="pt-0">
+                </Card.Header>
+                <Card.Content className="pt-0">
                   <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                     {formatCurrency(valorStats.APROVADO || 0)}
                   </div>
                   <div className="flex items-center gap-2">
-                    <Chip size="sm" color="primary" variant="flat">
+                    <Chip size="sm" color="accent" variant="tertiary">
                       {statusStats.APROVADO} vouchers
                     </Chip>
                   </div>
-                </CardBody>
+                </Card.Content>
               </Card>
 
               {/* Pagos */}
               <Card className="border border-transparent dark:border-default-100">
-                <CardHeader className="pb-2">
+                <Card.Header className="pb-2">
                   <div className="flex items-center gap-2">
                     <Icon icon="solar:shield-check-linear" className="w-5 h-5 text-green-500" />
                     <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Pagos</span>
                   </div>
-                </CardHeader>
-                <CardBody className="pt-0">
+                </Card.Header>
+                <Card.Content className="pt-0">
                   <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                     {formatCurrency(valorStats.PAGO || 0)}
                   </div>
                   <div className="flex items-center gap-2">
-                    <Chip size="sm" color="success" variant="flat">
+                    <Chip size="sm" color="success" variant="tertiary">
                       {statusStats.PAGO} vouchers
                     </Chip>
                   </div>
-                </CardBody>
+                </Card.Content>
               </Card>
             </div>
           </section>
@@ -573,28 +612,28 @@ export default function FaturasClient({
               </h2>
               <div className="flex items-center gap-2">
                 {statusFiltro !== "TODOS" && (
-                  <Chip size="sm" variant="flat" color="primary">
+                  <Chip size="sm" variant="tertiary" color="accent">
                     Status: {statusFiltro}
                   </Chip>
                 )}
                 {empresaSelecionada !== "TODAS" && (
-                  <Chip size="sm" variant="flat" color="secondary">
+                  <Chip size="sm" variant="tertiary" color="default">
                     Empresa: {empresasDisponiveis.find(e => e.value === empresaSelecionada)?.label || empresaSelecionada}
                   </Chip>
                 )}
                 {relatorio && (
-                  <Chip size="sm" variant="flat" color="default">
+                  <Chip size="sm" variant="tertiary" color="default">
                     {MESES.find(m => m.value === mesSelecionado)?.label} {anoSelecionado}
                   </Chip>
                 )}
                 {relatorio && (
                   <Button
-                    color="success"
-                    variant="flat"
+                    variant="tertiary"
                     size="sm"
                     onPress={gerarPDF}
-                    startContent={<Icon icon="solar:document-add-linear" />}
+                    className="text-success"
                   >
+                    <Icon icon="solar:document-add-linear" />
                     Gerar PDF
                   </Button>
                 )}
@@ -603,7 +642,7 @@ export default function FaturasClient({
 
             {loading ? (
               <div className="flex items-center justify-center py-12">
-                <Spinner size="lg" color="primary" />
+                <Spinner size="lg" color="accent" />
               </div>
             ) : error ? (
               <div className="text-center py-12">
@@ -614,12 +653,8 @@ export default function FaturasClient({
                   Erro ao carregar dados
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-4">{error}</p>
-                <Button
-                  color="primary"
-                  variant="flat"
-                  onPress={() => buscarDados()}
-                  startContent={<Icon icon="solar:refresh-linear" />}
-                >
+                <Button variant="tertiary" onPress={() => buscarDados()}>
+                  <Icon icon="solar:refresh-linear" />
                   Tentar Novamente
                 </Button>
               </div>
@@ -650,74 +685,95 @@ export default function FaturasClient({
       </div>
 
       {/* Modal para Relatório Mensal */}
-      <Modal isOpen={isOpen} onClose={onClose} placement="center" size="sm">
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <Icon icon="solar:file-chart-linear" className="w-5 h-5 text-orange-500" />
-                  <span>Relatório Mensal da Cooperativa</span>
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 font-normal">
-                  Relatório com o total gerado por motorista entre todas as empresas
-                </p>
-              </ModalHeader>
-              <ModalBody>
+      <Modal>
+        <Modal.Backdrop isOpen={isOpen} onOpenChange={(open) => { if (!open) close(); }}>
+          <Modal.Container placement="center" size="sm">
+            <Modal.Dialog>
+              <Modal.CloseTrigger />
+              <Modal.Header>
+                <Modal.Heading>
+                  <div className="flex items-center gap-2">
+                    <Icon icon="solar:file-chart-linear" className="w-5 h-5 text-orange-500" />
+                    <span>Relatório Mensal da Cooperativa</span>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 font-normal">
+                    Relatório com o total gerado por motorista entre todas as empresas
+                  </p>
+                </Modal.Heading>
+              </Modal.Header>
+              <Modal.Body>
                 <div className="flex flex-col gap-4">
-                  <Autocomplete
-                    label="Mês"
-                    placeholder="Buscar mês"
+                  <ComboBox
                     selectedKey={mesRelatorio}
                     onSelectionChange={(key) => {
                       if (key) {
                         setMesRelatorio(key as string);
                       }
                     }}
-                    size="sm"
                     isRequired
                     defaultItems={MESES}
                   >
-                    {(mes) => (
-                      <AutocompleteItem key={mes.value}>{mes.label}</AutocompleteItem>
-                    )}
-                  </Autocomplete>
+                    <Label>Mês</Label>
+                    <ComboBox.InputGroup>
+                      <Input placeholder="Buscar mês" />
+                      <ComboBox.Trigger />
+                    </ComboBox.InputGroup>
+                    <ComboBox.Popover>
+                      <ListBox>
+                        {(mes: LabelValue) => (
+                          <ListBox.Item id={mes.value} textValue={mes.label}>
+                            {mes.label}
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
+                        )}
+                      </ListBox>
+                    </ComboBox.Popover>
+                  </ComboBox>
 
-                  <Autocomplete
-                    label="Ano"
-                    placeholder="Buscar ano"
+                  <ComboBox
                     selectedKey={anoRelatorio}
                     onSelectionChange={(key) => {
                       if (key) {
                         setAnoRelatorio(key as string);
                       }
                     }}
-                    size="sm"
                     isRequired
                     defaultItems={ANOS}
                   >
-                    {(ano) => (
-                      <AutocompleteItem key={ano.value}>{ano.label}</AutocompleteItem>
-                    )}
-                  </Autocomplete>
+                    <Label>Ano</Label>
+                    <ComboBox.InputGroup>
+                      <Input placeholder="Buscar ano" />
+                      <ComboBox.Trigger />
+                    </ComboBox.InputGroup>
+                    <ComboBox.Popover>
+                      <ListBox>
+                        {(ano: LabelValue) => (
+                          <ListBox.Item id={ano.value} textValue={ano.label}>
+                            {ano.label}
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
+                        )}
+                      </ListBox>
+                    </ComboBox.Popover>
+                  </ComboBox>
                 </div>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="danger-soft" onPress={close}>
                   Cancelar
                 </Button>
                 <Button
-                  color="warning"
+                  variant="primary"
                   onPress={gerarRelatorioMensal}
-                  isLoading={loadingRelatorio}
-                  startContent={!loadingRelatorio && <Icon icon="solar:download-linear" />}
+                  isPending={loadingRelatorio}
                 >
+                  {!loadingRelatorio && <Icon icon="solar:download-linear" />}
                   Gerar Relatório
                 </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
+              </Modal.Footer>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
       </Modal>
 
       <ConfirmarAcaoModal

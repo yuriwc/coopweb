@@ -1,11 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Button } from "@heroui/button";
-import { Chip } from "@heroui/chip";
-import { Tooltip } from "@heroui/tooltip";
+import { Button } from "@heroui/react";
+import { Chip } from "@heroui/react";
+import { Tooltip } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { useDisclosure } from "@heroui/modal";
+import { useOverlayState } from "@heroui/react";
 import ShowToast from "../../../../../src/components/Toast";
 import { FilasDisplay } from "../../../../../src/components/FilasDisplay";
 import { FilaAdministrativa } from "../../../../../src/model/fila";
@@ -27,13 +27,13 @@ export default function FilasClient({
   token,
 }: FilasClientProps) {
   const router = useRouter();
-  const novaFilaDisclosure = useDisclosure();
+  const novaFilaDisclosure = useOverlayState();
 
   const totalFilas = filasAdministrativas.length;
   const limiteAtingido = contagemDisponivel && totalFilas >= LIMITE_FILAS;
 
   function handleSucesso() {
-    novaFilaDisclosure.onClose();
+    novaFilaDisclosure.close();
     ShowToast({ color: "success", title: "Fila criada com sucesso" });
     router.refresh();
   }
@@ -43,7 +43,7 @@ export default function FilasClient({
       <div className="container mx-auto p-4 sm:p-8 max-w-7xl">
         <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div className="flex items-center gap-4">
-            <Button variant="bordered" onPress={() => router.back()}>
+            <Button variant="secondary" onPress={() => router.back()}>
               ← Voltar
             </Button>
             <div>
@@ -52,7 +52,7 @@ export default function FilasClient({
                   Gestão de Filas
                 </h1>
                 {contagemDisponivel ? (
-                  <Chip size="sm" color={limiteAtingido ? "warning" : "default"} variant="flat">
+                  <Chip size="sm" color={limiteAtingido ? "warning" : "default"} variant="tertiary">
                     {totalFilas} de {LIMITE_FILAS} filas
                   </Chip>
                 ) : null}
@@ -63,17 +63,22 @@ export default function FilasClient({
             </div>
           </div>
 
-          <Tooltip content="Limite de 5 filas atingido" isDisabled={!limiteAtingido}>
-            <span>
-              <Button
-                color="primary"
-                startContent={<Icon icon="solar:add-circle-linear" />}
-                isDisabled={limiteAtingido}
-                onPress={novaFilaDisclosure.onOpen}
-              >
-                Nova fila
-              </Button>
-            </span>
+          <Tooltip delay={0} isDisabled={!limiteAtingido}>
+            <Tooltip.Trigger>
+              <span>
+                <Button
+                  variant="primary"
+                  isDisabled={limiteAtingido}
+                  onPress={novaFilaDisclosure.open}
+                >
+                  <Icon icon="solar:add-circle-linear" />
+                  Nova fila
+                </Button>
+              </span>
+            </Tooltip.Trigger>
+            <Tooltip.Content>
+              <p>Limite de 5 filas atingido</p>
+            </Tooltip.Content>
           </Tooltip>
         </header>
 
@@ -86,7 +91,7 @@ export default function FilasClient({
 
       <NovaFilaModal
         isOpen={novaFilaDisclosure.isOpen}
-        onOpenChange={novaFilaDisclosure.onOpenChange}
+        onOpenChange={novaFilaDisclosure.setOpen}
         cooperativaId={cooperativaId}
         token={token}
         onSucesso={handleSucesso}

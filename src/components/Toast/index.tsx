@@ -1,4 +1,4 @@
-import { addToast } from "@heroui/toast";
+import { toast } from "@heroui/react";
 
 type ColorVariant =
   | "default"
@@ -8,6 +8,16 @@ type ColorVariant =
   | "success"
   | "warning"
   | "danger";
+
+const VARIANT_MAP: Record<ColorVariant, "default" | "accent" | "success" | "warning" | "danger"> = {
+  default: "default",
+  foreground: "default",
+  primary: "accent",
+  secondary: "default",
+  success: "success",
+  warning: "warning",
+  danger: "danger",
+};
 
 interface Props {
   color: ColorVariant;
@@ -20,9 +30,8 @@ export default function ShowToast({
   title,
   description,
 }: Props) {
-  addToast({
-    title: title,
-    description: description,
-    color,
+  toast(title, {
+    description,
+    variant: VARIANT_MAP[color],
   });
 }

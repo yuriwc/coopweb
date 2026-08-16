@@ -1,7 +1,7 @@
 "use client";
 
-import { Select, SelectItem } from "@heroui/select";
-import { Spinner } from "@heroui/spinner";
+import { Select, ListBox } from "@heroui/react";
+import { Spinner } from "@heroui/react/spinner";
 import { Icon } from "@iconify/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";
@@ -51,6 +51,8 @@ export default function FilterPeriodo({
     [router, searchParams, baseUrl]
   );
 
+  const selectedPeriodo = periodos.find((p) => p.key === currentPeriodo);
+
   return (
     <div className="flex items-center gap-3">
       <span className="text-sm font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">
@@ -58,39 +60,42 @@ export default function FilterPeriodo({
       </span>
 
       <Select
-        selectedKeys={[currentPeriodo]}
-        onSelectionChange={(keys) => {
-          const selected = Array.from(keys)[0] as string;
-          handlePeriodoChange(selected);
+        value={currentPeriodo}
+        onChange={(key) => {
+          if (key) handlePeriodoChange(key.toString());
         }}
         className="w-48"
-        variant="bordered"
-        size="sm"
+        variant="secondary"
         isDisabled={isLoading || isPending}
-        startContent={
-          isLoading || isPending ? <Spinner size="sm" color="primary" /> : null
-        }
-        renderValue={(items) => {
-          return items.map((item) => {
-            const periodo = periodos.find((p) => p.key === item.key);
-            if (!periodo) return null;
-            return (
-              <div key={item.key} className="flex items-center gap-2">
-                <Icon icon={periodo.icon} className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                <span>{periodo.label}</span>
-              </div>
-            );
-          });
-        }}
       >
-        {periodos.map((periodo) => (
-          <SelectItem key={periodo.key}>
-            <div className="flex items-center gap-2">
-              <Icon icon={periodo.icon} className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-              <span>{periodo.label}</span>
-            </div>
-          </SelectItem>
-        ))}
+        <Select.Trigger>
+          {(isLoading || isPending) && <Spinner size="sm" color="accent" />}
+          <Select.Value>
+            {selectedPeriodo && (
+              <div className="flex items-center gap-2">
+                <Icon
+                  icon={selectedPeriodo.icon}
+                  className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                />
+                <span>{selectedPeriodo.label}</span>
+              </div>
+            )}
+          </Select.Value>
+          <Select.Indicator />
+        </Select.Trigger>
+        <Select.Popover>
+          <ListBox>
+            {periodos.map((periodo) => (
+              <ListBox.Item key={periodo.key} id={periodo.key} textValue={periodo.label}>
+                <div className="flex items-center gap-2">
+                  <Icon icon={periodo.icon} className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                  <span>{periodo.label}</span>
+                </div>
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </Select.Popover>
       </Select>
     </div>
   );

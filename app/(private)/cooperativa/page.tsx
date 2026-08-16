@@ -1,5 +1,5 @@
 import { Cooperativa } from "@/src/model/cooperativas";
-import { Button } from "@heroui/button";
+import { Button } from "@heroui/react";
 import { cookies } from "next/headers";
 import Link from "next/link";
 
@@ -50,7 +50,7 @@ export default async function Home() {
                 href={`/cooperativa/${empresa.id}`}
                 key={empresa.id}
               >
-                <Button className="w-full h-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 flex flex-col items-center justify-center transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-lg hover:scale-105 hover:-translate-y-1 group shadow-md min-h-[120px]">
+                <Button variant="tertiary" className="w-full h-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 flex flex-col items-center justify-center transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-lg hover:scale-105 hover:-translate-y-1 group shadow-md min-h-[120px]">
                   <span className="text-base sm:text-lg font-semibold tracking-[0.15em] uppercase text-slate-800 dark:text-slate-100 transition-all duration-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 text-center">
                     {empresa.nome}
                   </span>

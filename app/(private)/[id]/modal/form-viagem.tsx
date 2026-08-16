@@ -10,19 +10,13 @@ import LocationEntry, {
   EMPTY_LOCATION,
   LocationFormState,
 } from "../components/location-entry";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
-import { Button } from "@heroui/button";
+import { Modal } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { Avatar } from "@heroui/avatar";
-import { Card, CardBody, CardHeader } from "@heroui/card";
-import { Chip } from "@heroui/chip";
-import { Switch } from "@heroui/switch";
+import { Avatar } from "@heroui/react";
+import { Card } from "@heroui/react";
+import { Chip } from "@heroui/react";
+import { Switch } from "@heroui/react";
 import { fetchComLog } from "@/src/utils/log-fetch";
 
 interface LocationCoordinate {
@@ -283,59 +277,47 @@ export default function UnifiedTripModal({
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onOpenChange={onOpen}
-      size="2xl"
-      scrollBehavior="inside"
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              Solicitar Viagem
-              <p className="text-sm text-default-500 font-normal">
-                {getTripTypeDescription()}
-              </p>
-            </ModalHeader>
+    <Modal>
+      <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpen}>
+        <Modal.Container size="lg" scroll="inside">
+          <Modal.Dialog>
+            {({ close }) => (
+              <>
+                <Modal.CloseTrigger />
+                <Modal.Header>
+                  <Modal.Heading>
+                    Solicitar Viagem
+                    <p className="text-sm text-default-500 font-normal">
+                      {getTripTypeDescription()}
+                    </p>
+                  </Modal.Heading>
+                </Modal.Header>
 
-            <ModalBody className="gap-6">
+                <Modal.Body className="gap-6">
               {/* Passageiros selecionados */}
               <Card>
-                <CardHeader>
+                <Card.Header>
                   <div className="flex items-center gap-2">
                     <Icon icon="solar:users-group-rounded-linear" className="text-lg" />
                     <span className="text-sm font-medium">
                       Passageiros ({passagers.length})
                     </span>
                   </div>
-                </CardHeader>
-                <CardBody className="pt-0">
+                </Card.Header>
+                <Card.Content className="pt-0">
                   <div className="flex flex-wrap gap-2">
                     {passagers.map((passager) => (
-                      <Chip
-                        key={passager.id}
-                        avatar={
-                          <Avatar
-                            name={passager.name}
-                            size="sm"
-                            getInitials={(name) =>
-                              name
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")
-                                .slice(0, 2)
-                            }
-                          />
-                        }
-                        variant="flat"
-                        color="primary"
-                      >
+                      <Chip key={passager.id} variant="tertiary" color="accent">
+                        <Avatar size="sm">
+                          <Avatar.Fallback>
+                            {passager.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                          </Avatar.Fallback>
+                        </Avatar>
                         {passager.name}
                       </Chip>
                     ))}
                   </div>
-                </CardBody>
+                </Card.Content>
               </Card>
 
               {/* Toggle para viagem personalizada */}
@@ -348,9 +330,15 @@ export default function UnifiedTripModal({
                 </div>
                 <Switch
                   isSelected={isFlexibleTrip}
-                  onValueChange={setIsFlexibleTrip}
+                  onChange={setIsFlexibleTrip}
                   aria-label="Ativar viagem personalizada"
-                />
+                >
+                  <Switch.Content>
+                    <Switch.Control>
+                      <Switch.Thumb />
+                    </Switch.Control>
+                  </Switch.Content>
+                </Switch>
               </div>
 
               {!isFlexibleTrip ? (
@@ -404,12 +392,11 @@ export default function UnifiedTripModal({
                   {/* Botão adicionar parada */}
                   <Button
                     size="sm"
-                    variant="flat"
-                    color="default"
-                    startContent={<Icon icon="solar:add-circle-linear" />}
+                    variant="tertiary"
                     onPress={addIntermediateStop}
                     className="w-full"
                   >
+                    <Icon icon="solar:add-circle-linear" />
                     Adicionar parada intermediária
                   </Button>
 
@@ -443,31 +430,30 @@ export default function UnifiedTripModal({
                 initialCentroCusto={centroCusto}
                 token={token}
               />
-            </ModalBody>
+                </Modal.Body>
 
-            <ModalFooter>
-              <Button
-                color="danger"
-                variant="light"
-                onPress={onClose}
-                isDisabled={isLoading}
-              >
-                Cancelar
-              </Button>
-              <Button
-                color="primary"
-                onPress={handleSubmit}
-                isLoading={isLoading}
-                startContent={
-                  !isLoading && <Icon icon="solar:car-linear" />
-                }
-              >
-                {isLoading ? "Criando..." : "Criar Viagem"}
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
+                <Modal.Footer>
+                  <Button
+                    variant="danger-soft"
+                    onPress={close}
+                    isDisabled={isLoading}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onPress={handleSubmit}
+                    isPending={isLoading}
+                  >
+                    {!isLoading && <Icon icon="solar:car-linear" />}
+                    {isLoading ? "Criando..." : "Criar Viagem"}
+                  </Button>
+                </Modal.Footer>
+              </>
+            )}
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 }

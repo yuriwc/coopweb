@@ -1,16 +1,10 @@
 "use client";
 
-import { Button } from "@heroui/button";
+import { Button } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
-import { Avatar } from "@heroui/avatar";
-import { Chip } from "@heroui/chip";
+import { Modal } from "@heroui/react";
+import { Avatar } from "@heroui/react";
+import { Chip } from "@heroui/react";
 import ShowToast from "@/src/components/Toast";
 import { Funcionario } from "@/src/model/funcionario";
 import SelectCentrosCusto from "../select/centros-custo";
@@ -87,20 +81,24 @@ export default function VincularCentroCustoModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpen} size="md">
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              Vincular Centro de Custo
-            </ModalHeader>
+    <Modal>
+      <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpen}>
+        <Modal.Container size="md">
+          <Modal.Dialog>
+            {({ close }) => (
+              <>
+                <Modal.CloseTrigger />
+                <Modal.Header>
+                  <Modal.Heading>Vincular Centro de Custo</Modal.Heading>
+                </Modal.Header>
 
-            <ModalBody className="gap-6">
-              <div className="flex items-center gap-3 p-3 rounded-medium bg-default-50 dark:bg-default-100/10">
-                <Avatar
-                  size="sm"
-                  name={funcionario.name?.charAt(0).toUpperCase()}
-                />
+                <Modal.Body className="gap-6">
+              <div className="flex items-center gap-3 p-3 rounded-md bg-default-50 dark:bg-default-100/10">
+                <Avatar size="sm">
+                  <Avatar.Fallback>
+                    {funcionario.name?.charAt(0).toUpperCase()}
+                  </Avatar.Fallback>
+                </Avatar>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">
                     {funcionario.name}
@@ -110,7 +108,7 @@ export default function VincularCentroCustoModal({
                   </p>
                 </div>
                 {funcionario.centroCustoCodigo && (
-                  <Chip variant="flat" color="secondary" size="sm">
+                  <Chip variant="tertiary" color="default" size="sm">
                     {funcionario.centroCustoCodigo}
                   </Chip>
                 )}
@@ -121,33 +119,33 @@ export default function VincularCentroCustoModal({
                 token={token}
                 setCentroCusto={setSelectedCentroCusto}
               />
-            </ModalBody>
+                </Modal.Body>
 
-            <ModalFooter>
-              <Button
-                variant="light"
-                onPress={() => {
-                  setSelectedCentroCusto("");
-                  onClose();
-                }}
-                isDisabled={isLoading}
-              >
-                Cancelar
-              </Button>
-              <Button
-                color="primary"
-                onPress={handleSubmit}
-                isLoading={isLoading}
-                startContent={
-                  !isLoading && <Icon icon="solar:link-linear" className="w-4 h-4" />
-                }
-              >
-                Vincular
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
+                <Modal.Footer>
+                  <Button
+                    variant="tertiary"
+                    onPress={() => {
+                      setSelectedCentroCusto("");
+                      close();
+                    }}
+                    isDisabled={isLoading}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onPress={handleSubmit}
+                    isPending={isLoading}
+                  >
+                    {!isLoading && <Icon icon="solar:link-linear" className="w-4 h-4" />}
+                    Vincular
+                  </Button>
+                </Modal.Footer>
+              </>
+            )}
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 }

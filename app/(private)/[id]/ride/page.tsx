@@ -4,7 +4,7 @@ import { ViagemResumo } from "@/src/model/viagem";
 import ViagemTable from "./viagem-table";
 import FilterPeriodo from "./filter-periodo";
 import LoadingOverlay from "./loading-overlay";
-import { Card, CardBody } from "@heroui/card";
+import { Card } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
 const App = async (props: {
@@ -42,7 +42,7 @@ const App = async (props: {
           <Link
             href={`/${params.id}`}
             aria-label="Voltar"
-            className="inline-flex items-center justify-center rounded-medium bg-default-100 dark:bg-default-50 h-10 w-10 text-gray-700 dark:text-gray-300 hover:opacity-80 transition-opacity"
+            className="inline-flex items-center justify-center rounded-md bg-default-100 dark:bg-default-50 h-10 w-10 text-gray-700 dark:text-gray-300 hover:opacity-80 transition-opacity"
           >
             <Icon icon="solar:arrow-left-linear" className="w-5 h-5" />
           </Link>
@@ -59,7 +59,7 @@ const App = async (props: {
         {/* Superfície única: filtro, resumo e histórico */}
         <Card className="border border-gray-200 dark:border-gray-700 relative">
           <LoadingOverlay />
-          <CardBody className="p-6 sm:p-8">
+          <Card.Content className="p-6 sm:p-8">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
               <FilterPeriodo
                 currentPeriodo={periodo}
@@ -89,7 +89,7 @@ const App = async (props: {
             <div className="h-px bg-gray-200 dark:bg-gray-700 mb-6" />
 
             <ViagemTable viagens={viagens.viagens} />
-          </CardBody>
+          </Card.Content>
         </Card>
       </div>
     </div>

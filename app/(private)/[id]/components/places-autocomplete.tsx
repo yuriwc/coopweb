@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
+import { ComboBox, Input, ListBox, Label, FieldError } from "@heroui/react";
+import { Spinner } from "@heroui/react/spinner";
 import { Icon } from "@iconify/react";
 import useGoogleMaps from "@/src/hooks/useGoogleMaps";
 import { fetchComLog } from "@/src/utils/log-fetch";
@@ -193,68 +194,77 @@ export default function PlacesAutocomplete({
 
   if (currentError) {
     return (
-      <Autocomplete
-        label={label}
-        placeholder={currentError.includes("não configurada") ? "API Key não configurada" : "Erro ao carregar"}
-        isDisabled={true}
-        isInvalid={true}
-        errorMessage={currentError}
-        startContent={<Icon icon="solar:danger-triangle-linear" className="w-4 h-4 text-danger" />}
-      >
-        <AutocompleteItem key="error">
-          {currentError.includes("não configurada") ? "Configure GOOGLE_MAPS_API_KEY" : "Erro no serviço"}
-        </AutocompleteItem>
-      </Autocomplete>
+      <ComboBox isDisabled isInvalid className="w-full">
+        <Label>{label}</Label>
+        <ComboBox.InputGroup>
+          <Icon icon="solar:danger-triangle-linear" className="w-4 h-4 text-danger" />
+          <Input
+            placeholder={
+              currentError.includes("não configurada")
+                ? "API Key não configurada"
+                : "Erro ao carregar"
+            }
+          />
+        </ComboBox.InputGroup>
+        <FieldError>{currentError}</FieldError>
+      </ComboBox>
     );
   }
 
   if (!isGoogleLoaded) {
     return (
-      <Autocomplete
-        label={label}
-        placeholder="Carregando..."
-        isDisabled={true}
-        startContent={<Icon icon="solar:location-linear" className="w-4 h-4 text-default-400" />}
-      >
-        <AutocompleteItem key="loading">Carregando...</AutocompleteItem>
-      </Autocomplete>
+      <ComboBox isDisabled className="w-full">
+        <Label>{label}</Label>
+        <ComboBox.InputGroup>
+          <Icon icon="solar:location-linear" className="w-4 h-4 text-default-400" />
+          <Input placeholder="Carregando..." />
+        </ComboBox.InputGroup>
+      </ComboBox>
     );
   }
 
   return (
-    <Autocomplete
-      label={label}
-      placeholder={placeholder}
+    <ComboBox
       inputValue={inputValue}
       selectedKey={selectedKey}
       onInputChange={handleInputChange}
       onSelectionChange={handleSelectionChange}
-      isLoading={isLoading}
       items={suggestions}
       isInvalid={isInvalid}
-      errorMessage={errorMessage}
-      startContent={<Icon icon="solar:location-linear" className="w-4 h-4 text-default-400" />}
-      classNames={{
-        base: "w-full",
-        listboxWrapper: "max-h-[200px]",
-      }}
+      className="w-full"
     >
-      {(item) => (
-        <AutocompleteItem
-          key={item.place_id}
-          textValue={item.description}
-          className="data-[hover=true]:bg-default-100"
-        >
-          <div className="flex flex-col">
-            <span className="text-small font-medium">
-              {item.structured_formatting.main_text}
-            </span>
-            <span className="text-tiny text-default-400">
-              {item.structured_formatting.secondary_text}
-            </span>
-          </div>
-        </AutocompleteItem>
-      )}
-    </Autocomplete>
+      <Label>{label}</Label>
+      <ComboBox.InputGroup>
+        {isLoading ? (
+          <Spinner size="sm" />
+        ) : (
+          <Icon icon="solar:location-linear" className="w-4 h-4 text-default-400" />
+        )}
+        <Input placeholder={placeholder} />
+        <ComboBox.Trigger />
+      </ComboBox.InputGroup>
+      <ComboBox.Popover>
+        <ListBox className="max-h-[200px]">
+          {(item: PlaceResult) => (
+            <ListBox.Item
+              id={item.place_id}
+              textValue={item.description}
+              className="data-[hover=true]:bg-default-100"
+            >
+              <div className="flex flex-col">
+                <span className="text-sm font-medium">
+                  {item.structured_formatting.main_text}
+                </span>
+                <span className="text-xs text-default-400">
+                  {item.structured_formatting.secondary_text}
+                </span>
+              </div>
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          )}
+        </ListBox>
+      </ComboBox.Popover>
+      {errorMessage && <FieldError>{errorMessage}</FieldError>}
+    </ComboBox>
   );
 }

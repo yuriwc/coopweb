@@ -1,7 +1,6 @@
 "use client";
 
-import { Breadcrumbs, BreadcrumbItem } from "@heroui/breadcrumbs";
-import Link from "next/link";
+import { Breadcrumbs, BreadcrumbsItem } from "@heroui/react";
 
 interface IProps {
   name: string;
@@ -14,11 +13,11 @@ interface AppProps {
 
 export default function App({ items }: AppProps) {
   return (
-    <Breadcrumbs variant="light" className="text-sm">
+    <Breadcrumbs className="text-sm">
       {items.map((item) => (
-        <BreadcrumbItem key={item.url}>
-          <Link href={item.url}>{item.name}</Link>
-        </BreadcrumbItem>
+        <BreadcrumbsItem key={item.url} href={item.url}>
+          {item.name}
+        </BreadcrumbsItem>
       ))}
     </Breadcrumbs>
   );

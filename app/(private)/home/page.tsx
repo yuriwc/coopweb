@@ -1,6 +1,6 @@
 import { Cooperativa } from "@/src/model/cooperativas";
-import { Button } from "@heroui/button";
-import { Card, CardBody } from "@heroui/card";
+import { Button } from "@heroui/react";
+import { Card } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { cookies } from "next/headers";
 import Link from "next/link";
@@ -24,7 +24,7 @@ export default async function Home() {
     return (
       <div className="flex flex-col min-h-screen bg-[#F5F5F5] dark:bg-[#060607] items-center justify-center px-4">
         <Card className="max-w-md w-full border border-danger-200 bg-danger-50 dark:bg-danger-950/30">
-          <CardBody className="flex flex-col items-center gap-4 p-8">
+          <Card.Content className="flex flex-col items-center gap-4 p-8">
             <Icon
               icon="solar:close-circle-linear"
               className="w-16 h-16 text-danger-500"
@@ -36,7 +36,7 @@ export default async function Home() {
               Não foi possível carregar as empresas disponíveis. Tente novamente
               mais tarde.
             </p>
-          </CardBody>
+          </Card.Content>
         </Card>
       </div>
     );
@@ -86,7 +86,7 @@ export default async function Home() {
                 key={empresa.id}
               >
                 <Card className="h-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-lg transition-all duration-300 group-hover:border-blue-300 dark:group-hover:border-blue-600">
-                  <CardBody className="flex flex-col items-center justify-center gap-6 p-8 min-h-[180px]">
+                  <Card.Content className="flex flex-col items-center justify-center gap-6 p-8 min-h-[180px]">
                     {/* Company Icon */}
                     <div className="p-4 bg-linear-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-xl transition-all duration-300 group-hover:scale-110">
                       <Icon
@@ -105,20 +105,17 @@ export default async function Home() {
 
                     {/* Access Button */}
                     <Button
-                      variant="flat"
-                      color="primary"
+                      variant="tertiary"
                       size="sm"
-                      startContent={
-                        <Icon
-                          icon="solar:arrow-right-linear"
-                          className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
-                        />
-                      }
                       className="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-all duration-300"
                     >
                       Acessar
+                      <Icon
+                        icon="solar:arrow-right-linear"
+                        className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+                      />
                     </Button>
-                  </CardBody>
+                  </Card.Content>
                 </Card>
               </Link>
             ))}
@@ -127,7 +124,7 @@ export default async function Home() {
           {/* Empty State */}
           {empresas.length === 0 && (
             <Card className="max-w-md mx-auto border border-gray-200 dark:border-gray-700">
-              <CardBody className="flex flex-col items-center gap-4 p-12 text-center">
+              <Card.Content className="flex flex-col items-center gap-4 p-12 text-center">
                 <Icon
                   icon="solar:buildings-linear"
                   className="w-16 h-16 text-gray-400"
@@ -139,7 +136,7 @@ export default async function Home() {
                   Entre em contato com o administrador para ter acesso às
                   empresas.
                 </p>
-              </CardBody>
+              </Card.Content>
             </Card>
           )}
         </div>

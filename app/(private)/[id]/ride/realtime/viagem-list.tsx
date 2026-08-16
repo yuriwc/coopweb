@@ -7,10 +7,10 @@ import ViagemCard from "../../../../../src/components/ViagemCard";
 import { useRouter } from "next/navigation";
 import { ISelect } from "../../../../../src/interface/ISelect";
 import { Passageiro, ViagemRealTime } from "../../../../../src/model/viagem";
-import { Select, SelectItem } from "@heroui/select";
-import { Button } from "@heroui/button";
-import { Card, CardBody } from "@heroui/card";
-import { Chip } from "@heroui/chip";
+import { Select, Label, ListBox } from "@heroui/react";
+import { Button } from "@heroui/react";
+import { Card } from "@heroui/react";
+import { Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
 interface Props {
@@ -92,6 +92,7 @@ export default function ViagemList({ cooperativas }: Props) {
         <header className="flex items-center gap-4 mb-8">
           <Button
             isIconOnly
+            variant="tertiary"
             aria-label="Voltar"
             className="bg-default-100 dark:bg-default-50"
             onPress={() => router.back()}
@@ -110,31 +111,39 @@ export default function ViagemList({ cooperativas }: Props) {
 
         {/* Superfície única: seleção de cooperativa + viagens */}
         <Card className="border border-gray-200 dark:border-gray-700">
-          <CardBody className="p-6 sm:p-8">
+          <Card.Content className="p-6 sm:p-8">
             <div className="flex items-center justify-between gap-4 flex-wrap">
               <Select
-                label="Selecione a Cooperativa"
                 placeholder={
                   cooperativas.length === 0
                     ? "Nenhuma cooperativa disponível"
                     : "Escolha uma cooperativa"
                 }
-                selectedKeys={cooperativaId ? [cooperativaId] : []}
-                onSelectionChange={(keys) => {
-                  const selected = Array.from(keys)[0] as string;
-                  setCooperativaId(selected || "");
-                }}
+                value={cooperativaId || null}
+                onChange={(key) => setCooperativaId(key?.toString() || "")}
                 isDisabled={cooperativas.length === 0}
                 className="w-full sm:max-w-md"
-                variant="bordered"
+                variant="secondary"
               >
-                {cooperativas.map((coop) => (
-                  <SelectItem key={coop.value}>{coop.label}</SelectItem>
-                ))}
+                <Label>Selecione a Cooperativa</Label>
+                <Select.Trigger>
+                  <Select.Value />
+                  <Select.Indicator />
+                </Select.Trigger>
+                <Select.Popover>
+                  <ListBox>
+                    {cooperativas.map((coop) => (
+                      <ListBox.Item key={coop.value} id={coop.value} textValue={coop.label}>
+                        {coop.label}
+                        <ListBox.ItemIndicator />
+                      </ListBox.Item>
+                    ))}
+                  </ListBox>
+                </Select.Popover>
               </Select>
 
               {cooperativaId && viagens.length > 0 && (
-                <Chip color="success" variant="flat" size="sm">
+                <Chip color="success" variant="tertiary" size="sm">
                   {viagens.length} {viagens.length === 1 ? "viagem ativa" : "viagens ativas"}
                 </Chip>
               )}
@@ -199,7 +208,7 @@ export default function ViagemList({ cooperativas }: Props) {
                 </p>
               </div>
             )}
-          </CardBody>
+          </Card.Content>
         </Card>
       </div>
     </div>

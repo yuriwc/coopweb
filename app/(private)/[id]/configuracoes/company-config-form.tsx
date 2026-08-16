@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useActionState, useEffect, useState, useCallback } from "react";
-import { Button } from "@heroui/button";
-import { Card, CardBody, CardHeader } from "@heroui/card";
-import { Form } from "@heroui/form";
-import { Input } from "@heroui/input";
-import { Switch } from "@heroui/switch";
-import { addToast } from "@heroui/toast";
+import { Button } from "@heroui/react";
+import { Card } from "@heroui/react";
+import { Form } from "@heroui/react";
+import { TextField, Label, Description, InputGroup } from "@heroui/react";
+import { Switch } from "@heroui/react";
+import { toast } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/navigation";
 import {
@@ -135,10 +135,9 @@ export default function CompanyConfigForm({
   // Mostrar toast quando houver resultado
   useEffect(() => {
     if (state.message) {
-      addToast({
-        title: state.success ? "Sucesso" : "Erro",
+      toast(state.success ? "Sucesso" : "Erro", {
         description: state.message,
-        color: state.success ? "success" : "danger",
+        variant: state.success ? "success" : "danger",
       });
 
       if (state.success) {
@@ -162,33 +161,31 @@ export default function CompanyConfigForm({
       </div>
 
       <Card>
-        <CardHeader className="flex gap-3">
-          <Icon icon="mdi:cog" className="text-2xl text-primary" />
+        <Card.Header className="flex gap-3">
+          <Icon icon="mdi:cog" className="text-2xl text-accent" />
           <div className="flex flex-col">
             <p className="text-md font-semibold">Configurações Gerais</p>
-            <p className="text-small text-default-500">
+            <p className="text-sm text-default-500">
               Gerencie as configurações da sua empresa
             </p>
           </div>
-        </CardHeader>
-        <CardBody>
+        </Card.Header>
+        <Card.Content>
           <Form action={action} className="space-y-6">
-            <Input
+            <TextField
               name="dataFechamento"
-              label="Dia do Fechamento Mensal"
-              placeholder="15"
               type="number"
-              min="1"
-              max="31"
               defaultValue={currentConfig?.dataFechamento?.toString() || ""}
-              description="Dia do mês para fechamento (1-31)"
-              startContent={
-                <Icon
-                  icon="mdi:calendar"
-                  className="text-lg text-default-400"
-                />
-              }
-            />
+            >
+              <Label>Dia do Fechamento Mensal</Label>
+              <InputGroup>
+                <InputGroup.Prefix>
+                  <Icon icon="mdi:calendar" className="text-lg text-default-400" />
+                </InputGroup.Prefix>
+                <InputGroup.Input placeholder="15" min="1" max="31" />
+              </InputGroup>
+              <Description>Dia do mês para fechamento (1-31)</Description>
+            </TextField>
 
             <div className="flex flex-col gap-2">
               <Switch
@@ -198,7 +195,12 @@ export default function CompanyConfigForm({
                 }
                 value="true"
               >
-                Ativar cálculo automático por quilômetro
+                <Switch.Content>
+                  <Switch.Control>
+                    <Switch.Thumb />
+                  </Switch.Control>
+                  Ativar cálculo automático por quilômetro
+                </Switch.Content>
               </Switch>
               {/* Input hidden para garantir que sempre temos um valor quando o switch está off */}
               <input
@@ -212,67 +214,66 @@ export default function CompanyConfigForm({
               </p>
             </div>
 
-            <Input
+            <TextField
               name="precoPorKm"
-              label="Preço por Quilômetro (R$)"
-              placeholder="2.50"
               type="number"
-              step="0.01"
-              min="0.01"
               defaultValue={currentConfig?.precoPorKm?.toString() || ""}
-              description="Valor cobrado por quilômetro rodado"
-              startContent={
-                <span className="text-lg text-default-400">R$</span>
-              }
-            />
+            >
+              <Label>Preço por Quilômetro (R$)</Label>
+              <InputGroup>
+                <InputGroup.Prefix>
+                  <span className="text-lg text-default-400">R$</span>
+                </InputGroup.Prefix>
+                <InputGroup.Input placeholder="2.50" step="0.01" min="0.01" />
+              </InputGroup>
+              <Description>Valor cobrado por quilômetro rodado</Description>
+            </TextField>
 
-            <Input
+            <TextField
               name="precoBase"
-              label="Preço Base da Corrida (R$)"
-              placeholder="5.00"
               type="number"
-              step="0.01"
-              min="0.01"
               defaultValue={currentConfig?.precoBase?.toString() || ""}
-              description="Valor fixo base para cada corrida"
-              startContent={
-                <span className="text-lg text-default-400">R$</span>
-              }
-            />
+            >
+              <Label>Preço Base da Corrida (R$)</Label>
+              <InputGroup>
+                <InputGroup.Prefix>
+                  <span className="text-lg text-default-400">R$</span>
+                </InputGroup.Prefix>
+                <InputGroup.Input placeholder="5.00" step="0.01" min="0.01" />
+              </InputGroup>
+              <Description>Valor fixo base para cada corrida</Description>
+            </TextField>
 
             <div className="flex gap-4 justify-end pt-4">
               <Button
-                color="default"
-                variant="bordered"
+                variant="secondary"
                 onPress={() => router.back()}
                 isDisabled={isLoading}
               >
                 Cancelar
               </Button>
               <Button
-                color="primary"
+                variant="primary"
                 type="submit"
-                isLoading={isLoading}
-                startContent={
-                  !isLoading && (
-                    <Icon icon="mdi:content-save" className="text-lg" />
-                  )
-                }
+                isPending={isLoading}
               >
+                {!isLoading && (
+                  <Icon icon="mdi:content-save" className="text-lg" />
+                )}
                 {isLoading ? "Salvando..." : "Salvar Configurações"}
               </Button>
             </div>
           </Form>
-        </CardBody>
+        </Card.Content>
       </Card>
 
       {currentConfig && (
         <Card className="mt-6">
-          <CardHeader>
+          <Card.Header>
             <Icon icon="mdi:information" className="text-xl text-blue-500" />
             <p className="text-md font-semibold ml-2">Configurações Atuais</p>
-          </CardHeader>
-          <CardBody>
+          </Card.Header>
+          <Card.Content>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="font-medium">Dia do Fechamento:</span>
@@ -303,7 +304,7 @@ export default function CompanyConfigForm({
                 </span>
               </div>
             </div>
-          </CardBody>
+          </Card.Content>
         </Card>
       )}
     </div>

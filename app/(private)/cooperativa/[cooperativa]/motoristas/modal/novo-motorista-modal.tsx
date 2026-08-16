@@ -1,18 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-} from "@heroui/modal";
-import { Tabs, Tab } from "@heroui/tabs";
-import { Form } from "@heroui/form";
-import { Input } from "@heroui/input";
-import { Button } from "@heroui/button";
-import { Card, CardBody } from "@heroui/card";
-import { Chip } from "@heroui/chip";
+import { Modal } from "@heroui/react";
+import { Tabs } from "@heroui/react";
+import { Form } from "@heroui/react";
+import { TextField, Label, Input } from "@heroui/react";
+import { Button } from "@heroui/react";
+import { Card } from "@heroui/react";
+import { Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { cadastrarMotoristaManual } from "../action/cadastrar-motorista-manual";
 import { importarMotoristas } from "../action/importar-motoristas";
@@ -118,18 +113,35 @@ export default function NovoMotoristaModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="lg">
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">Novo motorista</ModalHeader>
-            <ModalBody>
+    <Modal>
+      <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpenChange}>
+        <Modal.Container size="lg">
+          <Modal.Dialog>
+            {({ close }) => (
+              <>
+                <Modal.CloseTrigger />
+                <Modal.Header>
+                  <Modal.Heading>Novo motorista</Modal.Heading>
+                </Modal.Header>
+                <Modal.Body>
               <Tabs
                 selectedKey={activeTab}
                 onSelectionChange={(key) => setActiveTab(key as "manual" | "planilha")}
-                fullWidth
               >
-                <Tab key="manual" title="Manual">
+                <Tabs.ListContainer>
+                  <Tabs.List aria-label="Forma de cadastro">
+                    <Tabs.Tab id="manual">
+                      Manual
+                      <Tabs.Indicator />
+                    </Tabs.Tab>
+                    <Tabs.Tab id="planilha">
+                      <Tabs.Separator />
+                      Importar planilha
+                      <Tabs.Indicator />
+                    </Tabs.Tab>
+                  </Tabs.List>
+                </Tabs.ListContainer>
+                <Tabs.Panel id="manual">
                   <Form
                     className="flex flex-col gap-4 pt-2"
                     onSubmit={(e) => {
@@ -137,79 +149,91 @@ export default function NovoMotoristaModal({
                       handleSubmitManual();
                     }}
                   >
-                    <Input
-                      label="CPF"
-                      placeholder="000.000.000-00"
-                      value={cpf}
-                      onValueChange={setCpf}
-                      isRequired
-                    />
-                    <Input
-                      label="CNH"
-                      value={cnh}
-                      onValueChange={setCnh}
-                      isRequired
-                    />
+                    <TextField value={cpf} onChange={setCpf} isRequired>
+                      <Label>CPF</Label>
+                      <Input placeholder="000.000.000-00" />
+                    </TextField>
+                    <TextField value={cnh} onChange={setCnh} isRequired>
+                      <Label>CNH</Label>
+                      <Input />
+                    </TextField>
                     <div className="grid grid-cols-3 gap-3 w-full">
-                      <Input
+                      <TextField
                         className="col-span-2"
-                        label="Rua"
                         value={endereco.rua}
-                        onValueChange={(v) => setEndereco((prev) => ({ ...prev, rua: v }))}
+                        onChange={(v) => setEndereco((prev) => ({ ...prev, rua: v }))}
                         isRequired
-                      />
-                      <Input
-                        label="Número"
+                      >
+                        <Label>Rua</Label>
+                        <Input />
+                      </TextField>
+                      <TextField
                         value={endereco.numero}
-                        onValueChange={(v) => setEndereco((prev) => ({ ...prev, numero: v }))}
+                        onChange={(v) => setEndereco((prev) => ({ ...prev, numero: v }))}
                         isRequired
-                      />
+                      >
+                        <Label>Número</Label>
+                        <Input />
+                      </TextField>
                     </div>
                     <div className="grid grid-cols-3 gap-3 w-full">
-                      <Input
-                        label="Bairro"
+                      <TextField
                         value={endereco.bairro}
-                        onValueChange={(v) => setEndereco((prev) => ({ ...prev, bairro: v }))}
+                        onChange={(v) => setEndereco((prev) => ({ ...prev, bairro: v }))}
                         isRequired
-                      />
-                      <Input
-                        label="Cidade"
+                      >
+                        <Label>Bairro</Label>
+                        <Input />
+                      </TextField>
+                      <TextField
                         value={endereco.cidade}
-                        onValueChange={(v) => setEndereco((prev) => ({ ...prev, cidade: v }))}
+                        onChange={(v) => setEndereco((prev) => ({ ...prev, cidade: v }))}
                         isRequired
-                      />
-                      <Input
-                        label="Estado"
-                        maxLength={2}
+                      >
+                        <Label>Cidade</Label>
+                        <Input />
+                      </TextField>
+                      <TextField
                         value={endereco.estado}
-                        onValueChange={(v) => setEndereco((prev) => ({ ...prev, estado: v }))}
+                        onChange={(v) => setEndereco((prev) => ({ ...prev, estado: v }))}
                         isRequired
-                      />
+                      >
+                        <Label>Estado</Label>
+                        <Input maxLength={2} />
+                      </TextField>
                     </div>
                     <div className="grid grid-cols-2 gap-3 w-full">
-                      <Input
-                        label="CEP"
+                      <TextField
                         value={endereco.cep}
-                        onValueChange={(v) => setEndereco((prev) => ({ ...prev, cep: v }))}
+                        onChange={(v) => setEndereco((prev) => ({ ...prev, cep: v }))}
                         isRequired
-                      />
-                      <Input
-                        label="Telefone"
+                      >
+                        <Label>CEP</Label>
+                        <Input />
+                      </TextField>
+                      <TextField
                         value={endereco.telefone}
-                        onValueChange={(v) => setEndereco((prev) => ({ ...prev, telefone: v }))}
+                        onChange={(v) => setEndereco((prev) => ({ ...prev, telefone: v }))}
                         isRequired
-                      />
+                      >
+                        <Label>Telefone</Label>
+                        <Input />
+                      </TextField>
                     </div>
-                    <Input
-                      label="E-mail (opcional)"
+                    <TextField
                       value={endereco.email}
-                      onValueChange={(v) => setEndereco((prev) => ({ ...prev, email: v }))}
-                    />
-                    <Input
-                      label="Referência (opcional)"
+                      onChange={(v) => setEndereco((prev) => ({ ...prev, email: v }))}
+                    >
+                      <Label>E-mail (opcional)</Label>
+                      <Input />
+                    </TextField>
+                    <TextField
                       value={endereco.referencia}
-                      onValueChange={(v) => setEndereco((prev) => ({ ...prev, referencia: v }))}
-                    />
+                      onChange={(v) => setEndereco((prev) => ({ ...prev, referencia: v }))}
+                    >
+                      <Label>Referência (opcional)</Label>
+                      <Input />
+                    </TextField>
 
                     {erroManual ? (
                       <p className="text-sm text-danger" role="alert">
@@ -218,17 +242,17 @@ export default function NovoMotoristaModal({
                     ) : null}
 
                     <div className="flex gap-2 justify-end w-full pt-2">
-                      <Button variant="light" onPress={() => handleClose(onClose)} isDisabled={enviandoManual}>
+                      <Button variant="tertiary" onPress={() => handleClose(close)} isDisabled={enviandoManual}>
                         Cancelar
                       </Button>
-                      <Button color="primary" type="submit" isLoading={enviandoManual}>
+                      <Button variant="primary" type="submit" isPending={enviandoManual}>
                         Cadastrar
                       </Button>
                     </div>
                   </Form>
-                </Tab>
+                </Tabs.Panel>
 
-                <Tab key="planilha" title="Importar planilha">
+                <Tabs.Panel id="planilha">
                   <div className="flex flex-col gap-4 pt-2">
                     <label className="flex flex-col gap-2">
                       <span className="text-sm text-default-600">Planilha de motoristas (.xlsx, .xls)</span>
@@ -249,30 +273,30 @@ export default function NovoMotoristaModal({
 
                     {resumo ? (
                       <Card>
-                        <CardBody className="flex flex-row gap-3 items-center">
-                          <Icon icon="solar:document-text-linear" className="w-6 h-6 text-primary" />
+                        <Card.Content className="flex flex-row gap-3 items-center">
+                          <Icon icon="solar:document-text-linear" className="w-6 h-6 text-accent" />
                           <div className="flex flex-col gap-1">
                             <span className="text-sm text-default-600">Resumo da importação</span>
                             <div className="flex gap-2">
-                              <Chip size="sm" variant="flat">{resumo.totalLinhas} processadas</Chip>
-                              <Chip size="sm" color="success" variant="flat">{resumo.sucesso} com sucesso</Chip>
+                              <Chip size="sm" variant="tertiary">{resumo.totalLinhas} processadas</Chip>
+                              <Chip size="sm" color="success" variant="tertiary">{resumo.sucesso} com sucesso</Chip>
                               {resumo.erro > 0 ? (
-                                <Chip size="sm" color="danger" variant="flat">{resumo.erro} com erro</Chip>
+                                <Chip size="sm" color="danger" variant="tertiary">{resumo.erro} com erro</Chip>
                               ) : null}
                             </div>
                           </div>
-                        </CardBody>
+                        </Card.Content>
                       </Card>
                     ) : null}
 
                     <div className="flex gap-2 justify-end w-full pt-2">
-                      <Button variant="light" onPress={() => handleClose(onClose)} isDisabled={enviandoPlanilha}>
+                      <Button variant="tertiary" onPress={() => handleClose(close)} isDisabled={enviandoPlanilha}>
                         {resumo ? "Fechar" : "Cancelar"}
                       </Button>
                       {!resumo ? (
                         <Button
-                          color="primary"
-                          isLoading={enviandoPlanilha}
+                          variant="primary"
+                          isPending={enviandoPlanilha}
                           isDisabled={!arquivo}
                           onPress={handleSubmitPlanilha}
                         >
@@ -281,12 +305,14 @@ export default function NovoMotoristaModal({
                       ) : null}
                     </div>
                   </div>
-                </Tab>
+                </Tabs.Panel>
               </Tabs>
-            </ModalBody>
-          </>
-        )}
-      </ModalContent>
+                </Modal.Body>
+              </>
+            )}
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 }

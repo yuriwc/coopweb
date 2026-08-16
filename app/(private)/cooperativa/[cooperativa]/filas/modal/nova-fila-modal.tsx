@@ -1,15 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-} from "@heroui/modal";
-import { Form } from "@heroui/form";
-import { Input } from "@heroui/input";
-import { Button } from "@heroui/button";
+import { Modal } from "@heroui/react";
+import { Form } from "@heroui/react";
+import { TextField, Label, Input } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { criarFila } from "../action/criar-fila";
 import { NovaFilaDto } from "../../../../../../src/model/fila";
 
@@ -69,12 +64,17 @@ export default function NovaFilaModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">Nova fila de atendimento</ModalHeader>
-            <ModalBody>
+    <Modal>
+      <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpenChange}>
+        <Modal.Container>
+          <Modal.Dialog>
+            {({ close }) => (
+              <>
+                <Modal.CloseTrigger />
+                <Modal.Header>
+                  <Modal.Heading>Nova fila de atendimento</Modal.Heading>
+                </Modal.Header>
+                <Modal.Body>
               <Form
                 className="flex flex-col gap-4 pb-4"
                 onSubmit={(e) => {
@@ -82,55 +82,43 @@ export default function NovaFilaModal({
                   handleSubmit();
                 }}
               >
-                <Input
-                  label="Nome do ponto"
-                  placeholder="Ex.: Shopping Barra"
-                  value={dados.nome}
-                  onValueChange={(v) => updateCampo("nome", v)}
-                  isRequired
-                />
+                <TextField value={dados.nome} onChange={(v) => updateCampo("nome", v)} isRequired>
+                  <Label>Nome do ponto</Label>
+                  <Input placeholder="Ex.: Shopping Barra" />
+                </TextField>
                 <div className="grid grid-cols-3 gap-3 w-full">
-                  <Input
+                  <TextField
                     className="col-span-2"
-                    label="Rua"
                     value={dados.rua}
-                    onValueChange={(v) => updateCampo("rua", v)}
+                    onChange={(v) => updateCampo("rua", v)}
                     isRequired
-                  />
-                  <Input
-                    label="Número"
-                    value={dados.numero}
-                    onValueChange={(v) => updateCampo("numero", v)}
-                    isRequired
-                  />
+                  >
+                    <Label>Rua</Label>
+                    <Input />
+                  </TextField>
+                  <TextField value={dados.numero} onChange={(v) => updateCampo("numero", v)} isRequired>
+                    <Label>Número</Label>
+                    <Input />
+                  </TextField>
                 </div>
                 <div className="grid grid-cols-3 gap-3 w-full">
-                  <Input
-                    label="Bairro"
-                    value={dados.bairro}
-                    onValueChange={(v) => updateCampo("bairro", v)}
-                    isRequired
-                  />
-                  <Input
-                    label="Cidade"
-                    value={dados.cidade}
-                    onValueChange={(v) => updateCampo("cidade", v)}
-                    isRequired
-                  />
-                  <Input
-                    label="Estado"
-                    maxLength={2}
-                    value={dados.estado}
-                    onValueChange={(v) => updateCampo("estado", v)}
-                    isRequired
-                  />
+                  <TextField value={dados.bairro} onChange={(v) => updateCampo("bairro", v)} isRequired>
+                    <Label>Bairro</Label>
+                    <Input />
+                  </TextField>
+                  <TextField value={dados.cidade} onChange={(v) => updateCampo("cidade", v)} isRequired>
+                    <Label>Cidade</Label>
+                    <Input />
+                  </TextField>
+                  <TextField value={dados.estado} onChange={(v) => updateCampo("estado", v)} isRequired>
+                    <Label>Estado</Label>
+                    <Input maxLength={2} />
+                  </TextField>
                 </div>
-                <Input
-                  label="CEP"
-                  value={dados.cep}
-                  onValueChange={(v) => updateCampo("cep", v)}
-                  isRequired
-                />
+                <TextField value={dados.cep} onChange={(v) => updateCampo("cep", v)} isRequired>
+                  <Label>CEP</Label>
+                  <Input />
+                </TextField>
 
                 {erro ? (
                   <p className="text-sm text-danger" role="alert">
@@ -139,18 +127,20 @@ export default function NovaFilaModal({
                 ) : null}
 
                 <div className="flex gap-2 justify-end w-full pt-2">
-                  <Button variant="light" onPress={() => handleClose(onClose)} isDisabled={enviando}>
+                  <Button variant="tertiary" onPress={() => handleClose(close)} isDisabled={enviando}>
                     Cancelar
                   </Button>
-                  <Button color="primary" type="submit" isLoading={enviando}>
+                  <Button variant="primary" type="submit" isPending={enviando}>
                     Criar fila
                   </Button>
                 </div>
               </Form>
-            </ModalBody>
-          </>
-        )}
-      </ModalContent>
+                </Modal.Body>
+              </>
+            )}
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 }

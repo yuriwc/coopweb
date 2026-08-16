@@ -1,8 +1,8 @@
 "use client";
 
 import { ISelect } from "@/src/interface/ISelect";
-import { Select, SelectItem } from "@heroui/select";
-import { Spinner } from "@heroui/spinner";
+import { Select, Label, ListBox } from "@heroui/react";
+import { Spinner } from "@heroui/react/spinner";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { fetchComLog } from "@/src/utils/log-fetch";
 
@@ -73,16 +73,16 @@ export default function SelectCentrosCusto({
     fetchCentrosCusto();
   }, [empresa, token, setCentroCusto, initialCentroCusto]);
 
-  const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setValue(e.target.value);
-    setCentroCusto(e.target.value);
+  const handleSelectionChange = (key: string | number | null) => {
+    const selected = key?.toString() || "";
+    setValue(selected);
+    setCentroCusto(selected);
   };
 
   return (
     <Select
-      variant="underlined"
+      variant="secondary"
       className="max-w-xs"
-      label="Centro de Custo"
       placeholder={
         isLoading
           ? "Carregando..."
@@ -91,13 +91,29 @@ export default function SelectCentrosCusto({
             : "Selecione"
       }
       isDisabled={isLoading || centrosCusto.length === 0}
-      startContent={isLoading ? <Spinner size="sm" /> : null}
-      selectedKeys={new Set([value])}
+      value={value || null}
       onChange={handleSelectionChange}
     >
-      {centrosCusto.map((centro) => (
-        <SelectItem key={centro.value.toString()}>{centro.label}</SelectItem>
-      ))}
+      <Label>Centro de Custo</Label>
+      <Select.Trigger>
+        {isLoading && <Spinner size="sm" />}
+        <Select.Value />
+        <Select.Indicator />
+      </Select.Trigger>
+      <Select.Popover>
+        <ListBox>
+          {centrosCusto.map((centro) => (
+            <ListBox.Item
+              key={centro.value.toString()}
+              id={centro.value.toString()}
+              textValue={centro.label}
+            >
+              {centro.label}
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          ))}
+        </ListBox>
+      </Select.Popover>
     </Select>
   );
 }
