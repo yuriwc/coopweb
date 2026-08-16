@@ -2,7 +2,9 @@
 
 import { ISelect } from "@/src/interface/ISelect";
 import { Select, SelectItem } from "@heroui/select";
+import { Spinner } from "@heroui/spinner";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { fetchComLog } from "@/src/utils/log-fetch";
 
 interface Props {
   empresa: string;
@@ -19,6 +21,7 @@ export default function SelectCentrosCusto({
 }: Props) {
   const [centrosCusto, setCentrosCusto] = useState<ISelect[]>([]);
   const [value, setValue] = useState(initialCentroCusto || "");
+  const [isLoading, setIsLoading] = useState(true);
 
   // Atualiza o valor quando initialCentroCusto muda
   useEffect(() => {
@@ -31,7 +34,7 @@ export default function SelectCentrosCusto({
   useEffect(() => {
     const fetchCentrosCusto = async () => {
       try {
-        const response = await fetch(
+        const response = await fetchComLog(
           `${process.env.NEXT_PUBLIC_SERVER}/api/v1/centro-custo/labels`,
           {
             next: { tags: ["getViagens"] },
@@ -62,6 +65,8 @@ export default function SelectCentrosCusto({
         }
       } catch (err) {
         console.error("Erro ao buscar centros de custo:", err);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -78,6 +83,15 @@ export default function SelectCentrosCusto({
       variant="underlined"
       className="max-w-xs"
       label="Centro de Custo"
+      placeholder={
+        isLoading
+          ? "Carregando..."
+          : centrosCusto.length === 0
+            ? "Nenhum centro de custo cadastrado"
+            : "Selecione"
+      }
+      isDisabled={isLoading || centrosCusto.length === 0}
+      startContent={isLoading ? <Spinner size="sm" /> : null}
       selectedKeys={new Set([value])}
       onChange={handleSelectionChange}
     >

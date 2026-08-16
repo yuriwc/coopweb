@@ -4,9 +4,10 @@ import { RelatorioVouchersCompleto } from "@/src/model/relatorio-vouchers";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Chip } from "@heroui/chip";
 import { Icon } from "@iconify/react";
-import { Button } from "@heroui/button";
 import { Tabs, Tab } from "@heroui/tabs";
+import Link from "next/link";
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { fetchComLog } from "@/src/utils/log-fetch";
 import VouchersTable from "./vouchers-table";
 
 interface DashboardClientProps {
@@ -29,7 +30,6 @@ export default function DashboardClient({
   const [error, setError] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<string>("current");
 
-  // Memoize default dates to prevent infinite loops
   const defaultDataInicio = useMemo(
     () =>
       dataInicio || new Date(new Date().setDate(1)).toISOString().split("T")[0],
@@ -41,8 +41,7 @@ export default function DashboardClient({
     [dataFim]
   );
 
-  // Get last 3 months data
-  const getMonthsData = () => {
+  const monthsData = useMemo(() => {
     const now = new Date();
     const months = [];
 
@@ -62,26 +61,10 @@ export default function DashboardClient({
     }
 
     return months;
-  };
-
-  const monthsData = getMonthsData();
-
-  console.log("🔧 [Dashboard useCallback] Dependencies check:", {
-    token: !!token,
-    empresaId,
-    dataInicio,
-    dataFim,
-    timestamp: new Date().toISOString(),
-  });
+  }, []);
 
   const fetchData = useCallback(
     async (month?: number) => {
-      console.log(
-        "🔍 [Dashboard fetchData] Iniciando fetch - month:",
-        month,
-        "timestamp:",
-        new Date().toISOString()
-      );
       try {
         setLoading(true);
         setError(false);
@@ -96,27 +79,16 @@ export default function DashboardClient({
 
           startDate = start.toISOString().split("T")[0];
           endDate = end.toISOString().split("T")[0];
-          console.log("📊 [Dashboard fetchData] Month filter:", {
-            startDate,
-            endDate,
-            month,
-          });
         } else {
           startDate = defaultDataInicio;
           endDate = defaultDataFim;
-          console.log("📅 [Dashboard fetchData] Default filter:", {
-            startDate,
-            endDate,
-          });
         }
 
         const url = month
           ? `${process.env.NEXT_PUBLIC_SERVER}/api/v1/relatorio/empresa/${empresaId}/vouchers/centro-custo/periodo?mes=${month}`
           : `${process.env.NEXT_PUBLIC_SERVER}/api/v1/relatorio/empresa/${empresaId}/vouchers/centro-custo/periodo?dataInicio=${startDate}&dataFim=${endDate}`;
 
-        console.log("🌐 [Dashboard fetchData] API call to:", url);
-
-        const response = await fetch(url, {
+        const response = await fetchComLog(url, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -125,7 +97,7 @@ export default function DashboardClient({
 
         if (!response.ok) {
           console.error(
-            "❌ [Dashboard fetchData] API error:",
+            "Erro na requisição:",
             response.status,
             response.statusText
           );
@@ -134,63 +106,31 @@ export default function DashboardClient({
         }
 
         const data: RelatorioVouchersCompleto = await response.json();
-        console.log("✅ [Dashboard fetchData] Success - data loaded");
         setRelatorio(data);
       } catch (error) {
-        console.error("💥 [Dashboard fetchData] Exception:", error);
+        console.error("Erro ao buscar relatório de vouchers:", error);
         setError(true);
       } finally {
         setLoading(false);
-        console.log(
-          "🏁 [Dashboard fetchData] Finalizado - timestamp:",
-          new Date().toISOString()
-        );
       }
     },
     [token, empresaId, defaultDataInicio, defaultDataFim]
   );
 
   useEffect(() => {
-    console.log("🔄 [Dashboard useEffect] Triggered - dependencies changed:", {
-      token: !!token,
-      empresaId,
-      fetchDataRef: typeof fetchData,
-      timestamp: new Date().toISOString(),
-    });
-
     if (token) {
-      console.log("🚀 [Dashboard useEffect] Calling fetchData...");
       fetchData();
-    } else {
-      console.log("⏸️ [Dashboard useEffect] No token, skipping fetchData");
     }
   }, [token, empresaId, fetchData]);
 
   const handleMonthChange = (month: string) => {
-    console.log(
-      "📅 [Dashboard handleMonthChange] Month selected:",
-      month,
-      "timestamp:",
-      new Date().toISOString()
-    );
     setSelectedMonth(month);
 
     if (month === "current") {
-      console.log(
-        "🔄 [Dashboard handleMonthChange] Loading current month data"
-      );
       fetchData();
     } else {
       const monthData = monthsData.find((m) => m.key === month);
-      console.log(
-        "🔍 [Dashboard handleMonthChange] Found month data:",
-        monthData
-      );
       if (monthData) {
-        console.log(
-          "📊 [Dashboard handleMonthChange] Calling fetchData with month:",
-          monthData.monthNumber
-        );
         fetchData(monthData.monthNumber);
       }
     }
@@ -198,13 +138,15 @@ export default function DashboardClient({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
           <Icon
             icon="solar:refresh-linear"
-            className="w-8 h-8 animate-spin mx-auto mb-4"
+            className="w-8 h-8 animate-spin mx-auto mb-4 text-primary"
           />
-          <p>Carregando dashboard...</p>
+          <p className="text-gray-600 dark:text-gray-300">
+            Carregando dashboard...
+          </p>
         </div>
       </div>
     );
@@ -212,17 +154,17 @@ export default function DashboardClient({
 
   if (error || !relatorio) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="max-w-md">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <Card className="max-w-md border border-gray-200 dark:border-gray-700">
           <CardBody className="text-center p-8">
             <Icon
               icon="solar:danger-triangle-linear"
               className="w-16 h-16 mx-auto text-danger mb-4"
             />
-            <h3 className="text-xl font-semibold mb-2">
+            <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
               Erro ao carregar dados
             </h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-300">
               Não foi possível carregar o relatório de vouchers.
             </p>
           </CardBody>
@@ -242,171 +184,116 @@ export default function DashboardClient({
     return new Date(dateString).toLocaleDateString("pt-BR");
   };
 
-  return (
-    <div className="min-h-screen relative overflow-hidden bg-[#F5F5F5] dark:bg-[#060607]">
+  const summaryCards = [
+    {
+      key: "total",
+      icon: "solar:ticket-linear",
+      iconClass: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900",
+      value: relatorio.totalVouchersGeral,
+      label: "Total Vouchers",
+    },
+    {
+      key: "valorTotal",
+      icon: "solar:dollar-linear",
+      iconClass:
+        "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900",
+      value: formatCurrency(relatorio.valorTotalGeral),
+      label: "Valor Total",
+    },
+    {
+      key: "valorPago",
+      icon: "solar:check-circle-linear",
+      iconClass:
+        "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900",
+      value: formatCurrency(relatorio.valorPagoGeral),
+      label: "Valor Pago",
+    },
+    {
+      key: "valorPendente",
+      icon: "solar:clock-circle-linear",
+      iconClass:
+        "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900",
+      value: formatCurrency(relatorio.valorPendenteGeral),
+      label: "Valor Pendente",
+    },
+  ];
 
-      <div className="relative z-10 container mx-auto p-4 sm:p-8 max-w-7xl">
-        {/* Header */}
-        <header className="pb-2 mb-6 relative group">
-          <div className="absolute inset-0 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg" />
-          <div className="relative p-6 rounded-xl">
-            <div className="flex flex-col gap-4">
-              <Button
-                as="a"
-                href={`/${empresaId}`}
-                variant="light"
-                color="default"
-                startContent={
-                  <Icon icon="solar:arrow-left-linear" className="w-4 h-4" />
-                }
-                className="self-start"
-              >
-                Voltar
-              </Button>
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-                <div>
-                  <h1 className="text-2xl lg:text-3xl font-bold bg-linear-to-r from-blue-600 via-purple-600 to-emerald-600 bg-clip-text text-transparent">
-                    Dashboard de Vouchers
-                  </h1>
-                  <p className="text-gray-600 dark:text-gray-300 mt-1">
-                    Relatório detalhado por centro de custo -{" "}
-                    {relatorio.empresaNome}
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Período: {formatDate(relatorio.dataInicio)} até{" "}
-                    {formatDate(relatorio.dataFim)}
-                  </p>
-                </div>
-                <Button
-                  as="a"
-                  href={`/${empresaId}/vouchers/resumo`}
-                  variant="ghost"
-                  color="primary"
-                  startContent={
-                    <Icon icon="solar:chart-linear" className="w-4 h-4" />
-                  }
-                >
-                  Ver Gráficos
-                </Button>
-              </div>
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="mx-auto max-w-7xl w-full pt-6 pb-12 px-4 sm:px-6 lg:px-8">
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <div className="flex items-center gap-4">
+            <Link
+              href={`/${empresaId}`}
+              aria-label="Voltar"
+              className="inline-flex items-center justify-center rounded-medium bg-default-100 dark:bg-default-50 h-10 w-10 text-gray-700 dark:text-gray-300 hover:opacity-80 transition-opacity shrink-0"
+            >
+              <Icon icon="solar:arrow-left-linear" className="w-5 h-5" />
+            </Link>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                Dashboard de Vouchers
+              </h1>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                {relatorio.empresaNome} · {formatDate(relatorio.dataInicio)}{" "}
+                até {formatDate(relatorio.dataFim)}
+              </p>
             </div>
           </div>
+          <Link
+            href={`/${empresaId}/vouchers/resumo`}
+            className="inline-flex items-center gap-2 rounded-medium border border-primary-200 dark:border-primary-800 text-primary-600 dark:text-primary-400 px-4 h-10 text-small font-medium hover:opacity-80 transition-opacity shrink-0"
+          >
+            <Icon icon="solar:chart-linear" className="w-4 h-4" />
+            Ver Gráficos
+          </Link>
         </header>
 
-        {/* Month Filter Tabs */}
-        <section className="mb-6">
-          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-            <CardBody className="p-4">
-              <Tabs
-                selectedKey={selectedMonth}
-                onSelectionChange={(key) => handleMonthChange(key as string)}
-                variant="underlined"
-                color="primary"
-              >
-                {monthsData.map((month) => (
-                  <Tab key={month.key} title={month.label} />
-                ))}
-              </Tabs>
-            </CardBody>
-          </Card>
-        </section>
+        <Card className="border border-gray-200 dark:border-gray-700 mb-6">
+          <CardBody className="p-6 sm:p-8">
+            <Tabs
+              selectedKey={selectedMonth}
+              onSelectionChange={(key) => handleMonthChange(key as string)}
+              variant="underlined"
+              color="primary"
+              className="mb-6"
+            >
+              {monthsData.map((month) => (
+                <Tab key={month.key} title={month.label} />
+              ))}
+            </Tabs>
 
-        {/* Summary Cards */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
-            <CardBody className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-50 dark:bg-blue-900 rounded-lg">
-                  <Icon
-                    icon="solar:ticket-linear"
-                    className="w-5 h-5 text-blue-600 dark:text-blue-400"
-                  />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {summaryCards.map((card) => (
+                <div
+                  key={card.key}
+                  className="flex items-center gap-3 p-4 rounded-medium bg-gray-50 dark:bg-gray-800/50"
+                >
+                  <div className={`p-2 rounded-lg ${card.iconClass}`}>
+                    <Icon icon={card.icon} className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-gray-900 dark:text-white">
+                      {card.value}
+                    </p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300">
+                      {card.label}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {relatorio.totalVouchersGeral}
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-300">
-                    Total Vouchers
-                  </p>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
+              ))}
+            </div>
+          </CardBody>
+        </Card>
 
-          <Card className="bg-white/18 dark:bg-white/5 backdrop-blur-xl border border-emerald-200/30 dark:border-white/10">
-            <CardBody className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-emerald-100/20 dark:bg-emerald-900/20 rounded-lg">
-                  <Icon
-                    icon="solar:dollar-linear"
-                    className="w-5 h-5 text-emerald-600 dark:text-emerald-400"
-                  />
-                </div>
-                <div>
-                  <p className="text-lg font-bold text-gray-900 dark:text-white">
-                    {formatCurrency(relatorio.valorTotalGeral)}
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-300">
-                    Valor Total
-                  </p>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-
-          <Card className="bg-white/18 dark:bg-white/5 backdrop-blur-xl border border-green-200/30 dark:border-white/10">
-            <CardBody className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100/20 dark:bg-green-900/20 rounded-lg">
-                  <Icon
-                    icon="solar:check-circle-linear"
-                    className="w-5 h-5 text-green-600 dark:text-green-400"
-                  />
-                </div>
-                <div>
-                  <p className="text-lg font-bold text-gray-900 dark:text-white">
-                    {formatCurrency(relatorio.valorPagoGeral)}
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-300">
-                    Valor Pago
-                  </p>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-
-          <Card className="bg-white/18 dark:bg-white/5 backdrop-blur-xl border border-orange-200/30 dark:border-white/10">
-            <CardBody className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-100/20 dark:bg-orange-900/20 rounded-lg">
-                  <Icon
-                    icon="solar:clock-circle-linear"
-                    className="w-5 h-5 text-orange-600 dark:text-orange-400"
-                  />
-                </div>
-                <div>
-                  <p className="text-lg font-bold text-gray-900 dark:text-white">
-                    {formatCurrency(relatorio.valorPendenteGeral)}
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-300">
-                    Valor Pendente
-                  </p>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-        </section>
-
-        {/* Centers List */}
         <section className="space-y-6">
           {relatorio.centrosCusto?.map((centro) => (
             <Card
               key={centro.codigoCentroCusto}
-              className="bg-white/20 dark:bg-white/3 backdrop-blur-xl border border-blue-200/40 dark:border-white/10"
+              className="border border-gray-200 dark:border-gray-700"
             >
               <CardHeader className="pb-3">
-                <div className="flex justify-between items-start w-full">
+                <div className="flex justify-between items-start w-full flex-wrap gap-3">
                   <div>
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                       {centro.codigoCentroCusto} - {centro.descricaoCentroCusto}
@@ -439,8 +326,6 @@ export default function DashboardClient({
             </Card>
           ))}
         </section>
-
-        <div className="pb-20" />
       </div>
     </div>
   );

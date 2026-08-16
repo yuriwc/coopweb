@@ -10,8 +10,13 @@ import {
 } from "@heroui/table";
 import { Chip } from "@heroui/chip";
 import { Tooltip } from "@heroui/tooltip";
+import { Button } from "@heroui/button";
 import { Icon } from "@iconify/react";
-import { VoucherCooperativa } from "../../../../../src/model/relatorio-vouchers";
+import {
+  STATUS_VOUCHER_LABEL,
+  StatusVoucher,
+  VoucherCooperativa,
+} from "../../../../../src/model/relatorio-vouchers";
 
 const columns = [
   { key: "voucher", label: "VOUCHER" },
@@ -24,13 +29,26 @@ const columns = [
   { key: "status", label: "STATUS" },
   { key: "trajeto", label: "TRAJETO" },
   { key: "pagamento", label: "PAGAMENTO" },
+  { key: "acoes", label: "AÇÕES" },
 ];
 
 interface VouchersCooperativaTableProps {
   vouchers: VoucherCooperativa[];
+  vouchersProcessando: Set<string>;
+  onAprovar: (voucher: VoucherCooperativa) => void;
+  onAbrirPagamento: (voucher: VoucherCooperativa) => void;
+  onAbrirDesconto: (voucher: VoucherCooperativa) => void;
+  onCancelar: (voucher: VoucherCooperativa) => void;
 }
 
-export default function VouchersCooperativaTable({ vouchers }: VouchersCooperativaTableProps) {
+export default function VouchersCooperativaTable({
+  vouchers,
+  vouchersProcessando,
+  onAprovar,
+  onAbrirPagamento,
+  onAbrirDesconto,
+  onCancelar,
+}: VouchersCooperativaTableProps) {
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
@@ -57,7 +75,7 @@ export default function VouchersCooperativaTable({ vouchers }: VouchersCooperati
     }
   };
 
-  const getStatusColor = (status: "PAGO" | "PENDENTE" | "APROVADO") => {
+  const getStatusColor = (status: StatusVoucher) => {
     switch (status) {
       case "PAGO":
         return "success";
@@ -65,12 +83,14 @@ export default function VouchersCooperativaTable({ vouchers }: VouchersCooperati
         return "warning";
       case "APROVADO":
         return "primary";
+      case "CANCELADO":
+        return "danger";
       default:
         return "default";
     }
   };
 
-  const getStatusIcon = (status: "PAGO" | "PENDENTE" | "APROVADO") => {
+  const getStatusIcon = (status: StatusVoucher) => {
     switch (status) {
       case "PAGO":
         return "solar:shield-check-linear";
@@ -78,6 +98,8 @@ export default function VouchersCooperativaTable({ vouchers }: VouchersCooperati
         return "solar:clock-circle-linear";
       case "APROVADO":
         return "solar:check-circle-linear";
+      case "CANCELADO":
+        return "solar:close-circle-linear";
       default:
         return "solar:question-circle-linear";
     }
@@ -203,7 +225,7 @@ export default function VouchersCooperativaTable({ vouchers }: VouchersCooperati
                         <Icon icon={getStatusIcon(voucher.status)} className="w-3 h-3" />
                       }
                     >
-                      {voucher.status}
+                      {STATUS_VOUCHER_LABEL[voucher.status]}
                     </Chip>
                   )}
                   
@@ -246,6 +268,58 @@ export default function VouchersCooperativaTable({ vouchers }: VouchersCooperati
                             </div>
                           </Tooltip>
                         </div>
+                      )}
+                    </div>
+                  )}
+
+                  {columnKey === "acoes" && (
+                    <div className="flex items-center gap-1.5">
+                      {voucher.status === "PENDENTE" && (
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          color="primary"
+                          aria-label={`Aprovar voucher ${voucher.numeroVoucher}`}
+                          isDisabled={vouchersProcessando.has(voucher.id)}
+                          onPress={() => onAprovar(voucher)}
+                        >
+                          Aprovar
+                        </Button>
+                      )}
+                      {(voucher.status === "PENDENTE" || voucher.status === "APROVADO") && (
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          aria-label={`Confirmar pagamento do voucher ${voucher.numeroVoucher}`}
+                          isDisabled={vouchersProcessando.has(voucher.id)}
+                          onPress={() => onAbrirPagamento(voucher)}
+                        >
+                          Pagar
+                        </Button>
+                      )}
+                      {(voucher.status === "PENDENTE" || voucher.status === "APROVADO") && (
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          aria-label={`Aplicar desconto no voucher ${voucher.numeroVoucher}`}
+                          isDisabled={vouchersProcessando.has(voucher.id)}
+                          onPress={() => onAbrirDesconto(voucher)}
+                        >
+                          Desconto
+                        </Button>
+                      )}
+                      {(voucher.status === "PENDENTE" || voucher.status === "APROVADO") && (
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          color="danger"
+                          className="ml-1.5"
+                          aria-label={`Cancelar voucher ${voucher.numeroVoucher}`}
+                          isDisabled={vouchersProcessando.has(voucher.id)}
+                          onPress={() => onCancelar(voucher)}
+                        >
+                          Cancelar
+                        </Button>
                       )}
                     </div>
                   )}

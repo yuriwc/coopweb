@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
 import { Icon } from "@iconify/react";
 import useGoogleMaps from "@/src/hooks/useGoogleMaps";
+import { fetchComLog } from "@/src/utils/log-fetch";
 
 interface PlaceResult {
   place_id: string;
@@ -69,7 +70,7 @@ export default function PlacesAutocomplete({
     setApiError(null);
 
     try {
-      const response = await fetch(`/api/google-maps/autocomplete?input=${encodeURIComponent(query)}`);
+      const response = await fetchComLog(`/api/google-maps/autocomplete?input=${encodeURIComponent(query)}`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -120,7 +121,7 @@ export default function PlacesAutocomplete({
     setApiError(null);
 
     try {
-      const response = await fetch(`/api/google-maps/place-details?place_id=${encodeURIComponent(placeId)}`);
+      const response = await fetchComLog(`/api/google-maps/place-details?place_id=${encodeURIComponent(placeId)}`);
       const data = await response.json();
 
       if (!response.ok) {

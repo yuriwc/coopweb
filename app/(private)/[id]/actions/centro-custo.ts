@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidateTag } from "next/cache";
+import { fetchComLog } from "@/src/utils/log-fetch";
 
 export async function vincularCentroCusto(
   funcionarioId: string,
@@ -8,7 +9,7 @@ export async function vincularCentroCusto(
   token: string
 ) {
   try {
-    const response = await fetch(
+    const response = await fetchComLog(
       `${process.env.NEXT_PUBLIC_SERVER}/api/v1/passageiro/${funcionarioId}/centro-custo`,
       {
         method: "PUT",

@@ -14,7 +14,7 @@ interface AppProps {
 
 export default function App({ items }: AppProps) {
   return (
-    <Breadcrumbs variant="bordered" className="absolute top-24 right-2 z-10">
+    <Breadcrumbs variant="light" className="text-sm">
       {items.map((item) => (
         <BreadcrumbItem key={item.url}>
           <Link href={item.url}>{item.name}</Link>

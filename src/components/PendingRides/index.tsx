@@ -12,6 +12,7 @@ import {
   Motorista,
 } from "@/src/services/motorista";
 import { formatTimestampToTime } from "@/src/utils/date";
+import ShowToast from "@/src/components/Toast";
 
 interface PendingRidesProps {
   cooperativaId: string;
@@ -93,19 +94,25 @@ export const PendingRides = ({
 
     setAssigning((prev) => ({ ...prev, [rideId]: true }));
 
-    const success = await assignMotoristaToRide(
-      cooperativaId,
-      rideId,
-      motoristaId
-    );
+    const result = await assignMotoristaToRide(cooperativaId, rideId, motoristaId);
 
-    if (success) {
+    if (result.success) {
       // Remove a viagem da lista após sucesso na atribuição
       setRides((prev) => prev.filter((ride) => ride.id !== rideId));
       setSelectedMotorista((prev) => {
         const newSelected = { ...prev };
         delete newSelected[rideId];
         return newSelected;
+      });
+      ShowToast({
+        color: "success",
+        title: "Motorista atribuído com sucesso",
+      });
+    } else {
+      ShowToast({
+        color: "danger",
+        title: "Não foi possível atribuir o motorista",
+        description: result.message,
       });
     }
 

@@ -2,7 +2,9 @@
 
 import { ISelect } from "@/src/interface/ISelect";
 import { Select, SelectItem } from "@heroui/select";
+import { Spinner } from "@heroui/spinner";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { fetchComLog } from "@/src/utils/log-fetch";
 
 interface Props {
   empresa: string;
@@ -17,11 +19,12 @@ export default function SelectCooperativas({
 }: Props) {
   const [cooperativas, setCooperativas] = useState<ISelect[]>([]);
   const [value, setValue] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchCooperativas = async () => {
       try {
-        const response = await fetch(
+        const response = await fetchComLog(
           `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/${empresa}/cooperativas`,
           {
             next: { tags: ["getViagens"] },
@@ -51,6 +54,8 @@ export default function SelectCooperativas({
         }
       } catch (err) {
         console.error("Erro ao buscar cooperativas:", err);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -67,6 +72,15 @@ export default function SelectCooperativas({
       variant="underlined"
       className="max-w-xs"
       label="Cooperativa"
+      placeholder={
+        isLoading
+          ? "Carregando..."
+          : cooperativas.length === 0
+            ? "Nenhuma cooperativa disponível"
+            : "Selecione"
+      }
+      isDisabled={isLoading || cooperativas.length === 0}
+      startContent={isLoading ? <Spinner size="sm" /> : null}
       selectedKeys={new Set([value])}
       onChange={handleSelectionChange}
     >

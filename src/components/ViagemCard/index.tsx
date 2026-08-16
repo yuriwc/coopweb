@@ -4,31 +4,19 @@ import { Chip } from "@heroui/chip";
 import { Button } from "@heroui/button";
 import { Icon } from "@iconify/react";
 import { usePathname } from "next/navigation";
+import { ViagemRealTime } from "@/src/model/viagem";
 
-interface Passageiro {
-  nome?: string;
-  sobrenome?: string;
-  rua?: string;
-  numero?: string;
-  bairro?: string;
-  cidade?: string;
-  estado?: string;
-  latitude?: number;
-  longitude?: number;
-}
-
-interface Viagem {
-  id: string;
-  passageiros: Passageiro[];
-  statusViagem: string;
-  enderecoEmpresa: string;
-  latitudeOrigem: number;
-  longitudeOrigem: number;
-  latitudeDestino: number;
-  longitudeDestino: number;
-  latitudeMotorista?: number;
-  longitudeMotorista?: number;
-}
+// Só os campos que este card de fato usa — evita exigir campos do modelo
+// completo (ViagemRealTime tem vários outros opcionais não usados aqui).
+type Viagem = Pick<
+  ViagemRealTime,
+  | "id"
+  | "passageiros"
+  | "statusViagem"
+  | "enderecoEmpresa"
+  | "latitudeMotorista"
+  | "longitudeMotorista"
+>;
 
 // Tipo para as cores aceitas pelos componentes HeroUI
 type ChipColorType =

@@ -3,39 +3,34 @@
 import { CentroCustoResumo } from "@/src/model/relatorio-vouchers";
 import { Card, CardBody } from "@heroui/card";
 import { Icon } from "@iconify/react";
-import { Button } from "@heroui/button";
 import { Tabs, Tab } from "@heroui/tabs";
+import Link from "next/link";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
+import { fetchComLog } from "@/src/utils/log-fetch";
 
 const VouchersCharts = dynamic(() => import("./charts"), {
   loading: () => (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white/20 dark:bg-white/3 backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 h-96 flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-8 h-8 animate-spin mx-auto mb-4 border-4 border-blue-500 border-t-transparent rounded-full" />
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              Carregando gráficos...
-            </p>
-          </div>
+        <div className="rounded-medium border border-gray-200 dark:border-gray-700 h-96 flex items-center justify-center">
+          <Icon
+            icon="solar:refresh-linear"
+            className="w-8 h-8 animate-spin text-primary"
+          />
         </div>
-        <div className="bg-white/20 dark:bg-white/3 backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 h-96 flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-8 h-8 animate-spin mx-auto mb-4 border-4 border-blue-500 border-t-transparent rounded-full" />
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              Carregando gráficos...
-            </p>
-          </div>
+        <div className="rounded-medium border border-gray-200 dark:border-gray-700 h-96 flex items-center justify-center">
+          <Icon
+            icon="solar:refresh-linear"
+            className="w-8 h-8 animate-spin text-primary"
+          />
         </div>
       </div>
-      <div className="bg-white/20 dark:bg-white/3 backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 h-96 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 animate-spin mx-auto mb-4 border-4 border-blue-500 border-t-transparent rounded-full" />
-          <p className="text-sm text-gray-600 dark:text-gray-300">
-            Carregando gráficos...
-          </p>
-        </div>
+      <div className="rounded-medium border border-gray-200 dark:border-gray-700 h-96 flex items-center justify-center">
+        <Icon
+          icon="solar:refresh-linear"
+          className="w-8 h-8 animate-spin text-primary"
+        />
       </div>
     </div>
   ),
@@ -71,8 +66,7 @@ export default function ResumoClient({
     [dataFim]
   );
 
-  // Get last 3 months data
-  const getMonthsData = () => {
+  const monthsData = useMemo(() => {
     const now = new Date();
     const months = [];
 
@@ -92,13 +86,10 @@ export default function ResumoClient({
     }
 
     return months;
-  };
-
-  const monthsData = getMonthsData();
+  }, []);
 
   const fetchData = useCallback(
     async (month?: number) => {
-      console.log("🔍 [fetchData] Iniciando - month:", month);
       try {
         setLoading(true);
         setError(false);
@@ -122,7 +113,7 @@ export default function ResumoClient({
           ? `${process.env.NEXT_PUBLIC_SERVER}/api/v1/relatorio/empresa/${empresaId}/vouchers/centro-custo/resumo?mes=${month}`
           : `${process.env.NEXT_PUBLIC_SERVER}/api/v1/relatorio/empresa/${empresaId}/vouchers/centro-custo/resumo?dataInicio=${startDate}&dataFim=${endDate}`;
 
-        const response = await fetch(url, {
+        const response = await fetchComLog(url, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -130,20 +121,18 @@ export default function ResumoClient({
         });
 
         if (!response.ok) {
-          console.error("❌ [fetchData] API error:", response.status);
+          console.error("Erro na requisição:", response.status, response.statusText);
           setError(true);
           return;
         }
 
         const data: CentroCustoResumo[] = await response.json();
-        console.log("✅ [fetchData] Success - data length:", data.length);
         setResumo(data);
       } catch (error) {
-        console.error("💥 [fetchData] Exception:", error);
+        console.error("Erro ao buscar resumo de vouchers:", error);
         setError(true);
       } finally {
         setLoading(false);
-        console.log("🏁 [fetchData] Finalizado");
       }
     },
     [token, empresaId, defaultDataInicio, defaultDataFim]
@@ -151,15 +140,11 @@ export default function ResumoClient({
 
   useEffect(() => {
     if (token) {
-      console.log("🚀 [useEffect] Calling fetchData...");
       fetchData();
-    } else {
-      console.log("⏸️ [useEffect] No token, skipping fetchData");
     }
   }, [token, empresaId, fetchData]);
 
   const handleMonthChange = (month: string) => {
-    console.log("📅 [handleMonthChange] Month selected:", month);
     setSelectedMonth(month);
 
     if (month === "current") {
@@ -174,13 +159,13 @@ export default function ResumoClient({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
           <Icon
             icon="solar:refresh-linear"
-            className="w-8 h-8 animate-spin mx-auto mb-4"
+            className="w-8 h-8 animate-spin mx-auto mb-4 text-primary"
           />
-          <p>Carregando resumo...</p>
+          <p className="text-gray-600 dark:text-gray-300">Carregando resumo...</p>
         </div>
       </div>
     );
@@ -188,17 +173,17 @@ export default function ResumoClient({
 
   if (error || !resumo) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="max-w-md">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <Card className="max-w-md border border-gray-200 dark:border-gray-700">
           <CardBody className="text-center p-8">
             <Icon
               icon="solar:danger-triangle-linear"
               className="w-16 h-16 mx-auto text-danger mb-4"
             />
-            <h3 className="text-xl font-semibold mb-2">
+            <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
               Erro ao carregar dados
             </h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-300">
               Não foi possível carregar o resumo de vouchers.
             </p>
           </CardBody>
@@ -228,168 +213,109 @@ export default function ResumoClient({
     return new Date(dateString).toLocaleDateString("pt-BR");
   };
 
-  return (
-    <div className="min-h-screen relative overflow-hidden bg-blue-50/50 dark:bg-gray-900">
-      {/* Background Effects */}
-      <div className="fixed inset-0 bg-linear-to-br from-blue-100/40 via-cyan-50/30 to-sky-100/40 dark:from-blue-950/40 dark:via-purple-950/40 dark:to-emerald-950/40" />
-      <div className="fixed inset-0 backdrop-blur-[2px]" />
+  const summaryCards = [
+    {
+      key: "total",
+      icon: "solar:ticket-linear",
+      iconClass: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900",
+      value: totals.totalVouchers,
+      label: "Total Vouchers",
+    },
+    {
+      key: "valorTotal",
+      icon: "solar:dollar-linear",
+      iconClass:
+        "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900",
+      value: formatCurrency(totals.valorTotal),
+      label: "Valor Total",
+    },
+    {
+      key: "valorPago",
+      icon: "solar:check-circle-linear",
+      iconClass:
+        "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900",
+      value: formatCurrency(totals.valorPago),
+      label: "Valor Pago",
+    },
+    {
+      key: "valorPendente",
+      icon: "solar:clock-circle-linear",
+      iconClass:
+        "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900",
+      value: formatCurrency(totals.valorPendente),
+      label: "Valor Pendente",
+    },
+  ];
 
-      <div className="relative z-10 container mx-auto p-4 sm:p-8 max-w-7xl">
-        {/* Header */}
-        <header className="pb-2 mb-6 relative group">
-          <div className="absolute inset-0 bg-white/20 dark:bg-white/5 backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 shadow-2xl shadow-blue-500/15 dark:shadow-black/20" />
-          <div className="relative p-6 rounded-xl">
-            <div className="flex flex-col gap-4">
-              <Button
-                as="a"
-                href={`/${empresaId}`}
-                variant="light"
-                color="default"
-                startContent={
-                  <Icon icon="solar:arrow-left-linear" className="w-4 h-4" />
-                }
-                className="self-start"
-              >
-                Voltar
-              </Button>
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-                <div>
-                  <h1 className="text-2xl lg:text-3xl font-bold bg-linear-to-r from-blue-600 via-purple-600 to-emerald-600 bg-clip-text text-transparent">
-                    Resumo de Vouchers
-                  </h1>
-                  <p className="text-gray-600 dark:text-gray-300 mt-1">
-                    Análise gráfica por centro de custo
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Período: {formatDate(defaultDataInicio)} até{" "}
-                    {formatDate(defaultDataFim)}
-                  </p>
-                </div>
-                <Button
-                  as="a"
-                  href={`/${empresaId}/vouchers/dashboard`}
-                  variant="ghost"
-                  color="primary"
-                  startContent={
-                    <Icon icon="solar:list-linear" className="w-4 h-4" />
-                  }
-                >
-                  Ver Detalhes
-                </Button>
-              </div>
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="mx-auto max-w-7xl w-full pt-6 pb-12 px-4 sm:px-6 lg:px-8">
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <div className="flex items-center gap-4">
+            <Link
+              href={`/${empresaId}`}
+              aria-label="Voltar"
+              className="inline-flex items-center justify-center rounded-medium bg-default-100 dark:bg-default-50 h-10 w-10 text-gray-700 dark:text-gray-300 hover:opacity-80 transition-opacity shrink-0"
+            >
+              <Icon icon="solar:arrow-left-linear" className="w-5 h-5" />
+            </Link>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                Resumo de Vouchers
+              </h1>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                Análise gráfica por centro de custo · {formatDate(defaultDataInicio)}{" "}
+                até {formatDate(defaultDataFim)}
+              </p>
             </div>
           </div>
+          <Link
+            href={`/${empresaId}/vouchers/dashboard`}
+            className="inline-flex items-center gap-2 rounded-medium border border-primary-200 dark:border-primary-800 text-primary-600 dark:text-primary-400 px-4 h-10 text-small font-medium hover:opacity-80 transition-opacity shrink-0"
+          >
+            <Icon icon="solar:list-linear" className="w-4 h-4" />
+            Ver Detalhes
+          </Link>
         </header>
 
-        {/* Month Filter Tabs */}
-        <section className="mb-6">
-          <Card className="bg-white/20 dark:bg-white/3 backdrop-blur-xl border border-blue-200/40 dark:border-white/10">
-            <CardBody className="p-4">
-              <Tabs
-                selectedKey={selectedMonth}
-                onSelectionChange={(key) => handleMonthChange(key as string)}
-                variant="underlined"
-                color="primary"
-              >
-                {monthsData.map((month) => (
-                  <Tab key={month.key} title={month.label} />
-                ))}
-              </Tabs>
-            </CardBody>
-          </Card>
-        </section>
+        <Card className="border border-gray-200 dark:border-gray-700 mb-6">
+          <CardBody className="p-6 sm:p-8">
+            <Tabs
+              selectedKey={selectedMonth}
+              onSelectionChange={(key) => handleMonthChange(key as string)}
+              variant="underlined"
+              color="primary"
+              className="mb-6"
+            >
+              {monthsData.map((month) => (
+                <Tab key={month.key} title={month.label} />
+              ))}
+            </Tabs>
 
-        {/* Summary Cards */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card className="bg-white/18 dark:bg-white/5 backdrop-blur-xl border border-blue-200/30 dark:border-white/10">
-            <CardBody className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100/20 dark:bg-blue-900/20 rounded-lg">
-                  <Icon
-                    icon="solar:ticket-linear"
-                    className="w-5 h-5 text-blue-600 dark:text-blue-400"
-                  />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {summaryCards.map((card) => (
+                <div
+                  key={card.key}
+                  className="flex items-center gap-3 p-4 rounded-medium bg-gray-50 dark:bg-gray-800/50"
+                >
+                  <div className={`p-2 rounded-lg ${card.iconClass}`}>
+                    <Icon icon={card.icon} className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-gray-900 dark:text-white">
+                      {card.value}
+                    </p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300">
+                      {card.label}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {totals.totalVouchers}
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-300">
-                    Total Vouchers
-                  </p>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
+              ))}
+            </div>
+          </CardBody>
+        </Card>
 
-          <Card className="bg-white/18 dark:bg-white/5 backdrop-blur-xl border border-emerald-200/30 dark:border-white/10">
-            <CardBody className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-emerald-100/20 dark:bg-emerald-900/20 rounded-lg">
-                  <Icon
-                    icon="solar:dollar-linear"
-                    className="w-5 h-5 text-emerald-600 dark:text-emerald-400"
-                  />
-                </div>
-                <div>
-                  <p className="text-lg font-bold text-gray-900 dark:text-white">
-                    {formatCurrency(totals.valorTotal)}
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-300">
-                    Valor Total
-                  </p>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-
-          <Card className="bg-white/18 dark:bg-white/5 backdrop-blur-xl border border-green-200/30 dark:border-white/10">
-            <CardBody className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100/20 dark:bg-green-900/20 rounded-lg">
-                  <Icon
-                    icon="solar:check-circle-linear"
-                    className="w-5 h-5 text-green-600 dark:text-green-400"
-                  />
-                </div>
-                <div>
-                  <p className="text-lg font-bold text-gray-900 dark:text-white">
-                    {formatCurrency(totals.valorPago)}
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-300">
-                    Valor Pago
-                  </p>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-
-          <Card className="bg-white/18 dark:bg-white/5 backdrop-blur-xl border border-orange-200/30 dark:border-white/10">
-            <CardBody className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-100/20 dark:bg-orange-900/20 rounded-lg">
-                  <Icon
-                    icon="solar:clock-circle-linear"
-                    className="w-5 h-5 text-orange-600 dark:text-orange-400"
-                  />
-                </div>
-                <div>
-                  <p className="text-lg font-bold text-gray-900 dark:text-white">
-                    {formatCurrency(totals.valorPendente)}
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-300">
-                    Valor Pendente
-                  </p>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-        </section>
-
-        {/* Charts */}
         <VouchersCharts data={resumo} />
-
-        <div className="pb-20" />
       </div>
     </div>
   );

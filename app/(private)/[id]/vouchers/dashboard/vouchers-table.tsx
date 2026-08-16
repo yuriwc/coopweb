@@ -63,7 +63,13 @@ export default function VouchersTable({ vouchers }: VouchersTableProps) {
   }
 
   return (
-    <Table aria-label="Tabela de vouchers do centro de custo">
+    <Table
+      aria-label="Tabela de vouchers do centro de custo"
+      classNames={{
+        wrapper: "bg-transparent shadow-none p-0",
+        th: "bg-gray-50 dark:bg-gray-800/50",
+      }}
+    >
       <TableHeader columns={columns}>
         {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
       </TableHeader>

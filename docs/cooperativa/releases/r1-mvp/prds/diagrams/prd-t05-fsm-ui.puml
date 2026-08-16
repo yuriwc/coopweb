@@ -1,0 +1,29 @@
+@startuml prd-t05-fsm-ui
+title Voucher — máquina de status (PRD-T05, ações do operador de cooperativa)
+
+[*] --> PENDENTE : criado automaticamente ao finalizar/assinar a viagem (RF-01, fora desta tela)
+
+PENDENTE --> APROVADO : aprovar (AC-T05-001)
+PENDENTE --> PAGO : confirmar pagamento (AC-T05-002)
+APROVADO --> PAGO : confirmar pagamento (AC-T05-002)
+PENDENTE --> CANCELADO : cancelar (AC-T05-003)
+APROVADO --> CANCELADO : cancelar (AC-T05-003)
+
+PENDENTE --> PENDENTE : aplicar desconto (recalcula valorTotal; não recalcula valorLiquidoMotorista — RN-04)
+APROVADO --> APROVADO : aplicar desconto (idem)
+
+PAGO --> [*] : estado terminal (invariante — nunca volta a status anterior)
+CANCELADO --> [*] : estado terminal
+
+note right of PAGO
+  Ações indisponíveis: aprovar, pagar,
+  cancelar, desconto (EF Macro Financeiro
+  §5 RF-02, regras R1-R4)
+end note
+
+note right of CANCELADO
+  Ações indisponíveis: aprovar, pagar,
+  desconto. Cancelar já não se aplica
+  (estado terminal).
+end note
+@enduml

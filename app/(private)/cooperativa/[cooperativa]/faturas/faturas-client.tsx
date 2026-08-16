@@ -10,7 +10,13 @@ import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
 import { Spinner } from "@heroui/spinner";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@heroui/modal";
 import { RelatorioCooperativaMes, VoucherCooperativa, EmpresaLabelValue } from "../../../../../src/model/relatorio-vouchers";
+import ShowToast from "../../../../../src/components/Toast";
 import VouchersCooperativaTable from "./vouchers-cooperativa-table";
+import { aprovarVoucher } from "./action/aprovar-voucher";
+import { cancelarVoucher } from "./action/cancelar-voucher";
+import ConfirmarAcaoModal from "./modal/confirmar-acao-modal";
+import ConfirmarPagamentoModal from "./modal/confirmar-pagamento-modal";
+import AplicarDescontoModal from "./modal/aplicar-desconto-modal";
 
 interface FaturasClientProps {
   cooperativaId: string;
@@ -45,6 +51,7 @@ const STATUS_OPTIONS = [
   { value: "PENDENTE", label: "Pendente" },
   { value: "APROVADO", label: "Aprovado" },
   { value: "PAGO", label: "Pago" },
+  { value: "CANCELADO", label: "Cancelado" },
 ];
 
 export default function FaturasClient({ 
@@ -72,6 +79,13 @@ export default function FaturasClient({
   const [mesRelatorio, setMesRelatorio] = useState<string>(mesAtual.toString());
   const [anoRelatorio, setAnoRelatorio] = useState<string>(anoAtual.toString());
   const [loadingRelatorio, setLoadingRelatorio] = useState(false);
+
+  // Ações por voucher (aprovar/pagar/cancelar/desconto)
+  const [vouchersProcessando, setVouchersProcessando] = useState<Set<string>>(new Set());
+  const [voucherParaAprovar, setVoucherParaAprovar] = useState<VoucherCooperativa | null>(null);
+  const [voucherParaCancelar, setVoucherParaCancelar] = useState<VoucherCooperativa | null>(null);
+  const [voucherParaPagar, setVoucherParaPagar] = useState<VoucherCooperativa | null>(null);
+  const [voucherParaDesconto, setVoucherParaDesconto] = useState<VoucherCooperativa | null>(null);
 
   const buscarDados = async () => {
     setLoading(true);
@@ -110,6 +124,90 @@ export default function FaturasClient({
       setLoading(false);
     }
   };
+
+  function marcarProcessando(voucherId: string, processando: boolean) {
+    setVouchersProcessando((prev) => {
+      const next = new Set(prev);
+      if (processando) {
+        next.add(voucherId);
+      } else {
+        next.delete(voucherId);
+      }
+      return next;
+    });
+  }
+
+  function handleAbrirAprovar(voucher: VoucherCooperativa) {
+    marcarProcessando(voucher.id, true);
+    setVoucherParaAprovar(voucher);
+  }
+
+  function handleFecharAprovar() {
+    if (voucherParaAprovar) marcarProcessando(voucherParaAprovar.id, false);
+    setVoucherParaAprovar(null);
+  }
+
+  async function handleAprovarSucesso() {
+    const voucherId = voucherParaAprovar?.id;
+    setVoucherParaAprovar(null);
+    ShowToast({ color: "success", title: "Voucher aprovado" });
+    await buscarDados();
+    if (voucherId) marcarProcessando(voucherId, false);
+  }
+
+  function handleAbrirCancelar(voucher: VoucherCooperativa) {
+    marcarProcessando(voucher.id, true);
+    setVoucherParaCancelar(voucher);
+  }
+
+  function handleFecharCancelar() {
+    if (voucherParaCancelar) marcarProcessando(voucherParaCancelar.id, false);
+    setVoucherParaCancelar(null);
+  }
+
+  async function handleCancelarSucesso() {
+    const voucherId = voucherParaCancelar?.id;
+    setVoucherParaCancelar(null);
+    ShowToast({ color: "success", title: "Voucher cancelado" });
+    await buscarDados();
+    if (voucherId) marcarProcessando(voucherId, false);
+  }
+
+  function handleAbrirPagamento(voucher: VoucherCooperativa) {
+    marcarProcessando(voucher.id, true);
+    setVoucherParaPagar(voucher);
+  }
+
+  function handleFecharPagamento() {
+    if (voucherParaPagar) marcarProcessando(voucherParaPagar.id, false);
+    setVoucherParaPagar(null);
+  }
+
+  async function handlePagamentoSucesso() {
+    const voucherId = voucherParaPagar?.id;
+    setVoucherParaPagar(null);
+    ShowToast({ color: "success", title: "Pagamento registrado com sucesso" });
+    await buscarDados();
+    if (voucherId) marcarProcessando(voucherId, false);
+  }
+
+  function handleAbrirDesconto(voucher: VoucherCooperativa) {
+    marcarProcessando(voucher.id, true);
+    setVoucherParaDesconto(voucher);
+  }
+
+  function handleFecharDesconto() {
+    if (voucherParaDesconto) marcarProcessando(voucherParaDesconto.id, false);
+    setVoucherParaDesconto(null);
+  }
+
+  async function handleDescontoSucesso() {
+    const voucherId = voucherParaDesconto?.id;
+    setVoucherParaDesconto(null);
+    ShowToast({ color: "success", title: "Desconto aplicado com sucesso" });
+    await buscarDados();
+    if (voucherId) marcarProcessando(voucherId, false);
+  }
 
   const gerarPDF = async () => {
     try {
@@ -526,7 +624,14 @@ export default function FaturasClient({
                 </Button>
               </div>
             ) : relatorio ? (
-              <VouchersCooperativaTable vouchers={vouchersFiltrados} />
+              <VouchersCooperativaTable
+                vouchers={vouchersFiltrados}
+                vouchersProcessando={vouchersProcessando}
+                onAprovar={handleAbrirAprovar}
+                onAbrirPagamento={handleAbrirPagamento}
+                onAbrirDesconto={handleAbrirDesconto}
+                onCancelar={handleAbrirCancelar}
+              />
             ) : (
               <div className="text-center py-12">
                 <div className="mb-4">
@@ -614,6 +719,50 @@ export default function FaturasClient({
           )}
         </ModalContent>
       </Modal>
+
+      <ConfirmarAcaoModal
+        isOpen={voucherParaAprovar !== null}
+        onOpenChange={(open) => !open && handleFecharAprovar()}
+        titulo={`Aprovar voucher ${voucherParaAprovar?.numeroVoucher ?? ""}`}
+        descricao='O voucher passa para "Aprovado, aguardando pagamento".'
+        rotuloConfirmar="Aprovar"
+        corConfirmar="primary"
+        onConfirmar={async () => {
+          if (!voucherParaAprovar) return { success: false, message: "Voucher inválido" };
+          return aprovarVoucher({ voucherId: voucherParaAprovar.id, token });
+        }}
+        onSucesso={handleAprovarSucesso}
+      />
+
+      <ConfirmarAcaoModal
+        isOpen={voucherParaCancelar !== null}
+        onOpenChange={(open) => !open && handleFecharCancelar()}
+        titulo={`Cancelar voucher ${voucherParaCancelar?.numeroVoucher ?? ""}`}
+        descricao="O voucher passa para “Cancelado” e não poderá mais ser aprovado ou pago."
+        rotuloConfirmar="Cancelar voucher"
+        corConfirmar="danger"
+        onConfirmar={async () => {
+          if (!voucherParaCancelar) return { success: false, message: "Voucher inválido" };
+          return cancelarVoucher({ voucherId: voucherParaCancelar.id, token });
+        }}
+        onSucesso={handleCancelarSucesso}
+      />
+
+      <ConfirmarPagamentoModal
+        isOpen={voucherParaPagar !== null}
+        onOpenChange={(open) => !open && handleFecharPagamento()}
+        voucher={voucherParaPagar}
+        token={token}
+        onSucesso={handlePagamentoSucesso}
+      />
+
+      <AplicarDescontoModal
+        isOpen={voucherParaDesconto !== null}
+        onOpenChange={(open) => !open && handleFecharDesconto()}
+        voucher={voucherParaDesconto}
+        token={token}
+        onSucesso={handleDescontoSucesso}
+      />
     </div>
   );
 }

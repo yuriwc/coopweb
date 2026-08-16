@@ -11,8 +11,9 @@ import {
   getKeyValue,
   Selection,
 } from "@heroui/table";
+import { Chip } from "@heroui/chip";
+import { Tooltip } from "@heroui/tooltip";
 import React, { useState, useCallback } from "react";
-import Menu from "./menu";
 import { Button } from "@heroui/button";
 import { usePathname, useRouter } from "next/navigation";
 import Icon from "@/src/components/icon";
@@ -24,7 +25,7 @@ import CentroCustoModal from "./modal/form-centro-custo";
 const columns = [
   {
     key: "name",
-    label: "NAME",
+    label: "Nome",
   },
   {
     key: "phone",
@@ -41,6 +42,10 @@ const columns = [
   {
     key: "centroCusto",
     label: "Centro de Custo",
+  },
+  {
+    key: "acoes",
+    label: "Ações",
   },
 ];
 
@@ -96,12 +101,12 @@ const TablePassegers = ({
         aria-label="Tabela de funciários de uma empresa"
         selectionMode="multiple"
         onSelectionChange={handleSelectionChange}
+        classNames={{
+          wrapper: "bg-transparent shadow-none p-0",
+          th: "bg-gray-50 dark:bg-gray-800/50",
+        }}
         topContent={
-          <div className="flex items-center gap-3 justify-between w-full">
-            <div>
-              <Menu />
-              <span className="text-lg">Tabela de Colaboradores</span>
-            </div>
+          <div className="flex items-center gap-3 justify-end w-full">
             <div className="flex flex-row items-center gap-4">
               {/* Ações de Viagem */}
               <div className="flex flex-row gap-2">
@@ -136,10 +141,9 @@ const TablePassegers = ({
               <div className="flex flex-row items-center gap-2">
                 <Button
                   onPress={handleCreate}
-                  variant="light"
+                  variant="flat"
                   size="sm"
                   startContent={<Icon icon="iconoir:plus" height={16} />}
-                  className="backdrop-blur-sm bg-gray-500/10 hover:bg-gray-500/20 border border-gray-200/30 dark:border-gray-700/30 text-gray-700 dark:text-gray-300 font-medium transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-gray-500/25"
                 >
                   Novo Colaborador
                 </Button>
@@ -183,33 +187,43 @@ const TablePassegers = ({
               {(columnKey) => (
                 <TableCell>
                   {columnKey === "centroCusto" ? (
-                    <div className="flex items-center justify-between">
-                      {item.centroCustoCodigo ? (
-                        <div className="flex flex-col">
-                          <span className="font-semibold text-sm">
-                            {item.centroCustoCodigo}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            {item.centroCustoDescricao}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-gray-400 italic">
-                          Não vinculado
+                    item.centroCustoCodigo ? (
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-sm">
+                          {item.centroCustoCodigo}
                         </span>
-                      )}
+                        <span className="text-xs text-gray-500">
+                          {item.centroCustoDescricao}
+                        </span>
+                      </div>
+                    ) : (
+                      <Chip size="sm" variant="flat" color="default">
+                        Não vinculado
+                      </Chip>
+                    )
+                  ) : columnKey === "acoes" ? (
+                    <Tooltip
+                      content={
+                        item.centroCustoCodigo
+                          ? "Alterar centro de custo"
+                          : "Vincular centro de custo"
+                      }
+                    >
                       <Button
+                        isIconOnly
                         size="sm"
-                        variant="light"
+                        variant="flat"
                         color="primary"
+                        aria-label={`${item.centroCustoCodigo ? "Alterar" : "Vincular"} centro de custo de ${item.name}`}
                         onPress={() => handleVincularCentroCusto(item)}
-                        startContent={
-                          <Icon icon="solar:link-linear" height={16} />
-                        }
                       >
-                        {item.centroCustoCodigo ? "Alterar" : "Vincular"}
+                        <Icon icon="solar:link-linear" height={16} />
                       </Button>
-                    </div>
+                    </Tooltip>
+                  ) : columnKey === "phone" || columnKey === "cidade" || columnKey === "estado" ? (
+                    getKeyValue(item, columnKey) || (
+                      <span className="text-gray-400">—</span>
+                    )
                   ) : (
                     getKeyValue(item, columnKey)
                   )}

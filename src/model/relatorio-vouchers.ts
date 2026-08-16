@@ -55,6 +55,8 @@ export interface CentroCustoResumo {
   valorPendente: number;
 }
 
+export type StatusVoucher = "PAGO" | "PENDENTE" | "APROVADO" | "CANCELADO";
+
 export interface VoucherCooperativa {
   id: string;
   numeroVoucher: string;
@@ -64,11 +66,28 @@ export interface VoucherCooperativa {
   nomeMotorista: string;
   nomePassageiro: string;
   valorTotal: number;
-  status: "PAGO" | "PENDENTE" | "APROVADO";
+  status: StatusVoucher;
   formaPagamento: string | null;
   origemViagem: string;
   destinoViagem: string;
   observacao: string;
+}
+
+export const STATUS_VOUCHER_LABEL: Record<StatusVoucher, string> = {
+  PENDENTE: "Aguardando aprovação",
+  APROVADO: "Aprovado, aguardando pagamento",
+  PAGO: "Pago",
+  CANCELADO: "Cancelado",
+};
+
+export interface PagarVoucherDto {
+  formaPagamento: string;
+  referenciaPagamento: string;
+}
+
+export interface AplicarDescontoVoucherDto {
+  valorDesconto: number;
+  motivoDesconto: string;
 }
 
 export interface RelatorioCooperativaMes {

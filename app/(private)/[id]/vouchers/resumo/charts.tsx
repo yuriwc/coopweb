@@ -59,7 +59,7 @@ export default function VouchersCharts({ data }: Props) {
   const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm p-3 rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg">
+        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg">
           <p className="font-semibold text-gray-900 dark:text-white">{label}</p>
           {payload.map((entry: TooltipPayload, index: number) => (
             <p key={index} style={{ color: entry.color }} className="text-sm">
@@ -103,10 +103,10 @@ export default function VouchersCharts({ data }: Props) {
     <div className="space-y-8">
       {/* Gráfico de Barras - Comparação de Vouchers */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-white/20 dark:bg-white/3 backdrop-blur-xl border border-blue-200/40 dark:border-white/10">
+        <Card className="border border-gray-200 dark:border-gray-700">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
-              <div className="p-2 bg-blue-100/20 dark:bg-blue-900/20 rounded-lg">
+              <div className="p-2 bg-blue-50 dark:bg-blue-900 rounded-lg">
                 <Icon
                   icon="solar:chart-linear"
                   className="w-5 h-5 text-blue-600 dark:text-blue-400"
@@ -141,10 +141,10 @@ export default function VouchersCharts({ data }: Props) {
           </CardBody>
         </Card>
 
-        <Card className="bg-white/20 dark:bg-white/3 backdrop-blur-xl border border-blue-200/40 dark:border-white/10">
+        <Card className="border border-gray-200 dark:border-gray-700">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
-              <div className="p-2 bg-emerald-100/20 dark:bg-emerald-900/20 rounded-lg">
+              <div className="p-2 bg-emerald-50 dark:bg-emerald-900 rounded-lg">
                 <Icon
                   icon="solar:pie-chart-linear"
                   className="w-5 h-5 text-emerald-600 dark:text-emerald-400"
@@ -197,10 +197,10 @@ export default function VouchersCharts({ data }: Props) {
 
       {/* Gráfico de Área - Valores por Status */}
       <section>
-        <Card className="bg-white/20 dark:bg-white/3 backdrop-blur-xl border border-blue-200/40 dark:border-white/10">
+        <Card className="border border-gray-200 dark:border-gray-700">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
-              <div className="p-2 bg-purple-100/20 dark:bg-purple-900/20 rounded-lg">
+              <div className="p-2 bg-purple-50 dark:bg-purple-900 rounded-lg">
                 <Icon
                   icon="solar:chart-2-linear"
                   className="w-5 h-5 text-purple-600 dark:text-purple-400"
@@ -256,10 +256,10 @@ export default function VouchersCharts({ data }: Props) {
 
       {/* Gráfico de Linha - Taxa de Pagamento */}
       <section>
-        <Card className="bg-white/20 dark:bg-white/3 backdrop-blur-xl border border-blue-200/40 dark:border-white/10">
+        <Card className="border border-gray-200 dark:border-gray-700">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
-              <div className="p-2 bg-cyan-100/20 dark:bg-cyan-900/20 rounded-lg">
+              <div className="p-2 bg-cyan-50 dark:bg-cyan-900 rounded-lg">
                 <Icon
                   icon="solar:graph-linear"
                   className="w-5 h-5 text-cyan-600 dark:text-cyan-400"

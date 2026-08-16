@@ -61,6 +61,24 @@ const App = async (props: { params: Promise<{ cooperativa: string }> }) => {
                   icon="solar:calendar-linear"
                 />
                 <ActionButton
+                  title="Gestão de Motoristas"
+                  description="Cadastre motoristas, vincule veículos e bloqueie/reative"
+                  href={"./" + params.cooperativa + "/motoristas"}
+                  icon="solar:user-id-linear"
+                />
+                <ActionButton
+                  title="Cadastrar Empresa"
+                  description="Cadastre uma nova empresa cliente da cooperativa"
+                  href={"./" + params.cooperativa + "/empresas/nova"}
+                  icon="solar:buildings-2-linear"
+                />
+                <ActionButton
+                  title="Gestão de Filas"
+                  description="Crie e acompanhe os pontos de atendimento"
+                  href={"./" + params.cooperativa + "/filas"}
+                  icon="solar:map-point-wave-linear"
+                />
+                <ActionButton
                   title="Faturas"
                   description="Acesse relatórios detalhados de vouchers e pagamentos"
                   href={"./" + params.cooperativa + "/faturas"}

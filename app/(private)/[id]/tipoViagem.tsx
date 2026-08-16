@@ -28,12 +28,14 @@ export const CustomRadio = (props: Props) => {
 };
 
 interface RadioGroupProps {
+  selectedPlan: string;
   setSelectedPlan: Dispatch<SetStateAction<string>>;
 }
 
-export default function App({ setSelectedPlan }: RadioGroupProps) {
+export default function App({ selectedPlan, setSelectedPlan }: RadioGroupProps) {
   return (
     <RadioGroup
+      value={selectedPlan}
       onValueChange={(e) => {
         setSelectedPlan(e);
       }}

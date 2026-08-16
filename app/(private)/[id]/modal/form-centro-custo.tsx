@@ -2,9 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@heroui/button";
-import { Card, CardBody, CardHeader } from "@heroui/card";
-import { Input } from "@heroui/input";
-import { Textarea } from "@heroui/input";
+import { Input, Textarea } from "@heroui/input";
 import { Icon } from "@iconify/react";
 import {
   Modal,
@@ -14,6 +12,7 @@ import {
   ModalFooter,
 } from "@heroui/modal";
 import ShowToast from "@/src/components/Toast";
+import { fetchComLog } from "@/src/utils/log-fetch";
 
 interface Props {
   isOpen: boolean;
@@ -67,7 +66,7 @@ export default function CentroCustoModal({
     setIsLoading(true);
 
     try {
-      const response = await fetch(
+      const response = await fetchComLog(
         `${process.env.NEXT_PUBLIC_SERVER}/api/v1/centro-custo`,
         {
           method: "POST",
@@ -113,145 +112,61 @@ export default function CentroCustoModal({
   return (
     <>
       <Button
-        variant="light"
-        color="success"
+        variant="flat"
         onPress={() => onOpen(true)}
         startContent={
           <Icon icon="solar:buildings-3-linear" className="w-4 h-4" />
         }
-        className="backdrop-blur-sm bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-200/30 dark:border-emerald-800/30 text-emerald-700 dark:text-emerald-300 font-medium transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-emerald-500/25"
         size="sm"
       >
         Centro de Custo
       </Button>
 
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={onOpen}
-        size="lg"
-        classNames={{
-          backdrop:
-            "bg-linear-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
-        }}
-      >
+      <Modal isOpen={isOpen} onOpenChange={onOpen} size="md">
         <ModalContent>
           {() => (
             <>
-              <ModalHeader className="flex flex-col gap-1 bg-linear-to-r from-emerald-50 to-green-50 dark:from-emerald-950/50 dark:to-green-950/50">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
-                    <Icon
-                      icon="solar:buildings-3-linear"
-                      className="w-6 h-6 text-emerald-600 dark:text-emerald-400"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold bg-linear-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
-                      Cadastrar Centro de Custo
-                    </h3>
-                    <p className="text-sm text-foreground-600">
-                      Configure um novo centro de custo para a empresa
-                    </p>
-                  </div>
-                </div>
+              <ModalHeader className="flex flex-col gap-1">
+                Cadastrar Centro de Custo
               </ModalHeader>
 
-              <ModalBody className="py-6 space-y-6">
-                <Card className="border border-default-200">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                        <Icon
-                          icon="solar:document-text-linear"
-                          className="w-5 h-5 text-blue-600 dark:text-blue-400"
-                        />
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-semibold text-foreground">
-                          Informações Básicas
-                        </h4>
-                        <p className="text-sm text-foreground-600">
-                          Dados identificadores do centro de custo
-                        </p>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardBody className="pt-0 space-y-4">
-                    <Input
-                      label="Código"
-                      placeholder="Ex: CC001, ADM, VENDAS"
-                      value={formData.codigo}
-                      onChange={(e) =>
-                        handleInputChange("codigo", e.target.value)
-                      }
-                      isRequired
-                      variant="bordered"
-                      startContent={
-                        <Icon
-                          icon="solar:hashtag-linear"
-                          className="w-4 h-4 text-default-400"
-                        />
-                      }
-                      classNames={{
-                        inputWrapper: [
-                          "border-default-200",
-                          "hover:border-emerald-300",
-                          "focus-within:border-emerald-500",
-                        ],
-                      }}
-                    />
+              <ModalBody className="gap-4">
+                <Input
+                  label="Código"
+                  placeholder="Ex: CC001, ADM, VENDAS"
+                  value={formData.codigo}
+                  onChange={(e) => handleInputChange("codigo", e.target.value)}
+                  isRequired
+                  variant="bordered"
+                />
 
-                    <Textarea
-                      label="Descrição"
-                      placeholder="Ex: Administrativo, Recursos Humanos, Vendas..."
-                      value={formData.descricao}
-                      onChange={(e) =>
-                        handleInputChange("descricao", e.target.value)
-                      }
-                      isRequired
-                      variant="bordered"
-                      minRows={3}
-                      maxRows={5}
-                      classNames={{
-                        inputWrapper: [
-                          "border-default-200",
-                          "hover:border-emerald-300",
-                          "focus-within:border-emerald-500",
-                        ],
-                      }}
-                    />
-                  </CardBody>
-                </Card>
+                <Textarea
+                  label="Descrição"
+                  placeholder="Ex: Administrativo, Recursos Humanos, Vendas..."
+                  value={formData.descricao}
+                  onChange={(e) => handleInputChange("descricao", e.target.value)}
+                  isRequired
+                  variant="bordered"
+                  minRows={3}
+                  maxRows={5}
+                />
               </ModalBody>
 
-              <ModalFooter className="bg-default-50 dark:bg-default-100/50">
-                <Button
-                  variant="light"
-                  onPress={handleClose}
-                  startContent={
-                    <Icon
-                      icon="solar:close-circle-linear"
-                      className="w-4 h-4"
-                    />
-                  }
-                >
+              <ModalFooter>
+                <Button variant="light" onPress={handleClose} isDisabled={isLoading}>
                   Cancelar
                 </Button>
                 <Button
-                  color="success"
+                  color="primary"
                   onPress={handleSubmit}
                   isLoading={isLoading}
                   startContent={
-                    !isLoading ? (
-                      <Icon
-                        icon="solar:check-circle-linear"
-                        className="w-4 h-4"
-                      />
-                    ) : null
+                    !isLoading && (
+                      <Icon icon="solar:check-circle-linear" className="w-4 h-4" />
+                    )
                   }
-                  className="bg-linear-to-r from-emerald-600 to-green-600 text-white font-semibold"
                 >
-                  {isLoading ? "Cadastrando..." : "Cadastrar"}
+                  Cadastrar
                 </Button>
               </ModalFooter>
             </>

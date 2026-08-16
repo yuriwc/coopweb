@@ -27,61 +27,6 @@ import { formatDateBR } from "@/src/utils/date";
 import { isValid } from "date-fns";
 import TripDetailsModal from "./trip-details-modal";
 
-// Ícones SVG
-interface IconProps extends React.SVGProps<SVGSVGElement> {
-  strokeWidth?: number;
-}
-
-const SearchIcon = (props: IconProps) => (
-  <svg
-    aria-hidden="true"
-    fill="none"
-    focusable="false"
-    height="1em"
-    role="presentation"
-    viewBox="0 0 24 24"
-    width="1em"
-    {...props}
-  >
-    <path
-      d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-    />
-    <path
-      d="M22 22L20 20"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-    />
-  </svg>
-);
-
-const ChevronDownIcon = ({ strokeWidth = 1.5, ...otherProps }: IconProps) => (
-  <svg
-    aria-hidden="true"
-    fill="none"
-    focusable="false"
-    height="1em"
-    role="presentation"
-    viewBox="0 0 24 24"
-    width="1em"
-    {...otherProps}
-  >
-    <path
-      d="m19.92 8.95-6.52 6.52c-.77.77-2.03.77-2.8 0L4.08 8.95"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeMiterlimit={10}
-      strokeWidth={strokeWidth}
-    />
-  </svg>
-);
-
 const columns = [
   { name: "PASSAGEIROS", uid: "passageiros", sortable: true },
   { name: "MOTORISTA", uid: "motorista", sortable: true },
@@ -125,9 +70,6 @@ interface Props {
 
 export default function ViagemTable({ viagens }: Props) {
   const [filterValue, setFilterValue] = React.useState("");
-  const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
-    new Set([])
-  );
   const [selectedTrip, setSelectedTrip] = React.useState<Viagem | null>(null);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
@@ -308,7 +250,7 @@ export default function ViagemTable({ viagens }: Props) {
           );
         case "actions":
           return (
-            <div className="relative flex justify-end items-center gap-2">
+            <div className="flex justify-end items-center">
               <Button
                 size="sm"
                 variant="flat"
@@ -321,32 +263,6 @@ export default function ViagemTable({ viagens }: Props) {
               >
                 Detalhes
               </Button>
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button isIconOnly size="sm" variant="light">
-                    <Icon
-                      icon="solar:menu-dots-vertical-linear"
-                      className="text-default-300"
-                    />
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu>
-                  <DropdownItem
-                    key={`editar`}
-                    startContent={<Icon icon="solar:map-point-linear" />}
-                  >
-                    Ver Rota
-                  </DropdownItem>
-                  <DropdownItem
-                    key={`cancelar`}
-                    startContent={<Icon icon="solar:download-linear" />}
-                    className="text-danger"
-                    color="danger"
-                  >
-                    Exportar
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
             </div>
           );
         default:
@@ -398,7 +314,7 @@ export default function ViagemTable({ viagens }: Props) {
             isClearable
             className="w-full sm:max-w-[44%]"
             placeholder="Buscar por passageiro, motorista, origem ou destino..."
-            startContent={<SearchIcon />}
+            startContent={<Icon icon="solar:magnifer-linear" className="text-default-400" />}
             value={filterValue}
             onClear={() => onClear()}
             onValueChange={onSearchChange}
@@ -407,7 +323,7 @@ export default function ViagemTable({ viagens }: Props) {
           <div className="flex gap-3">
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
-                <Button endContent={<ChevronDownIcon />} variant="flat">
+                <Button endContent={<Icon icon="solar:alt-arrow-down-linear" />} variant="flat">
                   Status
                 </Button>
               </DropdownTrigger>
@@ -428,7 +344,7 @@ export default function ViagemTable({ viagens }: Props) {
             </Dropdown>
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
-                <Button endContent={<ChevronDownIcon />} variant="flat">
+                <Button endContent={<Icon icon="solar:alt-arrow-down-linear" />} variant="flat">
                   Colunas
                 </Button>
               </DropdownTrigger>
@@ -447,12 +363,6 @@ export default function ViagemTable({ viagens }: Props) {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button
-              color="primary"
-              endContent={<Icon icon="solar:download-linear" />}
-            >
-              Exportar
-            </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -491,9 +401,7 @@ export default function ViagemTable({ viagens }: Props) {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small text-default-400">
-          {selectedKeys === "all"
-            ? "Todos os itens selecionados"
-            : `${selectedKeys.size} de ${filteredItems.length} selecionados`}
+          {filteredItems.length} {filteredItems.length !== 1 ? "viagens" : "viagem"}
         </span>
         <Pagination
           isCompact
@@ -525,7 +433,6 @@ export default function ViagemTable({ viagens }: Props) {
       </div>
     );
   }, [
-    selectedKeys,
     page,
     pages,
     filteredItems.length,
@@ -549,14 +456,12 @@ export default function ViagemTable({ viagens }: Props) {
       bottomContent={bottomContent}
       bottomContentPlacement="outside"
       classNames={{
-        wrapper: "max-h-[calc(100vh-300px)]",
+        wrapper: "max-h-[calc(100vh-300px)] bg-transparent shadow-none p-0",
+        th: "bg-gray-50 dark:bg-gray-800/50",
       }}
-      selectedKeys={selectedKeys}
-      selectionMode="multiple"
       sortDescriptor={sortDescriptor}
       topContent={topContent}
       topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
       onSortChange={setSortDescriptor}
     >
       <TableHeader columns={headerColumns}>
