@@ -6,9 +6,9 @@ export default function CooperativaLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen">
       <Navbar />
-      <main className="flex-1 overflow-y-auto pt-16">{children}</main>
+      <main className="pt-16">{children}</main>
     </div>
   );
 }

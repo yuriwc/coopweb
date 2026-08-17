@@ -5,6 +5,7 @@ import ViagemTable from "./viagem-table";
 import FilterPeriodo from "./filter-periodo";
 import LoadingOverlay from "./loading-overlay";
 import { Card } from "@heroui/react";
+import { Separator } from "@heroui/react/separator";
 import { Icon } from "@iconify/react";
 
 const App = async (props: {
@@ -66,27 +67,37 @@ const App = async (props: {
                 baseUrl={`/${params.id}/ride`}
               />
 
-              <div className="flex items-center gap-8">
-                <div>
-                  <p className="text-xs uppercase tracking-wide font-semibold text-gray-500 dark:text-gray-400">
-                    Total de Viagens
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {viagens.totalViagens}
-                  </p>
+              <div className="flex items-center gap-6">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent">
+                    <Icon icon="solar:routing-2-linear" className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-wide font-semibold text-gray-500 dark:text-gray-400">
+                      Total de Viagens
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                      {viagens.totalViagens}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs uppercase tracking-wide font-semibold text-gray-500 dark:text-gray-400">
-                    Valor Total
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    R$ {viagens.totalValor.toFixed(2)}
-                  </p>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-success-soft text-success">
+                    <Icon icon="solar:wallet-money-linear" className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-wide font-semibold text-gray-500 dark:text-gray-400">
+                      Valor Total
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                      R$ {viagens.totalValor.toFixed(2)}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="h-px bg-gray-200 dark:bg-gray-700 mb-6" />
+            <Separator className="mb-6" />
 
             <ViagemTable viagens={viagens.viagens} />
           </Card.Content>

@@ -400,10 +400,7 @@ export default function ViagemTable({ viagens }: Props) {
 
   const bottomContent = React.useMemo(() => {
     return (
-      <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-sm text-default-400">
-          {filteredItems.length} {filteredItems.length !== 1 ? "viagens" : "viagem"}
-        </span>
+      <div className="py-2 px-2 flex justify-center items-center">
         <Pagination>
           <Pagination.Content>
             <Pagination.Item>
@@ -423,33 +420,9 @@ export default function ViagemTable({ viagens }: Props) {
             </Pagination.Item>
           </Pagination.Content>
         </Pagination>
-        <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="tertiary"
-            onPress={onPreviousPage}
-          >
-            Anterior
-          </Button>
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="tertiary"
-            onPress={onNextPage}
-          >
-            Próximo
-          </Button>
-        </div>
       </div>
     );
-  }, [
-    page,
-    pages,
-    filteredItems.length,
-    onNextPage,
-    onPreviousPage,
-  ]);
+  }, [page, pages, onNextPage, onPreviousPage]);
 
   return (
     <>

@@ -1,5 +1,12 @@
 
 
-<!-- HEROUI-MIGRATION-AGENTS-MD-START -->
-[HeroUI Migration Docs Index]|root: ./.heroui-docs/migration|STOP. Always search migration docs before migrating components from HeroUI v2 to v3.|Start with: agent-index.mdx, then follow the workflow and component guides.|If docs missing, run this command first: heroui agents-md --migration --output CLAUDE.md|.:{(components)\accordion.mdx,(components)\alert.mdx,(components)\autocomplete.mdx,(components)\avatar.mdx,(components)\badge.mdx,(components)\breadcrumbs.mdx,(components)\button-group.mdx,(components)\button.mdx,(components)\calendar.mdx,(components)\card.mdx,(components)\checkbox-group.mdx,(components)\checkbox.mdx,(components)\chip.mdx,(components)\circular-progress.mdx,(components)\code.mdx,(components)\date-picker.mdx,(components)\date-range-picker.mdx,(components)\dateinput.mdx,(components)\divider.mdx,(components)\drawer.mdx,(components)\dropdown.mdx,(components)\form.mdx,(components)\image.mdx,(components)\input-otp.mdx,(components)\input.mdx,(components)\kbd.mdx,(components)\link.mdx,(components)\listbox.mdx,(components)\modal.mdx,(components)\navbar.mdx,(components)\numberinput.mdx,(components)\pagination.mdx,(components)\popover.mdx,(components)\progress.mdx,(components)\radio-group.mdx,(components)\radio.mdx,(components)\range-calendar.mdx,(components)\scroll-shadow.mdx,(components)\select.mdx,(components)\skeleton.mdx,(components)\slider.mdx,(components)\snippet.mdx,(components)\spacer.mdx,(components)\spinner.mdx,(components)\switch.mdx,(components)\table.mdx,(components)\tabs.mdx,(components)\timeinput.mdx,(components)\toast.mdx,(components)\tooltip.mdx,(components)\user.mdx,(migration-for-agents)\agent-skills.mdx,(migration-for-agents)\agents-md.mdx,(migration-for-agents)\mcp-server.mdx,(workflows)\agent-guide-full.mdx,(workflows)\agent-guide-incremental.mdx,agent-index.mdx,hooks.mdx,styling.mdx}
-<!-- HEROUI-MIGRATION-AGENTS-MD-END -->
+<!-- HEROUI-V3-DOCS-START -->
+[HeroUI v3 Documentation]
+This project is fully on HeroUI v3 (`@heroui/react`, `@heroui/styles`) — the v2→v3 migration is complete, no v2 packages remain.
+When working with HeroUI v3 components (APIs, props, patterns, styling), consult the official LLM-facing docs before guessing:
+- Quick reference index: https://heroui.com/react/llms.txt
+- Full documentation: https://heroui.com/react/llms-full.txt
+- Component docs only: https://heroui.com/react/llms-components.txt
+- Common patterns/recipes: https://heroui.com/react/llms-patterns.txt
+Fetch the relevant file when implementing or debugging a HeroUI v3 component, especially ones not yet used elsewhere in this codebase.
+<!-- HEROUI-V3-DOCS-END -->
