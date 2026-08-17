@@ -442,26 +442,26 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Grid principal com 6 cards - máximo 2 colunas para evitar sobreposição */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
         {data.map((item, index) => (
           <Card
             key={index}
-            className="border border-transparent dark:border-default-100 hover:shadow-md transition-shadow duration-200 relative overflow-hidden"
+            className="border border-transparent dark:border-default-100 relative overflow-hidden"
           >
-            <div className="p-3 relative z-10">
-              {/* Header com ícone e título - layout compacto */}
-              <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 relative z-10">
+              {/* Linha única: ícone + título/valor + indicador */}
+              <div className="flex items-center gap-2">
                 <div
                   className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-lg shrink-0",
+                    "flex h-7 w-7 items-center justify-center rounded-lg shrink-0",
                     {
-                      "bg-success-100 text-success-600":
+                      "bg-success-soft text-success":
                         item.color === "success",
-                      "bg-warning-100 text-warning-600":
+                      "bg-warning-soft text-warning":
                         item.color === "warning",
-                      "bg-danger-100 text-danger-600": item.color === "danger",
+                      "bg-danger-soft text-danger": item.color === "danger",
                       "bg-accent-soft text-accent":
                         item.color === "primary",
                       "bg-default text-accent":
@@ -471,22 +471,18 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
                     }
                   )}
                 >
-                  <Icon icon={item.iconName} width={16} />
+                  <Icon icon={item.iconName} width={14} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <dt className="text-xs font-medium text-default-500 mb-0.5 truncate">
+                  <dt className="text-[11px] font-medium text-default-500 truncate leading-tight">
                     {item.title}
                   </dt>
-                  <dd className="text-base font-semibold text-default-700 leading-none">
+                  <dd className="text-sm font-semibold text-default-700 leading-tight truncate">
                     {item.value}
                   </dd>
                 </div>
-              </div>
-
-              {/* Chip de status */}
-              <div className="flex justify-end">
                 <Chip
-                  className="h-5 rounded-full"
+                  className="h-5 rounded-full shrink-0"
                   color={toChipColor(item.color)}
                   size="sm"
                   variant="tertiary"
@@ -504,33 +500,31 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
 
               {/* Lista de passageiros se existir */}
               {item.passageiros && item.passageiros.length > 0 && (
-                <div className="mt-3">
-                  <div className="flex flex-wrap gap-1">
-                    {item.passageiros
-                      .slice(0, 2)
-                      .map((nome, passengerIndex) => (
-                        <Chip
-                          key={passengerIndex}
-                          className="h-5 rounded-full"
-                          color="accent"
-                          size="sm"
-                          variant="tertiary"
-                        >
-                          <Icon height={8} icon="solar:user-circle-linear" width={8} />
-                          {nome.split(" ")[0]}
-                        </Chip>
-                      ))}
-                    {item.passageiros.length > 2 && (
+                <div className="flex flex-wrap gap-1 mt-1.5 ml-9">
+                  {item.passageiros
+                    .slice(0, 2)
+                    .map((nome, passengerIndex) => (
                       <Chip
+                        key={passengerIndex}
                         className="h-5 rounded-full"
-                        color="default"
+                        color="accent"
                         size="sm"
                         variant="tertiary"
                       >
-                        +{item.passageiros.length - 2}
+                        <Icon height={8} icon="solar:user-circle-linear" width={8} />
+                        {nome.split(" ")[0]}
                       </Chip>
-                    )}
-                  </div>
+                    ))}
+                  {item.passageiros.length > 2 && (
+                    <Chip
+                      className="h-5 rounded-full"
+                      color="default"
+                      size="sm"
+                      variant="tertiary"
+                    >
+                      +{item.passageiros.length - 2}
+                    </Chip>
+                  )}
                 </div>
               )}
             </div>
@@ -553,56 +547,50 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
                 key={index}
                 className="border border-transparent dark:border-default-100 hover:shadow-md transition-shadow duration-200 relative overflow-hidden"
               >
-                {/* Background animado baseado no progresso */}
+                {/* Background baseado no progresso */}
                 <div
                   className={cn(
-                    "absolute inset-0 opacity-5 transition-all duration-1000 ease-out",
+                    "absolute inset-0 opacity-10 transition-all duration-1000 ease-out",
                     {
-                      "bg-linear-to-r from-success-200 to-success-300":
-                        item.color === "success",
-                      "bg-linear-to-r from-warning-200 to-warning-300":
-                        item.color === "warning",
-                      "bg-linear-to-r from-danger-200 to-danger-300":
-                        item.color === "danger",
-                      "bg-linear-to-r from-accent to-accent":
-                        item.color === "primary",
+                      "bg-success": item.color === "success",
+                      "bg-warning": item.color === "warning",
+                      "bg-danger": item.color === "danger",
+                      "bg-accent": item.color === "primary",
                     }
                   )}
                   style={{ width: `${item.progresso}%` }}
                 />
 
-                <div className="p-3 relative z-10">
-                  {/* Header com ícone e título - layout compacto */}
-                  <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 relative z-10">
+                  <div className="flex items-center gap-2">
                     <div
                       className={cn(
-                        "flex h-8 w-8 items-center justify-center rounded-lg shrink-0",
+                        "flex h-7 w-7 items-center justify-center rounded-lg shrink-0",
                         {
-                          "bg-success-100 text-success-600":
+                          "bg-success-soft text-success":
                             item.color === "success",
-                          "bg-warning-100 text-warning-600":
+                          "bg-warning-soft text-warning":
                             item.color === "warning",
-                          "bg-danger-100 text-danger-600":
+                          "bg-danger-soft text-danger":
                             item.color === "danger",
                           "bg-accent-soft text-accent":
                             item.color === "primary",
                         }
                       )}
                     >
-                      <Icon icon={item.iconName} width={16} />
+                      <Icon icon={item.iconName} width={14} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <dt className="text-xs font-medium text-default-500 mb-0.5 truncate">
+                      <dt className="text-[11px] font-medium text-default-500 truncate leading-tight">
                         {item.title}
                       </dt>
-                      <dd className="text-base font-semibold text-default-700 leading-none">
+                      <dd className="text-sm font-semibold text-default-700 leading-tight truncate">
                         {item.value}
                       </dd>
                     </div>
                   </div>
 
-                  {/* Chip de status */}
-                  <div className="flex justify-end">
+                  <div className="flex justify-end mt-1">
                     <Chip
                       className="h-5 rounded-full"
                       color={toChipColor(item.color)}
