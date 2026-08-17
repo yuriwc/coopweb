@@ -63,67 +63,62 @@ const TablePassegers = ({
   return (
     <div className="flex flex-col gap-3">
       <Table className="bg-transparent shadow-none p-0">
-        <div className="flex items-center gap-3 justify-end w-full">
-          <div className="flex flex-row items-center gap-4">
-            {/* Ações de Viagem */}
-            <div className="flex flex-row gap-2">
-              <Button
-                onPress={() => setIsModalOpen(true)}
-                variant="primary"
-                size="sm"
-                className="font-medium"
-                isDisabled={passagers.length === 0}
-              >
-                <Icon icon="solar:car-linear" height={16} />
-                Solicitar Viagem
-              </Button>
-              <Button
-                onPress={() => setIsModalProgramadaOpen(true)}
-                variant="secondary"
-                size="sm"
-                className="font-medium"
-                isDisabled={passagers.length === 0}
-              >
-                <Icon icon="solar:calendar-linear" height={16} />
-                Programar Viagem
-              </Button>
-            </div>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full mb-4">
+          {/* Ações de Viagem */}
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              onPress={() => setIsModalOpen(true)}
+              variant="primary"
+              size="sm"
+              className="font-medium"
+              isDisabled={passagers.length === 0}
+            >
+              <Icon icon="solar:car-linear" height={16} />
+              Solicitar Viagem
+            </Button>
+            <Button
+              onPress={() => setIsModalProgramadaOpen(true)}
+              variant="secondary"
+              size="sm"
+              className="font-medium"
+              isDisabled={passagers.length === 0}
+            >
+              <Icon icon="solar:calendar-linear" height={16} />
+              Programar Viagem
+            </Button>
+          </div>
 
-            {/* Separador visual */}
-            <div className="h-8 w-px bg-linear-to-b from-transparent via-gray-300/50 dark:via-gray-600/50 to-transparent" />
+          {/* Gestão de Colaboradores */}
+          <div className="flex flex-wrap items-center gap-2">
+            <Button onPress={handleCreate} variant="tertiary" size="sm">
+              <Icon icon="iconoir:plus" height={16} />
+              Novo Colaborador
+            </Button>
 
-            {/* Gestão de Colaboradores */}
-            <div className="flex flex-row items-center gap-2">
-              <Button onPress={handleCreate} variant="tertiary" size="sm">
-                <Icon icon="iconoir:plus" height={16} />
-                Novo Colaborador
-              </Button>
-
-              <CentroCustoModal
-                isOpen={isCentroCustoModalOpen}
-                onOpen={setIsCentroCustoModalOpen}
-                empresa={empresa}
-                token={token}
-                onSuccess={handleRefresh}
-              />
-            </div>
-
-            {/* Modais (renderizados fora da estrutura visual) */}
-            <FormViagem
-              token={token}
-              isOpen={isModalOpen}
-              onOpen={setIsModalOpen}
-              passagers={passagers}
+            <CentroCustoModal
+              isOpen={isCentroCustoModalOpen}
+              onOpen={setIsCentroCustoModalOpen}
               empresa={empresa}
-            />
-            <FormViagemProgramada
               token={token}
-              isOpen={isModalProgramadaOpen}
-              onOpen={setIsModalProgramadaOpen}
-              passagers={passagers}
-              empresa={empresa}
+              onSuccess={handleRefresh}
             />
           </div>
+
+          {/* Modais (renderizados fora da estrutura visual) */}
+          <FormViagem
+            token={token}
+            isOpen={isModalOpen}
+            onOpen={setIsModalOpen}
+            passagers={passagers}
+            empresa={empresa}
+          />
+          <FormViagemProgramada
+            token={token}
+            isOpen={isModalProgramadaOpen}
+            onOpen={setIsModalProgramadaOpen}
+            passagers={passagers}
+            empresa={empresa}
+          />
         </div>
 
         <Table.ScrollContainer>
@@ -134,9 +129,15 @@ const TablePassegers = ({
           >
             <Table.Header>
               <Table.Column className="bg-gray-50 dark:bg-gray-800/50">
-                <Checkbox slot="selection" />
+                <Checkbox slot="selection" aria-label="Selecionar todos">
+                  <Checkbox.Content>
+                    <Checkbox.Control>
+                      <Checkbox.Indicator />
+                    </Checkbox.Control>
+                  </Checkbox.Content>
+                </Checkbox>
               </Table.Column>
-              <Table.Column className="bg-gray-50 dark:bg-gray-800/50">Nome</Table.Column>
+              <Table.Column isRowHeader className="bg-gray-50 dark:bg-gray-800/50">Nome</Table.Column>
               <Table.Column className="bg-gray-50 dark:bg-gray-800/50">Telefone</Table.Column>
               <Table.Column className="bg-gray-50 dark:bg-gray-800/50">Cidade</Table.Column>
               <Table.Column className="bg-gray-50 dark:bg-gray-800/50">Estado</Table.Column>
@@ -147,7 +148,13 @@ const TablePassegers = ({
               {(item) => (
                 <Table.Row id={item.id}>
                   <Table.Cell>
-                    <Checkbox slot="selection" />
+                    <Checkbox slot="selection" aria-label={`Selecionar ${item.name}`}>
+                      <Checkbox.Content>
+                        <Checkbox.Control>
+                          <Checkbox.Indicator />
+                        </Checkbox.Control>
+                      </Checkbox.Content>
+                    </Checkbox>
                   </Table.Cell>
                   <Table.Cell>{item.name}</Table.Cell>
                   <Table.Cell>{item.phone || <span className="text-gray-400">—</span>}</Table.Cell>

@@ -28,7 +28,7 @@ export default function App({ motoristas, setMotorista }: Props) {
         }
       }}
       variant="secondary"
-      className="max-w-xs"
+      className="flex-1"
     >
       <Label>Motorista</Label>
       <ComboBox.InputGroup>

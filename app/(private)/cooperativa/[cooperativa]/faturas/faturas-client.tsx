@@ -330,71 +330,33 @@ export default function FaturasClient({
   ];
 
   return (
-    <div className="relative overflow-hidden bg-blue-50/50 dark:bg-gray-900">
-      {/* Liquid Glass Background */}
-      <div className="fixed inset-0 bg-linear-to-br from-blue-100/40 via-cyan-50/30 to-sky-100/40 dark:from-blue-950/40 dark:via-purple-950/40 dark:to-emerald-950/40" />
-      <div className="fixed inset-0 backdrop-blur-[2px]" />
-
-      {/* Dynamic Background Particles */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-10 left-10 w-32 h-32 bg-blue-200/20 dark:bg-blue-400/10 rounded-full blur-xl animate-pulse" />
-        <div className="absolute top-32 right-20 w-24 h-24 bg-cyan-200/20 dark:bg-purple-400/10 rounded-full blur-xl animate-pulse delay-700" />
-        <div className="absolute bottom-20 left-1/3 w-40 h-40 bg-sky-200/20 dark:bg-emerald-400/10 rounded-full blur-xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 right-1/3 w-20 h-20 bg-blue-300/15 dark:bg-blue-500/8 rounded-full blur-2xl animate-pulse delay-500" />
-        <div className="absolute bottom-1/3 left-1/4 w-28 h-28 bg-cyan-300/15 dark:bg-cyan-500/8 rounded-full blur-2xl animate-pulse delay-1200" />
-      </div>
-
-      <div className="relative z-10 container mx-auto p-4 sm:p-8 max-w-7xl">
-        {/* Header */}
-        <header className="pb-4 mb-8 relative group">
-          <div className="absolute inset-0 bg-white/20 dark:bg-white/5 backdrop-blur-xl rounded-xl border border-blue-200/40 dark:border-white/10 shadow-2xl shadow-blue-500/15 dark:shadow-black/20" />
-          <div className="absolute inset-0 bg-linear-to-r from-blue-400/8 via-cyan-400/8 to-sky-400/8 dark:from-blue-500/3 dark:via-purple-500/3 dark:to-emerald-500/3 rounded-xl" />
-
-          <div className="relative p-6 rounded-xl">
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-              <div className="flex items-center gap-4">
-                <Button
-                  variant="secondary"
-                  onPress={() => router.back()}
-                  className="bg-white/10 dark:bg-white/5 backdrop-blur-xl border-blue-200/40 dark:border-white/20 text-gray-700 dark:text-gray-300 hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-300 uppercase tracking-widest text-xs"
-                >
-                  ← Voltar
-                </Button>
-                <div>
-                  <h1 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white drop-shadow-lg">
-                    Faturas da Cooperativa
-                  </h1>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm font-medium drop-shadow-lg">
-                    Gestão de vouchers e pagamentos
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 text-xs">
-                <Button
-                  variant="tertiary"
-                  size="sm"
-                  onPress={open}
-                  className="bg-white/10 dark:bg-white/5 backdrop-blur-xl border border-orange-200/40 dark:border-orange-400/20 text-orange-700 dark:text-orange-300 hover:bg-orange-50/20 dark:hover:bg-orange-950/20"
-                >
-                  <Icon icon="solar:file-chart-linear" />
-                  Relatório Mensal
-                </Button>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 dark:bg-white/5 backdrop-blur-xl rounded-full border border-blue-200/30 dark:border-white/10">
-                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse shadow-lg shadow-blue-400/50" />
-                  <span className="text-gray-600 dark:text-gray-300 font-medium drop-shadow-lg">
-                    {relatorio ? `${relatorio.total} vouchers` : "Carregando..."}
-                  </span>
-                </div>
-              </div>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="container mx-auto p-4 sm:p-8 max-w-7xl">
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div className="flex items-center gap-4">
+            <Button variant="secondary" onPress={() => router.back()}>
+              ← Voltar
+            </Button>
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+                Faturas da Cooperativa
+              </h1>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Gestão de vouchers e pagamentos ·{" "}
+                {relatorio ? `${relatorio.total} vouchers` : "Carregando..."}
+              </p>
             </div>
           </div>
+
+          <Button variant="tertiary" size="sm" onPress={open}>
+            <Icon icon="solar:file-chart-linear" />
+            Relatório Mensal
+          </Button>
         </header>
 
         {/* Filtros */}
-        <section className="mb-8 relative">
-          <div className="absolute inset-0 bg-white/15 dark:bg-white/2 backdrop-blur-xl rounded-2xl border border-blue-200/25 dark:border-white/5" />
-          <div className="relative p-6 rounded-2xl">
+        <Card className="mb-6">
+          <Card.Content>
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">
                 <ComboBox
@@ -516,13 +478,12 @@ export default function FaturasClient({
                 Atualizar
               </Button>
             </div>
-          </div>
-        </section>
+          </Card.Content>
+        </Card>
 
         {/* Cards de Resumo */}
         {relatorio && (
-          <section className="mb-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
               {/* Total Geral */}
               <Card className="border border-transparent dark:border-default-100">
                 <Card.Header className="pb-2">
@@ -598,14 +559,12 @@ export default function FaturasClient({
                   </div>
                 </Card.Content>
               </Card>
-            </div>
-          </section>
+          </div>
         )}
 
         {/* Tabela de Vouchers */}
-        <section className="relative">
-          <div className="absolute inset-0 bg-white/15 dark:bg-white/2 backdrop-blur-xl rounded-2xl border border-blue-200/25 dark:border-white/5" />
-          <div className="relative p-6 rounded-2xl">
+        <Card>
+          <Card.Content>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-bold text-gray-800 dark:text-white">
                 Lista de Vouchers
@@ -680,8 +639,8 @@ export default function FaturasClient({
                 </p>
               </div>
             )}
-          </div>
-        </section>
+          </Card.Content>
+        </Card>
       </div>
 
       {/* Modal para Relatório Mensal */}

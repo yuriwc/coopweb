@@ -71,7 +71,7 @@ export default function SelectCooperativas({
   return (
     <Select
       variant="secondary"
-      className="max-w-xs"
+      className="w-full"
       placeholder={
         isLoading
           ? "Carregando..."

@@ -50,7 +50,7 @@ export default function VouchersTable({ vouchers }: VouchersTableProps) {
       <Table.ScrollContainer>
         <Table.Content aria-label="Tabela de vouchers do centro de custo">
           <Table.Header>
-            <Table.Column className="bg-gray-50 dark:bg-gray-800/50">VOUCHER</Table.Column>
+            <Table.Column isRowHeader className="bg-gray-50 dark:bg-gray-800/50">VOUCHER</Table.Column>
             <Table.Column className="bg-gray-50 dark:bg-gray-800/50">DATA</Table.Column>
             <Table.Column className="bg-gray-50 dark:bg-gray-800/50">MOTORISTA</Table.Column>
             <Table.Column className="bg-gray-50 dark:bg-gray-800/50">PASSAGEIRO</Table.Column>

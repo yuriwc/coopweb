@@ -58,17 +58,15 @@ export default function EncerrarButton({
   };
 
   return (
-    <div className="flex justify-center p-3 border-t border-white/20 dark:border-white/10">
-      <Button
-        variant="danger-soft"
-        size="sm"
-        onPress={handleEncerrar}
-        isPending={loading}
-        className="bg-red-50/50 dark:bg-red-950/50 text-red-700 dark:text-red-300 border-red-200/50 dark:border-red-800/50 hover:bg-red-100/70 dark:hover:bg-red-900/70"
-      >
-        {!loading && <Icon icon="solar:stop-circle-linear" />}
-        {loading ? "Encerrando..." : "Encerrar Programação"}
-      </Button>
-    </div>
+    <Button
+      variant="danger-soft"
+      size="sm"
+      onPress={handleEncerrar}
+      isPending={loading}
+      className="w-full"
+    >
+      {!loading && <Icon icon="solar:stop-circle-linear" />}
+      {loading ? "Encerrando..." : "Encerrar programação"}
+    </Button>
   );
 }

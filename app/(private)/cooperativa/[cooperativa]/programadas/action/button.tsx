@@ -51,9 +51,8 @@ export default function ActionButton({
   }
 
   return (
-    <div className="flex flex-row border-t-[0.5px] border-black p-3 justify-center items-center gap-2">
+    <div className="flex flex-row items-center gap-3 w-full">
       <Motorista motoristas={motoristas} setMotorista={setSelectedMotorista} />
-      <div className="w-1" />
       <Confirm
         name={selectedMotorista?.nome || ""}
         onCancel={async () => {}}

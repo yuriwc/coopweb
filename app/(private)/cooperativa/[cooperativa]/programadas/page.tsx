@@ -101,38 +101,12 @@ const App = async (props: { params: Promise<{ cooperativa: string }> }) => {
 
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#F5F5F5] dark:bg-[#060607]">
-
-      <div className="relative z-10 p-4">
-        <div className="max-w-4xl mx-auto">
-          {/* Cabeçalho */}
-          <header className="mb-8">
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 shadow-md">
-              <h1 className="text-2xl sm:text-3xl font-bold bg-linear-to-r from-blue-600 via-sky-600 to-indigo-600 dark:from-blue-400 dark:via-sky-400 dark:to-indigo-400 bg-clip-text text-transparent tracking-wide">
-                VIAGENS PROGRAMADAS
-              </h1>
-            </div>
-          </header>
-
-          {/* Tabs customizadas */}
-          <ProgramadasClient 
-            programadasSemMotorista={programadasSemMotorista}
-            programadasComMotorista={programadasComMotorista}
-            motoristas={motoristas}
-            token={token}
-          />
-
-          {/* Rodapé */}
-          <footer className="mt-8">
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 shadow-md text-center">
-              <p className="text-xs font-medium tracking-[0.3em] uppercase text-slate-600 dark:text-slate-300">
-                SISTEMA DE TRANSPORTE CORPORATIVO
-              </p>
-            </div>
-          </footer>
-        </div>
-      </div>
-    </div>
+    <ProgramadasClient
+      programadasSemMotorista={programadasSemMotorista}
+      programadasComMotorista={programadasComMotorista}
+      motoristas={motoristas}
+      token={token}
+    />
   );
 };
 

@@ -82,7 +82,7 @@ export default function SelectCentrosCusto({
   return (
     <Select
       variant="secondary"
-      className="max-w-xs"
+      className="w-full"
       placeholder={
         isLoading
           ? "Carregando..."

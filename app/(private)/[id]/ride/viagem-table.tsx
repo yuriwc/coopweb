@@ -353,12 +353,14 @@ export default function ViagemTable({ viagens }: Props) {
                   selectionMode="multiple"
                   onSelectionChange={setVisibleColumns}
                 >
-                  {columns.map((column) => (
-                    <Dropdown.Item key={column.uid} id={column.uid} textValue={column.name} className="capitalize">
-                      <Dropdown.ItemIndicator />
-                      <Label>{column.name}</Label>
-                    </Dropdown.Item>
-                  ))}
+                  {columns
+                    .filter((column) => column.uid !== "passageiros")
+                    .map((column) => (
+                      <Dropdown.Item key={column.uid} id={column.uid} textValue={column.name} className="capitalize">
+                        <Dropdown.ItemIndicator />
+                        <Label>{column.name}</Label>
+                      </Dropdown.Item>
+                    ))}
                 </Dropdown.Menu>
               </Dropdown.Popover>
             </Dropdown>
@@ -472,6 +474,7 @@ export default function ViagemTable({ viagens }: Props) {
                 <Table.Column
                   id={column.uid}
                   allowsSorting={column.sortable}
+                  isRowHeader={column.uid === "passageiros"}
                   className={`sticky top-0 z-10 bg-gray-50 dark:bg-gray-800/50 ${column.uid === "actions" ? "text-center" : "text-start"}`}
                 >
                   {column.name}

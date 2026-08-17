@@ -95,6 +95,7 @@ export default function LocationEntry({
           label={label}
           onPlaceSelect={onPlaceSelect}
           placeholder={placeholder}
+          hideLabel
         />
 
         {location.place && (

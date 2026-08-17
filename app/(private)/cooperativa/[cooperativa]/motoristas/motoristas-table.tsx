@@ -37,7 +37,7 @@ export default function MotoristasTable({
         <Table.ScrollContainer>
           <Table.Content aria-label="Tabela de motoristas da cooperativa">
             <Table.Header>
-              <Table.Column>NOME</Table.Column>
+              <Table.Column isRowHeader>NOME</Table.Column>
               <Table.Column>CPF</Table.Column>
               <Table.Column>CADASTRO</Table.Column>
               <Table.Column>VEÍCULO</Table.Column>

@@ -117,7 +117,7 @@ export default function VouchersCooperativaTable({
         <Table.ScrollContainer>
           <Table.Content aria-label="Tabela de vouchers da cooperativa">
             <Table.Header>
-              <Table.Column className="bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold uppercase tracking-wide">VOUCHER</Table.Column>
+              <Table.Column isRowHeader className="bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold uppercase tracking-wide">VOUCHER</Table.Column>
               <Table.Column className="bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold uppercase tracking-wide">EMPRESA</Table.Column>
               <Table.Column className="bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold uppercase tracking-wide">EMISSÃO</Table.Column>
               <Table.Column className="bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold uppercase tracking-wide">VENCIMENTO</Table.Column>

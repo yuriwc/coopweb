@@ -40,6 +40,7 @@ interface Props {
   value?: string;
   isInvalid?: boolean;
   errorMessage?: string;
+  hideLabel?: boolean;
 }
 
 export default function PlacesAutocomplete({
@@ -49,7 +50,9 @@ export default function PlacesAutocomplete({
   value = "",
   isInvalid = false,
   errorMessage,
+  hideLabel = false,
 }: Props) {
+  const labelClassName = hideLabel ? "sr-only" : undefined;
   const [inputValue, setInputValue] = useState(value);
   const [suggestions, setSuggestions] = useState<PlaceResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -195,7 +198,7 @@ export default function PlacesAutocomplete({
   if (currentError) {
     return (
       <ComboBox isDisabled isInvalid className="w-full">
-        <Label>{label}</Label>
+        <Label className={labelClassName}>{label}</Label>
         <ComboBox.InputGroup>
           <Icon icon="solar:danger-triangle-linear" className="w-4 h-4 text-danger" />
           <Input
@@ -205,6 +208,7 @@ export default function PlacesAutocomplete({
                 : "Erro ao carregar"
             }
           />
+          <ComboBox.Trigger />
         </ComboBox.InputGroup>
         <FieldError>{currentError}</FieldError>
       </ComboBox>
@@ -214,10 +218,11 @@ export default function PlacesAutocomplete({
   if (!isGoogleLoaded) {
     return (
       <ComboBox isDisabled className="w-full">
-        <Label>{label}</Label>
+        <Label className={labelClassName}>{label}</Label>
         <ComboBox.InputGroup>
           <Icon icon="solar:location-linear" className="w-4 h-4 text-default-400" />
           <Input placeholder="Carregando..." />
+          <ComboBox.Trigger />
         </ComboBox.InputGroup>
       </ComboBox>
     );
@@ -233,7 +238,7 @@ export default function PlacesAutocomplete({
       isInvalid={isInvalid}
       className="w-full"
     >
-      <Label>{label}</Label>
+      <Label className={labelClassName}>{label}</Label>
       <ComboBox.InputGroup>
         {isLoading ? (
           <Spinner size="sm" />

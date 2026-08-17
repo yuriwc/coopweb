@@ -105,7 +105,7 @@ export default function CentroCustoModal({
 
   return (
     <>
-      <Button variant="tertiary" onPress={() => onOpen(true)} size="sm">
+      <Button variant="tertiary" onPress={() => onOpen(true)} size="sm" className="font-medium">
         <Icon icon="solar:buildings-3-linear" className="w-4 h-4" />
         Centro de Custo
       </Button>

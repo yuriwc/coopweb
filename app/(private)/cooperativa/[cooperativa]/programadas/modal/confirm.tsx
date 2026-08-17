@@ -21,19 +21,8 @@ export default function App({ name, onCancel, onConfirm }: ModalProps) {
 
   return (
     <>
-      <Button
-        variant="tertiary"
-        className="
-                  flex justify-center
-                  w-full items-center
-                  border-[0.5px] border-black
-                  p-2 text-xs
-                  font-light tracking-[0.5em] uppercase
-                  hover:bg-black hover:text-white transition-colors
-                "
-        onPress={open}
-      >
-        Alocar Motorista
+      <Button variant="primary" className="shrink-0" onPress={open}>
+        Alocar motorista
       </Button>
       <Modal>
         <Modal.Backdrop isOpen={isOpen} onOpenChange={setOpen}>

@@ -279,7 +279,7 @@ export default function UnifiedTripModal({
   return (
     <Modal>
       <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpen}>
-        <Modal.Container size="lg" scroll="inside">
+        <Modal.Container size="lg" scroll="inside" className="!max-w-2xl">
           <Modal.Dialog>
             {({ close }) => (
               <>
@@ -416,20 +416,21 @@ export default function UnifiedTripModal({
                 </div>
               )}
 
-              {/* Cooperativa */}
-              <SelectCooperativas
-                empresa={empresa}
-                setCooperativa={setCooperativa}
-                token={token}
-              />
+              {/* Cooperativa e Centro de custo */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <SelectCooperativas
+                  empresa={empresa}
+                  setCooperativa={setCooperativa}
+                  token={token}
+                />
 
-              {/* Centro de custo */}
-              <SelectCentrosCusto
-                empresa={empresa}
-                setCentroCusto={setCentroCusto}
-                initialCentroCusto={centroCusto}
-                token={token}
-              />
+                <SelectCentrosCusto
+                  empresa={empresa}
+                  setCentroCusto={setCentroCusto}
+                  initialCentroCusto={centroCusto}
+                  token={token}
+                />
+              </div>
                 </Modal.Body>
 
                 <Modal.Footer>
