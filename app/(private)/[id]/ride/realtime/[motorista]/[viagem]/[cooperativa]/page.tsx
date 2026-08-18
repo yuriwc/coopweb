@@ -1,16 +1,18 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ref, onValue, off } from "firebase/database";
 import { database } from "@/scripts/firebase-config";
-import "leaflet/dist/leaflet.css";
-import { Marker, Popup } from "react-leaflet";
-import L from "leaflet";
+import {
+  GoogleMap,
+  Marker,
+  InfoWindow,
+  Polyline,
+  useJsApiLoader,
+} from "@react-google-maps/api";
 import { ViagemRealTime } from "@/src/model/viagem";
 import ViagemInfoCards from "@/src/components/ViagemInfoCards";
-import type { Map } from "leaflet";
 import { Button } from "@heroui/react";
 import { Card } from "@heroui/react";
 import { Chip } from "@heroui/react";
@@ -18,63 +20,7 @@ import { Icon } from "@iconify/react";
 import { Spinner } from "@heroui/react/spinner";
 import { cn } from "@heroui/react";
 
-const MapContainer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.MapContainer),
-  { ssr: false }
-);
-const TileLayer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.TileLayer),
-  { ssr: false }
-);
-const Polyline = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Polyline),
-  { ssr: false }
-);
-
-// Função para criar ícone do motorista com rotação - seta de navegação
-const createMotoristaIcon = (direcaoGraus: number = 0) => {
-  return L.divIcon({
-    html: `
-      <div style="
-        width: 40px; 
-        height: 40px; 
-        transform: rotate(${direcaoGraus}deg);
-        transform-origin: center;
-        transition: transform 0.3s ease-in-out;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #0070f3;
-        border-radius: 50% 50% 50% 0;
-        border: 3px solid white;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      ">
-        <div style="
-          width: 0;
-          height: 0;
-          border-left: 8px solid transparent;
-          border-right: 8px solid transparent;
-          border-bottom: 12px solid white;
-          transform: translateY(-2px);
-        "></div>
-      </div>
-    `,
-    className: "custom-navigation-icon",
-    iconSize: [40, 40],
-    iconAnchor: [20, 20],
-  });
-};
-
-// Ícones customizados fixos
-const origemIcon = L.icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/3177/3177361.png", // Ícone de GPS
-  iconSize: [44, 44],
-});
-
-const destinoIcon = L.icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png", // Ícone de pessoa
-  iconSize: [44, 44],
-});
+const GOOGLE_MAPS_LIBRARIES: "places"[] = [];
 
 const Page = () => {
   const [viagem, setViagem] = useState<ViagemRealTime | null>(null);
@@ -83,11 +29,20 @@ const Page = () => {
     "connecting" | "connected" | "disconnected"
   >("connecting");
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
-  const mapRef = useRef<Map | null>(null);
+  const [activeInfoWindow, setActiveInfoWindow] = useState<
+    "motorista" | "origem" | "destino" | null
+  >(null);
+  const mapRef = useRef<google.maps.Map | null>(null);
   const params = useParams();
   const motoristaID = params?.motorista as string;
   const cooperativaID = params?.cooperativa as string;
   const router = useRouter();
+
+  const { isLoaded: isGoogleMapsLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries: GOOGLE_MAPS_LIBRARIES,
+  });
 
   // Funções de controle do mapa
   const centerOnDriver = useCallback(() => {
@@ -96,22 +51,23 @@ const Page = () => {
       viagem?.latitudeMotorista !== undefined &&
       viagem?.longitudeMotorista !== undefined
     ) {
-      mapRef.current.setView(
-        [viagem.latitudeMotorista, viagem.longitudeMotorista],
-        18
-      );
+      mapRef.current.panTo({
+        lat: viagem.latitudeMotorista,
+        lng: viagem.longitudeMotorista,
+      });
+      mapRef.current.setZoom(18);
     }
   }, [viagem?.latitudeMotorista, viagem?.longitudeMotorista]);
 
   const zoomIn = useCallback(() => {
     if (mapRef.current) {
-      mapRef.current.zoomIn();
+      mapRef.current.setZoom((mapRef.current.getZoom() ?? 17) + 1);
     }
   }, []);
 
   const zoomOut = useCallback(() => {
     if (mapRef.current) {
-      mapRef.current.zoomOut();
+      mapRef.current.setZoom((mapRef.current.getZoom() ?? 17) - 1);
     }
   }, []);
 
@@ -124,22 +80,6 @@ const Page = () => {
         mapElement.requestFullscreen();
       }
     }
-  }, []);
-
-  // Adicionar estilo CSS para ícone rotacionado
-  useEffect(() => {
-    const style = document.createElement("style");
-    style.textContent = `
-      .custom-navigation-icon {
-        background: transparent !important;
-        border: none !important;
-      }
-    `;
-    document.head.appendChild(style);
-
-    return () => {
-      document.head.removeChild(style);
-    };
   }, []);
 
   // Função para obter informações do status de conexão
@@ -216,10 +156,10 @@ const Page = () => {
       viagem?.latitudeMotorista !== undefined &&
       viagem?.longitudeMotorista !== undefined
     ) {
-      mapRef.current.setView([
-        viagem.latitudeMotorista,
-        viagem.longitudeMotorista,
-      ]);
+      mapRef.current.panTo({
+        lat: viagem.latitudeMotorista,
+        lng: viagem.longitudeMotorista,
+      });
     }
   }, [viagem?.latitudeMotorista, viagem?.longitudeMotorista]);
 
@@ -337,59 +277,73 @@ const Page = () => {
 
               <Card.Content>
                 <div className="h-[400px] lg:h-[500px] xl:h-[600px] w-full rounded-xl overflow-hidden">
-                    {viagem.latitudeMotorista !== undefined &&
-                    viagem.longitudeMotorista !== undefined ? (
-                      <MapContainer
-                        center={[
-                          viagem.latitudeMotorista,
-                          viagem.longitudeMotorista,
-                        ]}
-                        zoom={20}
-                        scrollWheelZoom={true}
-                        className="h-full w-full"
-                        // @ts-expect-error react-leaflet whenReady event type is not compatible, but we need the map instance
-                        whenReady={(event) => {
-                          mapRef.current = event.target;
-                        }}
-                      >
-                        <TileLayer
-                          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                          attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
-                        />
-
-                        {viagem.latitudeDestino != null &&
-                          viagem.longitudeDestino != null && (
+                  {viagem.latitudeMotorista !== undefined &&
+                  viagem.longitudeMotorista !== undefined &&
+                  isGoogleMapsLoaded ? (
+                    <GoogleMap
+                      mapContainerStyle={{ width: "100%", height: "100%" }}
+                      center={{
+                        lat: viagem.latitudeMotorista,
+                        lng: viagem.longitudeMotorista,
+                      }}
+                      zoom={17}
+                      onLoad={(map) => {
+                        mapRef.current = map;
+                      }}
+                      options={{
+                        streetViewControl: false,
+                        mapTypeControl: false,
+                        fullscreenControl: false,
+                      }}
+                    >
+                      {viagem.latitudeDestino != null &&
+                        viagem.longitudeDestino != null && (
                           <Polyline
-                            positions={[
-                              [
-                                viagem.latitudeMotorista,
-                                viagem.longitudeMotorista,
-                              ],
-                              [viagem.latitudeDestino, viagem.longitudeDestino],
+                            path={[
+                              {
+                                lat: viagem.latitudeMotorista,
+                                lng: viagem.longitudeMotorista,
+                              },
+                              {
+                                lat: viagem.latitudeDestino,
+                                lng: viagem.longitudeDestino,
+                              },
                             ]}
-                            pathOptions={{
-                              color: "#0070f3",
-                              dashArray: "8 12",
-                              weight: 4,
-                              opacity: 0.8,
+                            options={{
+                              strokeColor: "#0070f3",
+                              strokeOpacity: 0.8,
+                              strokeWeight: 4,
+                              icons: [
+                                {
+                                  icon: { path: "M 0,-1 0,1", strokeOpacity: 1, scale: 3 },
+                                  offset: "0",
+                                  repeat: "16px",
+                                },
+                              ],
                             }}
                           />
                         )}
 
-                        <Marker
-                          position={[
-                            viagem.latitudeMotorista,
-                            viagem.longitudeMotorista,
-                          ]}
-                          icon={createMotoristaIcon(
-                            viagem.direcaoGraus || viagem.direcao || 0
-                          )}
-                        >
-                          <Popup className="text-sm">
-                            <div className="space-y-1">
-                              <div className="font-semibold text-accent">
-                                🧭 MOTORISTA
-                              </div>
+                      <Marker
+                        position={{
+                          lat: viagem.latitudeMotorista,
+                          lng: viagem.longitudeMotorista,
+                        }}
+                        onClick={() => setActiveInfoWindow("motorista")}
+                        icon={{
+                          path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                          rotation: viagem.direcaoGraus || viagem.direcao || 0,
+                          scale: 6,
+                          fillColor: "#0070f3",
+                          fillOpacity: 1,
+                          strokeColor: "#ffffff",
+                          strokeWeight: 2,
+                        }}
+                      >
+                        {activeInfoWindow === "motorista" && (
+                          <InfoWindow onCloseClick={() => setActiveInfoWindow(null)}>
+                            <div className="text-sm space-y-1">
+                              <div className="font-semibold text-accent">Motorista</div>
                               <div className="text-xs text-muted">
                                 {viagem.latitudeMotorista.toFixed(6)},{" "}
                                 {viagem.longitudeMotorista.toFixed(6)}
@@ -398,68 +352,83 @@ const Page = () => {
                                 Velocidade: {viagem.velocidade || 0} km/h
                               </div>
                             </div>
-                          </Popup>
-                        </Marker>
+                          </InfoWindow>
+                        )}
+                      </Marker>
 
-                        {viagem.latitudeOrigem != null &&
-                          viagem.longitudeOrigem != null && (
+                      {viagem.latitudeOrigem != null &&
+                        viagem.longitudeOrigem != null && (
                           <Marker
-                            position={[
-                              viagem.latitudeOrigem,
-                              viagem.longitudeOrigem,
-                            ]}
-                            icon={origemIcon}
+                            position={{
+                              lat: viagem.latitudeOrigem,
+                              lng: viagem.longitudeOrigem,
+                            }}
+                            onClick={() => setActiveInfoWindow("origem")}
+                            icon={{
+                              path: google.maps.SymbolPath.CIRCLE,
+                              scale: 8,
+                              fillColor: "#17c964",
+                              fillOpacity: 1,
+                              strokeColor: "#ffffff",
+                              strokeWeight: 2,
+                            }}
                           >
-                            <Popup className="text-sm">
-                              <div className="space-y-1">
-                                <div className="font-semibold text-success">
-                                  📍 ORIGEM (GPS)
+                            {activeInfoWindow === "origem" && (
+                              <InfoWindow onCloseClick={() => setActiveInfoWindow(null)}>
+                                <div className="text-sm space-y-1">
+                                  <div className="font-semibold text-success">Origem</div>
+                                  <div className="text-xs">{viagem.enderecoEmpresa}</div>
                                 </div>
-                                <div className="text-xs">
-                                  {viagem.enderecoEmpresa}
-                                </div>
-                              </div>
-                            </Popup>
+                              </InfoWindow>
+                            )}
                           </Marker>
                         )}
 
-                        {viagem.latitudeDestino != null &&
-                          viagem.longitudeDestino != null && (
+                      {viagem.latitudeDestino != null &&
+                        viagem.longitudeDestino != null && (
                           <Marker
-                            position={[
-                              viagem.latitudeDestino,
-                              viagem.longitudeDestino,
-                            ]}
-                            icon={destinoIcon}
+                            position={{
+                              lat: viagem.latitudeDestino,
+                              lng: viagem.longitudeDestino,
+                            }}
+                            onClick={() => setActiveInfoWindow("destino")}
+                            icon={{
+                              path: google.maps.SymbolPath.CIRCLE,
+                              scale: 8,
+                              fillColor: "#f31260",
+                              fillOpacity: 1,
+                              strokeColor: "#ffffff",
+                              strokeWeight: 2,
+                            }}
                           >
-                            <Popup className="text-sm">
-                              <div className="space-y-1">
-                                <div className="font-semibold text-warning">
-                                  👤 DESTINO (PASSAGEIRO)
+                            {activeInfoWindow === "destino" && (
+                              <InfoWindow onCloseClick={() => setActiveInfoWindow(null)}>
+                                <div className="text-sm space-y-1">
+                                  <div className="font-semibold text-danger">Destino</div>
+                                  <div className="text-xs">
+                                    {viagem.passageiros?.[0]?.cidade || "Destino"}
+                                  </div>
                                 </div>
-                                <div className="text-xs">
-                                  {viagem.passageiros?.[0]?.cidade || "Destino"}
-                                </div>
-                              </div>
-                            </Popup>
+                              </InfoWindow>
+                            )}
                           </Marker>
                         )}
-                      </MapContainer>
-                    ) : (
-                      <div className="flex items-center justify-center h-full">
-                        <div className="text-center space-y-4">
-                          <Spinner size="lg" color="accent" />
-                          <div>
-                            <h4 className="font-semibold text-gray-800 dark:text-white">
-                              Aguardando localização
-                            </h4>
-                            <p className="text-sm text-gray-600 dark:text-gray-300">
-                              Esperando dados de GPS do motorista...
-                            </p>
-                          </div>
+                    </GoogleMap>
+                  ) : (
+                    <div className="flex items-center justify-center h-full">
+                      <div className="text-center space-y-4">
+                        <Spinner size="lg" color="accent" />
+                        <div>
+                          <h4 className="font-semibold text-gray-800 dark:text-white">
+                            Aguardando localização
+                          </h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-300">
+                            Esperando dados de GPS do motorista...
+                          </p>
                         </div>
                       </div>
-                    )}
+                    </div>
+                  )}
                 </div>
               </Card.Content>
             </Card>

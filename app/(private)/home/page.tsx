@@ -22,17 +22,17 @@ export default async function Home() {
   if (!response.ok) {
     console.error("Erro na requisição:", response.status, response.statusText);
     return (
-      <div className="flex flex-col min-h-screen bg-[#F5F5F5] dark:bg-[#060607] items-center justify-center px-4">
-        <Card className="max-w-md w-full border border-danger-200 bg-danger-50 dark:bg-danger-950/30">
+      <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 items-center justify-center px-4">
+        <Card className="max-w-md w-full border border-danger bg-danger-soft">
           <Card.Content className="flex flex-col items-center gap-4 p-8">
             <Icon
               icon="solar:close-circle-linear"
-              className="w-16 h-16 text-danger-500"
+              className="w-16 h-16 text-danger"
             />
-            <h3 className="text-lg font-semibold text-danger-700 dark:text-danger-400">
+            <h3 className="text-lg font-semibold text-danger">
               Erro ao carregar empresas
             </h3>
-            <p className="text-sm text-danger-600 dark:text-danger-300 text-center">
+            <p className="text-sm text-danger text-center">
               Não foi possível carregar as empresas disponíveis. Tente novamente
               mais tarde.
             </p>

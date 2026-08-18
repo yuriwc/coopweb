@@ -187,11 +187,11 @@ export default function ProgramadasClient({
 
                         <div className="ml-6 space-y-3">
                           <div className="flex items-start gap-3">
-                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-success-100 mt-0.5 shrink-0">
-                              <div className="h-2 w-2 rounded-full bg-success-500" />
+                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-success-soft mt-0.5 shrink-0">
+                              <div className="h-2 w-2 rounded-full bg-success" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs font-medium text-success-600 uppercase tracking-wide mb-1">
+                              <p className="text-xs font-medium text-success uppercase tracking-wide mb-1">
                                 Origem
                               </p>
                               <p className="text-sm text-default-600 leading-relaxed truncate">
@@ -200,14 +200,14 @@ export default function ProgramadasClient({
                             </div>
                           </div>
 
-                          <div className="ml-3 h-4 w-px bg-linear-to-b from-success-300 to-danger-300" />
+                          <div className="ml-3 h-4 w-px bg-linear-to-b from-success to-danger" />
 
                           <div className="flex items-start gap-3">
-                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-danger-100 mt-0.5 shrink-0">
-                              <div className="h-2 w-2 rounded-full bg-danger-500" />
+                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-danger-soft mt-0.5 shrink-0">
+                              <div className="h-2 w-2 rounded-full bg-danger" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs font-medium text-danger-600 uppercase tracking-wide mb-1">
+                              <p className="text-xs font-medium text-danger uppercase tracking-wide mb-1">
                                 Destino
                               </p>
                               <p className="text-sm text-default-600 leading-relaxed truncate">
@@ -339,11 +339,11 @@ export default function ProgramadasClient({
 
                         <div className="ml-6 space-y-3">
                           <div className="flex items-start gap-3">
-                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-success-100 mt-0.5 shrink-0">
-                              <div className="h-2 w-2 rounded-full bg-success-500" />
+                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-success-soft mt-0.5 shrink-0">
+                              <div className="h-2 w-2 rounded-full bg-success" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs font-medium text-success-600 uppercase tracking-wide mb-1">
+                              <p className="text-xs font-medium text-success uppercase tracking-wide mb-1">
                                 Origem
                               </p>
                               <p className="text-sm text-default-600 leading-relaxed truncate">
@@ -352,14 +352,14 @@ export default function ProgramadasClient({
                             </div>
                           </div>
 
-                          <div className="ml-3 h-4 w-px bg-linear-to-b from-success-300 to-danger-300" />
+                          <div className="ml-3 h-4 w-px bg-linear-to-b from-success to-danger" />
 
                           <div className="flex items-start gap-3">
-                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-danger-100 mt-0.5 shrink-0">
-                              <div className="h-2 w-2 rounded-full bg-danger-500" />
+                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-danger-soft mt-0.5 shrink-0">
+                              <div className="h-2 w-2 rounded-full bg-danger" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs font-medium text-danger-600 uppercase tracking-wide mb-1">
+                              <p className="text-xs font-medium text-danger uppercase tracking-wide mb-1">
                                 Destino
                               </p>
                               <p className="text-sm text-default-600 leading-relaxed truncate">

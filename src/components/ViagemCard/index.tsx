@@ -43,9 +43,18 @@ export default function ViagemCard({
 
   // Função para obter informações do status
   const getStatusInfo = () => {
-    const status = viagem.statusViagem?.toLowerCase() || "";
+    const statusBruto = viagem.statusViagem || "";
+    // Normaliza "EM_PERCURSO", "Iniciada", "embarcado" etc. para comparar sem
+    // depender de maiúsculas/minúsculas ou underscore.
+    const status = statusBruto.replace(/_/g, " ").trim().toLowerCase();
 
-    if (status === "Iniciada" || status === "Embarcado") {
+    if (
+      status === "iniciada" ||
+      status === "embarcado" ||
+      status === "em percurso" ||
+      status === "em andamento" ||
+      status === "ativa"
+    ) {
       return {
         color: "success" as ChipColorType,
         icon: "solar:car-linear",
@@ -53,7 +62,19 @@ export default function ViagemCard({
       };
     }
 
-    if (status === "finalizada") {
+    if (
+      status === "aguardando passageiro" ||
+      status === "aguardando" ||
+      status === "pendente"
+    ) {
+      return {
+        color: "warning" as ChipColorType,
+        icon: "solar:hourglass-linear",
+        label: "Aguardando Passageiro",
+      };
+    }
+
+    if (status === "finalizada" || status === "concluida" || status === "concluída") {
       return {
         color: "accent" as ChipColorType,
         icon: "solar:check-circle-linear",
@@ -69,10 +90,23 @@ export default function ViagemCard({
       };
     }
 
+    if (status === "cancelada") {
+      return {
+        color: "danger" as ChipColorType,
+        icon: "solar:close-circle-linear",
+        label: "Cancelada",
+      };
+    }
+
+    // Status não mapeado: mostra o valor real de forma legível em vez de "Indefinido".
+    const legivel = statusBruto
+      ? status.charAt(0).toUpperCase() + status.slice(1)
+      : "Sem status";
+
     return {
       color: "default" as ChipColorType,
       icon: "solar:question-circle-linear",
-      label: "Indefinido",
+      label: legivel,
     };
   };
 
@@ -99,12 +133,9 @@ export default function ViagemCard({
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-soft text-accent">
               <Icon icon="solar:route-linear" width={18} />
             </div>
-            <div>
-              <h3 className="text-sm font-semibold text-default-700">
-                Viagem #{viagem.id.slice(0, 8)}
-              </h3>
-              <p className="text-xs text-default-500">ID: {viagem.id}</p>
-            </div>
+            <h3 className="text-sm font-semibold text-default-700">
+              Viagem #{viagem.id.slice(0, 8)}
+            </h3>
           </div>
 
           <div className="flex items-center gap-2">
@@ -185,11 +216,11 @@ export default function ViagemCard({
             <div className="ml-6 space-y-3">
               {/* Origem */}
               <div className="flex items-start gap-3">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-success-100 mt-0.5">
-                  <div className="h-2 w-2 rounded-full bg-success-500"></div>
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-success-soft mt-0.5">
+                  <div className="h-2 w-2 rounded-full bg-success"></div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-success-600 uppercase tracking-wide mb-1">
+                  <p className="text-xs font-medium text-success uppercase tracking-wide mb-1">
                     Origem
                   </p>
                   <p className="text-sm text-default-600 leading-relaxed truncate">
@@ -199,15 +230,15 @@ export default function ViagemCard({
               </div>
 
               {/* Linha conectora */}
-              <div className="ml-3 h-4 w-px bg-linear-to-b from-success-300 to-danger-300"></div>
+              <div className="ml-3 h-4 w-px bg-linear-to-b from-success to-danger"></div>
 
               {/* Destino */}
               <div className="flex items-start gap-3">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-danger-100 mt-0.5">
-                  <div className="h-2 w-2 rounded-full bg-danger-500"></div>
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-danger-soft mt-0.5">
+                  <div className="h-2 w-2 rounded-full bg-danger"></div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-danger-600 uppercase tracking-wide mb-1">
+                  <p className="text-xs font-medium text-danger uppercase tracking-wide mb-1">
                     Destino
                   </p>
                   <p className="text-sm text-default-600 leading-relaxed truncate">

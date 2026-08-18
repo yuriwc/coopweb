@@ -31,30 +31,51 @@ interface ViagemInfoCardsProps {
   viagem: ViagemRealTime;
 }
 
+// Deixa um status cru tipo "EM_PERCURSO" legível: "Em percurso".
+function humanizeStatus(raw: string): string {
+  const texto = raw.replace(/_/g, " ").trim().toLowerCase();
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
 const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
   // Função para obter informações do status
   const getStatusInfo = () => {
-    const status = viagem.statusViagem?.toLowerCase() || "";
+    const statusBruto = viagem.statusViagem || "";
+    // Normaliza "EM_PERCURSO", "Em Andamento", "ativa" etc. para o mesmo formato de comparação.
+    const status = statusBruto.replace(/_/g, " ").trim().toLowerCase();
 
-    if (status === "ativa" || status === "em andamento") {
+    if (
+      status === "ativa" ||
+      status === "em andamento" ||
+      status === "em percurso" ||
+      status === "iniciada" ||
+      status === "embarcado"
+    ) {
       return {
         color: "success" as ChipColorType,
         icon: "solar:car-linear",
-        bgClass: "bg-success-50",
-        borderClass: "border-success-200",
-        textClass: "text-success",
         change: "Em movimento",
         changeType: "positive" as const,
       };
     }
 
-    if (status === "finalizada") {
+    if (
+      status === "aguardando passageiro" ||
+      status === "aguardando" ||
+      status === "pendente"
+    ) {
+      return {
+        color: "warning" as ChipColorType,
+        icon: "solar:hourglass-linear",
+        change: "Aguardando passageiro",
+        changeType: "neutral" as const,
+      };
+    }
+
+    if (status === "finalizada" || status === "concluida" || status === "concluída") {
       return {
         color: "primary" as ChipColorType,
         icon: "solar:check-circle-linear",
-        bgClass: "bg-accent-soft",
-        borderClass: "border-accent",
-        textClass: "text-accent",
         change: "Concluída",
         changeType: "neutral" as const,
       };
@@ -64,21 +85,25 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
       return {
         color: "warning" as ChipColorType,
         icon: "solar:pause-circle-linear",
-        bgClass: "bg-warning-50",
-        borderClass: "border-warning-200",
-        textClass: "text-warning",
         change: "Pausada",
         changeType: "neutral" as const,
       };
     }
 
+    if (status === "cancelada") {
+      return {
+        color: "danger" as ChipColorType,
+        icon: "solar:close-circle-linear",
+        change: "Cancelada",
+        changeType: "negative" as const,
+      };
+    }
+
+    // Status não mapeado: mostra o valor real de forma legível em vez de "Indefinido".
     return {
       color: "default" as ChipColorType,
       icon: "solar:question-circle-linear",
-      bgClass: "bg-default-50",
-      borderClass: "border-default-200",
-      textClass: "text-default",
-      change: "Indefinido",
+      change: statusBruto ? humanizeStatus(statusBruto) : "Sem status",
       changeType: "neutral" as const,
     };
   };

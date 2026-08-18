@@ -85,9 +85,9 @@ export default function VincularVeiculoModal({
                 </Modal.Header>
                 <Modal.Body>
               {motorista?.veiculo ? (
-                <div className="flex items-start gap-2 rounded-lg bg-warning-50 dark:bg-warning-950/30 border border-warning-200 dark:border-warning-800 p-3">
-                  <Icon icon="solar:danger-triangle-linear" className="w-5 h-5 text-warning-600 shrink-0 mt-0.5" />
-                  <p className="text-sm text-warning-800 dark:text-warning-300">
+                <div className="flex items-start gap-2 rounded-lg bg-warning-soft border border-warning p-3">
+                  <Icon icon="solar:danger-triangle-linear" className="w-5 h-5 text-warning shrink-0 mt-0.5" />
+                  <p className="text-sm text-warning">
                     Este motorista já tem o veículo de placa <strong>{motorista.veiculo.placa}</strong> vinculado.
                     Ao continuar, esse veículo ficará sem motorista.
                   </p>
