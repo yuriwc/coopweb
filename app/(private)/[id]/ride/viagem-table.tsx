@@ -183,7 +183,7 @@ export default function ViagemTable({ viagens }: Props) {
                     }`
                   : viagem.passageiros.join(", ")}
               </p>
-              <p className="text-bold text-xs capitalize text-default-400">
+              <p className="text-bold text-xs capitalize text-muted">
                 {viagem.passageiros.length} passageiro
                 {viagem.passageiros.length > 1 ? "s" : ""}
               </p>
@@ -307,7 +307,7 @@ export default function ViagemTable({ viagens }: Props) {
           >
             <InputGroup>
               <InputGroup.Prefix>
-                <Icon icon="solar:magnifer-linear" className="text-default-400" />
+                <Icon icon="solar:magnifer-linear" className="text-muted" />
               </InputGroup.Prefix>
               <InputGroup.Input placeholder="Buscar por passageiro, motorista, origem ou destino..." />
               {filterValue && (
@@ -367,14 +367,14 @@ export default function ViagemTable({ viagens }: Props) {
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-sm">
+          <span className="text-muted text-sm">
             Total de {filteredItems.length}
             {filteredItems.length !== 1 ? " viagens" : " viagem"}
           </span>
-          <label className="flex items-center text-default-400 text-sm">
+          <label className="flex items-center text-muted text-sm">
             Linhas por página:
             <select
-              className="bg-transparent outline-none text-default-400 text-sm ml-2"
+              className="bg-transparent outline-none text-muted text-sm ml-2"
               onChange={onRowsPerPageChange}
               value={rowsPerPage}
             >
@@ -409,7 +409,7 @@ export default function ViagemTable({ viagens }: Props) {
               </Pagination.Previous>
             </Pagination.Item>
             <Pagination.Item>
-              <span className="px-2 text-sm text-default-500">
+              <span className="px-2 text-sm text-muted">
                 {page} / {pages}
               </span>
             </Pagination.Item>

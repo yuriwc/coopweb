@@ -473,7 +473,7 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
         {data.map((item, index) => (
           <Card
             key={index}
-            className="border border-transparent dark:border-default-100 relative overflow-hidden"
+            className="border border-transparent dark:border-default relative overflow-hidden"
           >
             <div className="p-2 relative z-10">
               {/* Linha única: ícone + título/valor + indicador */}
@@ -491,7 +491,7 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
                         item.color === "primary",
                       "bg-default text-accent":
                         item.color === "secondary",
-                      "bg-default-100 text-default-600":
+                      "bg-default text-muted":
                         item.color === "default",
                     }
                   )}
@@ -499,10 +499,10 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
                   <Icon icon={item.iconName} width={14} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <dt className="text-[11px] font-medium text-default-500 truncate leading-tight">
+                  <dt className="text-[11px] font-medium text-muted truncate leading-tight">
                     {item.title}
                   </dt>
-                  <dd className="text-sm font-semibold text-default-700 leading-tight truncate">
+                  <dd className="text-sm font-semibold text-muted leading-tight truncate">
                     {item.value}
                   </dd>
                 </div>
@@ -570,7 +570,7 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
             {estimativasData.map((item, index) => (
               <Card
                 key={index}
-                className="border border-transparent dark:border-default-100 hover:shadow-md transition-shadow duration-200 relative overflow-hidden"
+                className="border border-transparent dark:border-default hover:shadow-md transition-shadow duration-200 relative overflow-hidden"
               >
                 {/* Background baseado no progresso */}
                 <div
@@ -606,10 +606,10 @@ const ViagemInfoCards: React.FC<ViagemInfoCardsProps> = ({ viagem }) => {
                       <Icon icon={item.iconName} width={14} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <dt className="text-[11px] font-medium text-default-500 truncate leading-tight">
+                      <dt className="text-[11px] font-medium text-muted truncate leading-tight">
                         {item.title}
                       </dt>
-                      <dd className="text-sm font-semibold text-default-700 leading-tight truncate">
+                      <dd className="text-sm font-semibold text-muted leading-tight truncate">
                         {item.value}
                       </dd>
                     </div>

@@ -22,9 +22,9 @@ export default function MotoristasTable({
   if (motoristas.length === 0) {
     return (
       <div className="text-center py-12">
-        <Icon icon="solar:user-cross-linear" className="w-12 h-12 mx-auto text-default-300" />
-        <h3 className="text-lg font-semibold text-default-700 mt-4">Nenhum motorista encontrado</h3>
-        <p className="text-sm text-default-500">
+        <Icon icon="solar:user-cross-linear" className="w-12 h-12 mx-auto text-muted" />
+        <h3 className="text-lg font-semibold text-muted mt-4">Nenhum motorista encontrado</h3>
+        <p className="text-sm text-muted">
           Cadastre o primeiro motorista da cooperativa em &quot;Novo motorista&quot;.
         </p>
       </div>
@@ -49,7 +49,7 @@ export default function MotoristasTable({
                 <Table.Row id={motorista.id}>
                   <Table.Cell>
                     <span className="text-sm font-medium">
-                      {motorista.nome ?? <span className="text-default-400 italic">Não informado</span>}
+                      {motorista.nome ?? <span className="text-muted italic">Não informado</span>}
                     </span>
                   </Table.Cell>
 
@@ -68,7 +68,7 @@ export default function MotoristasTable({
                       {motorista.veiculo ? (
                         motorista.veiculo.placa
                       ) : (
-                        <span className="text-default-400 italic">sem veículo</span>
+                        <span className="text-muted italic">sem veículo</span>
                       )}
                     </span>
                   </Table.Cell>

@@ -70,7 +70,7 @@ export default function AplicarDescontoModal({
                 </Modal.Header>
                 <Modal.Body>
               {voucher ? (
-                <p className="text-sm text-default-600">
+                <p className="text-sm text-muted">
                   Valor bruto: <strong>{formatCurrency(voucher.valorTotal)}</strong>
                 </p>
               ) : null}
@@ -90,7 +90,7 @@ export default function AplicarDescontoModal({
                   <Label>Valor do desconto</Label>
                   <InputGroup>
                     <InputGroup.Prefix>
-                      <span className="text-default-400">R$</span>
+                      <span className="text-muted">R$</span>
                     </InputGroup.Prefix>
                     <InputGroup.Input min={0.01} step={0.01} />
                   </InputGroup>

@@ -125,7 +125,7 @@ export default function ViagemCard({
   };
 
   return (
-    <Card className="border border-transparent dark:border-default-100 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
+    <Card className="border border-transparent dark:border-default hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
       <Card.Content className="p-6 space-y-5">
         {/* Header com ID da viagem e status */}
         <div className="flex items-center justify-between">
@@ -133,7 +133,7 @@ export default function ViagemCard({
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-soft text-accent">
               <Icon icon="solar:route-linear" width={18} />
             </div>
-            <h3 className="text-sm font-semibold text-default-700">
+            <h3 className="text-sm font-semibold text-muted">
               Viagem #{viagem.id.slice(0, 8)}
             </h3>
           </div>
@@ -161,9 +161,9 @@ export default function ViagemCard({
                 <Icon
                   icon="solar:users-group-rounded-linear"
                   width={16}
-                  className="text-default-500"
+                  className="text-muted"
                 />
-                <span className="text-sm font-medium text-default-600">
+                <span className="text-sm font-medium text-muted">
                   Passageiros
                 </span>
               </div>
@@ -190,7 +190,7 @@ export default function ViagemCard({
                   </Chip>
                 ))
               ) : (
-                <span className="text-xs text-default-400">
+                <span className="text-xs text-muted">
                   Nenhum passageiro
                 </span>
               )}
@@ -210,7 +210,7 @@ export default function ViagemCard({
                 width={16}
                 className="text-accent"
               />
-              <span className="text-sm font-medium text-default-600">Rota</span>
+              <span className="text-sm font-medium text-muted">Rota</span>
             </div>
 
             <div className="ml-6 space-y-3">
@@ -223,7 +223,7 @@ export default function ViagemCard({
                   <p className="text-xs font-medium text-success uppercase tracking-wide mb-1">
                     Origem
                   </p>
-                  <p className="text-sm text-default-600 leading-relaxed truncate">
+                  <p className="text-sm text-muted leading-relaxed truncate">
                     {viagem.enderecoEmpresa || "Endereço não informado"}
                   </p>
                 </div>
@@ -241,7 +241,7 @@ export default function ViagemCard({
                   <p className="text-xs font-medium text-danger uppercase tracking-wide mb-1">
                     Destino
                   </p>
-                  <p className="text-sm text-default-600 leading-relaxed truncate">
+                  <p className="text-sm text-muted leading-relaxed truncate">
                     {enderecoDestino || "Destino não informado"}
                   </p>
                 </div>
@@ -251,7 +251,7 @@ export default function ViagemCard({
         </div>
       </Card.Content>
 
-      <Card.Footer className="px-6 py-4 bg-default-50 dark:bg-default-100/50">
+      <Card.Footer className="px-6 py-4 bg-default dark:bg-default/50">
         <Link
           href={getMonitoramentoLink()}
           className="inline-flex items-center justify-center gap-2 w-full rounded-md bg-accent text-white h-10 px-4 text-sm font-medium hover:opacity-90 transition-opacity"

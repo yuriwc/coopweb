@@ -165,7 +165,7 @@ export default function CompanyConfigForm({
           <Icon icon="mdi:cog" className="text-2xl text-accent" />
           <div className="flex flex-col">
             <p className="text-md font-semibold">Configurações Gerais</p>
-            <p className="text-sm text-default-500">
+            <p className="text-sm text-muted">
               Gerencie as configurações da sua empresa
             </p>
           </div>
@@ -180,7 +180,7 @@ export default function CompanyConfigForm({
               <Label>Dia do Fechamento Mensal</Label>
               <InputGroup>
                 <InputGroup.Prefix>
-                  <Icon icon="mdi:calendar" className="text-lg text-default-400" />
+                  <Icon icon="mdi:calendar" className="text-lg text-muted" />
                 </InputGroup.Prefix>
                 <InputGroup.Input placeholder="15" min="1" max="31" />
               </InputGroup>
@@ -222,7 +222,7 @@ export default function CompanyConfigForm({
               <Label>Preço por Quilômetro (R$)</Label>
               <InputGroup>
                 <InputGroup.Prefix>
-                  <span className="text-lg text-default-400">R$</span>
+                  <span className="text-lg text-muted">R$</span>
                 </InputGroup.Prefix>
                 <InputGroup.Input placeholder="2.50" step="0.01" min="0.01" />
               </InputGroup>
@@ -237,7 +237,7 @@ export default function CompanyConfigForm({
               <Label>Preço Base da Corrida (R$)</Label>
               <InputGroup>
                 <InputGroup.Prefix>
-                  <span className="text-lg text-default-400">R$</span>
+                  <span className="text-lg text-muted">R$</span>
                 </InputGroup.Prefix>
                 <InputGroup.Input placeholder="5.00" step="0.01" min="0.01" />
               </InputGroup>

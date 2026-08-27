@@ -53,7 +53,7 @@ export default function ReativarMotoristaModal({
                   <Modal.Heading>Reativar {motorista?.nome ?? motorista?.cpf}</Modal.Heading>
                 </Modal.Header>
                 <Modal.Body>
-                  <p className="text-sm text-default-600">
+                  <p className="text-sm text-muted">
                     O motorista volta a poder aceitar corridas, entrar na fila e receber disparo direto.
                   </p>
                   {erro ? (

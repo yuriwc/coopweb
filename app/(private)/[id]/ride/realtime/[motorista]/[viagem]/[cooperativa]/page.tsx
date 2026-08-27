@@ -474,7 +474,7 @@ const Page = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {viagem.latitudeMotorista && viagem.longitudeMotorista && (
-                      <div className="bg-default-50 dark:bg-default-100/10 rounded-lg p-2">
+                      <div className="bg-default dark:bg-default/10 rounded-lg p-2">
                         <div className="flex items-center gap-2 mb-0.5">
                           <Icon icon="solar:gps-linear" className="w-4 h-4 text-accent" />
                           <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
@@ -489,7 +489,7 @@ const Page = () => {
                     )}
 
                     {viagem.direcaoGraus && (
-                      <div className="bg-default-50 dark:bg-default-100/10 rounded-lg p-2">
+                      <div className="bg-default dark:bg-default/10 rounded-lg p-2">
                         <div className="flex items-center gap-2 mb-0.5">
                           <Icon icon="solar:compass-linear" className="w-4 h-4 text-warning" />
                           <span className="text-xs font-medium text-gray-600 dark:text-gray-400">

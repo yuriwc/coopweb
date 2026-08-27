@@ -485,7 +485,7 @@ export default function FaturasClient({
         {relatorio && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
               {/* Total Geral */}
-              <Card className="border border-transparent dark:border-default-100">
+              <Card className="border border-transparent dark:border-default">
                 <Card.Header className="pb-2">
                   <div className="flex items-center gap-2">
                     <Icon icon="solar:calculator-linear" className="w-5 h-5 text-blue-500" />
@@ -501,7 +501,7 @@ export default function FaturasClient({
               </Card>
 
               {/* Pendentes */}
-              <Card className="border border-transparent dark:border-default-100">
+              <Card className="border border-transparent dark:border-default">
                 <Card.Header className="pb-2">
                   <div className="flex items-center gap-2">
                     <Icon icon="solar:clock-circle-linear" className="w-5 h-5 text-yellow-500" />
@@ -521,7 +521,7 @@ export default function FaturasClient({
               </Card>
 
               {/* Aprovados */}
-              <Card className="border border-transparent dark:border-default-100">
+              <Card className="border border-transparent dark:border-default">
                 <Card.Header className="pb-2">
                   <div className="flex items-center gap-2">
                     <Icon icon="solar:check-circle-linear" className="w-5 h-5 text-blue-500" />
@@ -541,7 +541,7 @@ export default function FaturasClient({
               </Card>
 
               {/* Pagos */}
-              <Card className="border border-transparent dark:border-default-100">
+              <Card className="border border-transparent dark:border-default">
                 <Card.Header className="pb-2">
                   <div className="flex items-center gap-2">
                     <Icon icon="solar:shield-check-linear" className="w-5 h-5 text-green-500" />

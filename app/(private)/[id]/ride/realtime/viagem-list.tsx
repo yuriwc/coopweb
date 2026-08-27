@@ -94,7 +94,7 @@ export default function ViagemList({ cooperativas }: Props) {
             isIconOnly
             variant="tertiary"
             aria-label="Voltar"
-            className="bg-default-100 dark:bg-default-50"
+            className="bg-default dark:bg-default"
             onPress={() => router.back()}
           >
             <Icon icon="solar:arrow-left-linear" className="w-5 h-5" />

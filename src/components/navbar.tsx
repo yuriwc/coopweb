@@ -49,6 +49,7 @@ export default function App() {
   const [empresaId, setEmpresaId] = useState<string | null>(null);
   const [cooperativaId, setCooperativaId] = useState<string | null>(null);
   const [isCooperativaRoute, setIsCooperativaRoute] = useState(false);
+  const [isAdminRoute, setIsAdminRoute] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const pathname = usePathname();
@@ -57,8 +58,16 @@ export default function App() {
   useEffect(() => {
     const segments = pathname.split("/");
 
+    // Área administrativa: /admin/... não tem empresa nem cooperativa no caminho
+    if (segments[1] === "admin") {
+      setIsAdminRoute(true);
+      setIsCooperativaRoute(false);
+      setEmpresaId(null);
+      setCooperativaId(null);
+    }
     // Verificar se é uma rota de cooperativa (/cooperativa/[id]/...)
-    if (segments[1] === "cooperativa" && segments[2]) {
+    else if (segments[1] === "cooperativa" && segments[2]) {
+      setIsAdminRoute(false);
       setIsCooperativaRoute(true);
       setCooperativaId(segments[2]);
       setEmpresaId(null);
@@ -71,10 +80,12 @@ export default function App() {
       segments[1] !== "signup" &&
       segments[1] !== "cooperativa"
     ) {
+      setIsAdminRoute(false);
       setIsCooperativaRoute(false);
       setEmpresaId(segments[1]);
       setCooperativaId(null);
     } else {
+      setIsAdminRoute(false);
       setIsCooperativaRoute(false);
       setEmpresaId(null);
       setCooperativaId(null);
@@ -118,7 +129,13 @@ export default function App() {
     { label: "Relatórios", href: empresaId ? `/${empresaId}/vouchers/dashboard` : "/vouchers" },
   ];
 
-  const links = isCooperativaRoute ? cooperativaLinks : empresaLinks;
+  const adminLinks: NavLink[] = [
+    { label: "Painel", href: "/admin", exact: true },
+    { label: "Empresas", href: "/admin/empresas" },
+    { label: "Cooperativas", href: "/admin/cooperativas" },
+  ];
+
+  const links = isAdminRoute ? adminLinks : isCooperativaRoute ? cooperativaLinks : empresaLinks;
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 h-16 flex items-center bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm px-6">
@@ -133,10 +150,12 @@ export default function App() {
         {links.map((link) => (
           <NavLinkItem key={link.label} link={link} pathname={pathname} />
         ))}
-        <NavLinkItem
-          link={{ label: "Manual", href: "/docs/webgo.html" }}
-          pathname={pathname}
-        />
+        {!isAdminRoute && (
+          <NavLinkItem
+            link={{ label: "Manual", href: "/docs/webgo.html" }}
+            pathname={pathname}
+          />
+        )}
       </div>
 
       <div className="flex items-center gap-3 shrink-0">

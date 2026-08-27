@@ -4,10 +4,12 @@ import { Card } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { cookies } from "next/headers";
 import Link from "next/link";
+import { getUsuarioAtual } from "@/src/services/usuario-atual";
 
 export default async function Home() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value || "";
+  const usuario = await getUsuarioAtual();
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_SERVER}/api/v1/empresa/findByUser`,
     {
@@ -75,6 +77,30 @@ export default async function Home() {
             transportes
           </p>
         </div>
+
+        {/* Atalho para a área administrativa — só ADMIN tem acesso */}
+        {usuario?.role === "ADMIN" && (
+          <Link href="/admin" className="group block w-full max-w-4xl">
+            <Card className="border border-accent bg-accent-soft hover:shadow-lg transition-all duration-300">
+              <Card.Content className="flex items-center gap-4 p-6">
+                <div className="p-3 bg-white/60 dark:bg-black/20 rounded-xl">
+                  <Icon icon="solar:settings-linear" className="w-7 h-7 text-accent" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-accent">Painel administrativo</h3>
+                  <p className="text-sm text-accent/80">
+                    Cadastrar empresas e cooperativas, criar usuários e motoristas, gerenciar
+                    vínculos.
+                  </p>
+                </div>
+                <Icon
+                  icon="solar:arrow-right-linear"
+                  className="w-5 h-5 text-accent transition-transform duration-300 group-hover:translate-x-1"
+                />
+              </Card.Content>
+            </Card>
+          </Link>
+        )}
 
         {/* Companies Grid */}
         <div className="w-full max-w-4xl">

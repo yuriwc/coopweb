@@ -255,13 +255,13 @@ export default function NovoMotoristaModal({
                 <Tabs.Panel id="planilha">
                   <div className="flex flex-col gap-4 pt-2">
                     <label className="flex flex-col gap-2">
-                      <span className="text-sm text-default-600">Planilha de motoristas (.xlsx, .xls)</span>
+                      <span className="text-sm text-muted">Planilha de motoristas (.xlsx, .xls)</span>
                       <input
                         type="file"
                         accept=".xlsx,.xls"
                         aria-label="Selecionar planilha de motoristas"
                         onChange={(e) => setArquivo(e.target.files?.[0] ?? null)}
-                        className="text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-default-100 file:px-3 file:py-2 file:text-sm dark:file:bg-default-50 dark:text-default-200"
+                        className="text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-default file:px-3 file:py-2 file:text-sm dark:file:bg-default dark:text-muted"
                       />
                     </label>
 
@@ -276,7 +276,7 @@ export default function NovoMotoristaModal({
                         <Card.Content className="flex flex-row gap-3 items-center">
                           <Icon icon="solar:document-text-linear" className="w-6 h-6 text-accent" />
                           <div className="flex flex-col gap-1">
-                            <span className="text-sm text-default-600">Resumo da importação</span>
+                            <span className="text-sm text-muted">Resumo da importação</span>
                             <div className="flex gap-2">
                               <Chip size="sm" variant="tertiary">{resumo.totalLinhas} processadas</Chip>
                               <Chip size="sm" color="success" variant="tertiary">{resumo.sucesso} com sucesso</Chip>

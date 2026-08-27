@@ -55,7 +55,7 @@ export default function ConfirmarAcaoModal({
                   <Modal.Heading>{titulo}</Modal.Heading>
                 </Modal.Header>
                 <Modal.Body>
-                  <p className="text-sm text-default-600">{descricao}</p>
+                  <p className="text-sm text-muted">{descricao}</p>
                   {erro ? (
                     <p className="text-sm text-danger" role="alert">
                       {erro}

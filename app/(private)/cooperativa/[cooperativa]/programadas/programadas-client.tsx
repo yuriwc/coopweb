@@ -106,7 +106,7 @@ export default function ProgramadasClient({
             >
               <InputGroup>
                 <InputGroup.Prefix>
-                  <Icon icon="solar:magnifer-linear" className="text-default-400" />
+                  <Icon icon="solar:magnifer-linear" className="text-muted" />
                 </InputGroup.Prefix>
                 <InputGroup.Input placeholder="Buscar por passageiro ou motorista..." />
                 {searchTerm && (
@@ -148,10 +148,10 @@ export default function ProgramadasClient({
                           <Icon icon="solar:route-linear" width={18} />
                         </div>
                         <div>
-                          <h3 className="text-sm font-semibold text-default-700">
+                          <h3 className="text-sm font-semibold text-muted">
                             Viagem #{transporte.id.slice(0, 8).toUpperCase()}
                           </h3>
-                          <p className="text-xs text-default-500">
+                          <p className="text-xs text-muted">
                             {transporte.horaSaida} → {transporte.horaRetorno}
                           </p>
                         </div>
@@ -164,9 +164,9 @@ export default function ProgramadasClient({
                           <Icon
                             icon="solar:users-group-rounded-linear"
                             width={16}
-                            className="text-default-500"
+                            className="text-muted"
                           />
-                          <span className="text-sm font-medium text-default-600">
+                          <span className="text-sm font-medium text-muted">
                             Passageiros
                           </span>
                         </div>
@@ -182,7 +182,7 @@ export default function ProgramadasClient({
                       <div className="space-y-3">
                         <div className="flex items-center gap-2">
                           <Icon icon="solar:routing-linear" width={16} className="text-accent" />
-                          <span className="text-sm font-medium text-default-600">Rota</span>
+                          <span className="text-sm font-medium text-muted">Rota</span>
                         </div>
 
                         <div className="ml-6 space-y-3">
@@ -194,7 +194,7 @@ export default function ProgramadasClient({
                               <p className="text-xs font-medium text-success uppercase tracking-wide mb-1">
                                 Origem
                               </p>
-                              <p className="text-sm text-default-600 leading-relaxed truncate">
+                              <p className="text-sm text-muted leading-relaxed truncate">
                                 {transporte.enderecoEmpresa}
                               </p>
                             </div>
@@ -210,7 +210,7 @@ export default function ProgramadasClient({
                               <p className="text-xs font-medium text-danger uppercase tracking-wide mb-1">
                                 Destino
                               </p>
-                              <p className="text-sm text-default-600 leading-relaxed truncate">
+                              <p className="text-sm text-muted leading-relaxed truncate">
                                 {transporte.enderecosPassageiros[0]}
                               </p>
                             </div>
@@ -219,7 +219,7 @@ export default function ProgramadasClient({
                       </div>
                     </Card.Content>
 
-                    <Card.Footer className="bg-default-50 dark:bg-default-100/50">
+                    <Card.Footer className="bg-default dark:bg-default/50">
                       <ActionButton
                         token={token}
                         motoristas={motoristas}
@@ -258,10 +258,10 @@ export default function ProgramadasClient({
                             <Icon icon="solar:route-linear" width={18} />
                           </div>
                           <div>
-                            <h3 className="text-sm font-semibold text-default-700">
+                            <h3 className="text-sm font-semibold text-muted">
                               Viagem #{viagem.id.slice(0, 8).toUpperCase()}
                             </h3>
-                            <p className="text-xs text-default-500">
+                            <p className="text-xs text-muted">
                               {viagem.horaSaida} → {viagem.horaRetorno}
                             </p>
                           </div>
@@ -280,19 +280,19 @@ export default function ProgramadasClient({
                           <Icon
                             icon="solar:user-id-linear"
                             width={16}
-                            className="text-default-500"
+                            className="text-muted"
                           />
-                          <span className="text-sm font-medium text-default-600">Motorista</span>
+                          <span className="text-sm font-medium text-muted">Motorista</span>
                         </div>
                         <div className="ml-6">
-                          <p className="text-sm font-semibold text-default-700">
+                          <p className="text-sm font-semibold text-muted">
                             {viagem.motoristaNome}
                           </p>
                           <div className="flex flex-wrap gap-3 mt-1">
-                            <p className="text-xs text-default-500">
+                            <p className="text-xs text-muted">
                               {viagem.motoristaTelefone}
                             </p>
-                            <p className="text-xs text-default-500">
+                            <p className="text-xs text-muted">
                               Matrícula {viagem.motoristaMatricula}
                             </p>
                           </div>
@@ -304,11 +304,11 @@ export default function ProgramadasClient({
                           <Icon
                             icon="solar:buildings-2-linear"
                             width={16}
-                            className="text-default-500"
+                            className="text-muted"
                           />
-                          <span className="text-sm font-medium text-default-600">Empresa</span>
+                          <span className="text-sm font-medium text-muted">Empresa</span>
                         </div>
-                        <p className="text-sm text-default-600 ml-6">{viagem.nomeEmpresa}</p>
+                        <p className="text-sm text-muted ml-6">{viagem.nomeEmpresa}</p>
                       </div>
 
                       <div className="space-y-2">
@@ -316,9 +316,9 @@ export default function ProgramadasClient({
                           <Icon
                             icon="solar:users-group-rounded-linear"
                             width={16}
-                            className="text-default-500"
+                            className="text-muted"
                           />
-                          <span className="text-sm font-medium text-default-600">
+                          <span className="text-sm font-medium text-muted">
                             Passageiros
                           </span>
                         </div>
@@ -334,7 +334,7 @@ export default function ProgramadasClient({
                       <div className="space-y-3">
                         <div className="flex items-center gap-2">
                           <Icon icon="solar:routing-linear" width={16} className="text-accent" />
-                          <span className="text-sm font-medium text-default-600">Rota</span>
+                          <span className="text-sm font-medium text-muted">Rota</span>
                         </div>
 
                         <div className="ml-6 space-y-3">
@@ -346,7 +346,7 @@ export default function ProgramadasClient({
                               <p className="text-xs font-medium text-success uppercase tracking-wide mb-1">
                                 Origem
                               </p>
-                              <p className="text-sm text-default-600 leading-relaxed truncate">
+                              <p className="text-sm text-muted leading-relaxed truncate">
                                 {viagem.enderecoEmpresa}
                               </p>
                             </div>
@@ -362,7 +362,7 @@ export default function ProgramadasClient({
                               <p className="text-xs font-medium text-danger uppercase tracking-wide mb-1">
                                 Destino
                               </p>
-                              <p className="text-sm text-default-600 leading-relaxed truncate">
+                              <p className="text-sm text-muted leading-relaxed truncate">
                                 {viagem.enderecosPassageiros[0]}
                               </p>
                             </div>
@@ -371,7 +371,7 @@ export default function ProgramadasClient({
                       </div>
                     </Card.Content>
 
-                    <Card.Footer className="bg-default-50 dark:bg-default-100/50">
+                    <Card.Footer className="bg-default dark:bg-default/50">
                       <EncerrarButton idProgramacao={viagem.id} token={token} />
                     </Card.Footer>
                   </Card>

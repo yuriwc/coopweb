@@ -60,7 +60,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
                 <Link
                   href={`/${params.id}/ride/realtime`}
                   aria-label="Monitoramento em tempo real"
-                  className="inline-flex items-center justify-center rounded-md bg-default-100 dark:bg-default-50 h-10 w-10 text-gray-700 dark:text-gray-300 hover:opacity-80 transition-opacity"
+                  className="inline-flex items-center justify-center rounded-md bg-default dark:bg-default h-10 w-10 text-gray-700 dark:text-gray-300 hover:opacity-80 transition-opacity"
                 >
                   <Icon icon="solar:gps-linear" className="w-4 h-4" />
                 </Link>
@@ -74,7 +74,7 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
                 <Link
                   href={`/${params.id}/configuracoes`}
                   aria-label="Configurações da empresa"
-                  className="inline-flex items-center justify-center rounded-md bg-default-100 dark:bg-default-50 h-10 w-10 text-gray-700 dark:text-gray-300 hover:opacity-80 transition-opacity"
+                  className="inline-flex items-center justify-center rounded-md bg-default dark:bg-default h-10 w-10 text-gray-700 dark:text-gray-300 hover:opacity-80 transition-opacity"
                 >
                   <Icon icon="solar:settings-linear" className="w-4 h-4" />
                 </Link>

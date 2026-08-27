@@ -226,7 +226,7 @@ export default function DashboardClient({
             <Link
               href={`/${empresaId}`}
               aria-label="Voltar"
-              className="inline-flex items-center justify-center rounded-md bg-default-100 dark:bg-default-50 h-10 w-10 text-gray-700 dark:text-gray-300 hover:opacity-80 transition-opacity shrink-0"
+              className="inline-flex items-center justify-center rounded-md bg-default dark:bg-default h-10 w-10 text-gray-700 dark:text-gray-300 hover:opacity-80 transition-opacity shrink-0"
             >
               <Icon icon="solar:arrow-left-linear" className="w-5 h-5" />
             </Link>

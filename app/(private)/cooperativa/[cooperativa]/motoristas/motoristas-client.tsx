@@ -121,7 +121,7 @@ export default function MotoristasClient({
             <TextField value={searchTerm} onChange={setSearchTerm} aria-label="Buscar por nome ou CPF">
               <InputGroup>
                 <InputGroup.Prefix>
-                  <Icon icon="solar:magnifer-linear" className="text-default-400" />
+                  <Icon icon="solar:magnifer-linear" className="text-muted" />
                 </InputGroup.Prefix>
                 <InputGroup.Input placeholder="Buscar por nome ou CPF..." />
                 {searchTerm && (

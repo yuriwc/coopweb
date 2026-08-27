@@ -93,7 +93,7 @@ export default function VincularCentroCustoModal({
                 </Modal.Header>
 
                 <Modal.Body className="gap-6">
-              <div className="flex items-center gap-3 p-3 rounded-md bg-default-50 dark:bg-default-100/10">
+              <div className="flex items-center gap-3 p-3 rounded-md bg-default dark:bg-default/10">
                 <Avatar size="sm">
                   <Avatar.Fallback>
                     {funcionario.name?.charAt(0).toUpperCase()}
@@ -103,7 +103,7 @@ export default function VincularCentroCustoModal({
                   <p className="text-sm font-medium text-foreground truncate">
                     {funcionario.name}
                   </p>
-                  <p className="text-xs text-default-500 truncate">
+                  <p className="text-xs text-muted truncate">
                     {funcionario.phone || funcionario.cidade || "—"}
                   </p>
                 </div>

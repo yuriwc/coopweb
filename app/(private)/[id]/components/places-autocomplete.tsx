@@ -220,7 +220,7 @@ export default function PlacesAutocomplete({
       <ComboBox isDisabled className="w-full">
         <Label className={labelClassName}>{label}</Label>
         <ComboBox.InputGroup>
-          <Icon icon="solar:location-linear" className="w-4 h-4 text-default-400" />
+          <Icon icon="solar:location-linear" className="w-4 h-4 text-muted" />
           <Input placeholder="Carregando..." />
           <ComboBox.Trigger />
         </ComboBox.InputGroup>
@@ -243,7 +243,7 @@ export default function PlacesAutocomplete({
         {isLoading ? (
           <Spinner size="sm" />
         ) : (
-          <Icon icon="solar:location-linear" className="w-4 h-4 text-default-400" />
+          <Icon icon="solar:location-linear" className="w-4 h-4 text-muted" />
         )}
         <Input placeholder={placeholder} />
         <ComboBox.Trigger />
@@ -254,13 +254,13 @@ export default function PlacesAutocomplete({
             <ListBox.Item
               id={item.place_id}
               textValue={item.description}
-              className="data-[hover=true]:bg-default-100"
+              className="data-[hover=true]:bg-default"
             >
               <div className="flex flex-col">
                 <span className="text-sm font-medium">
                   {item.structured_formatting.main_text}
                 </span>
-                <span className="text-xs text-default-400">
+                <span className="text-xs text-muted">
                   {item.structured_formatting.secondary_text}
                 </span>
               </div>

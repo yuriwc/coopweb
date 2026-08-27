@@ -293,7 +293,7 @@ export default function ScheduledTripModal({
                 <Modal.Header>
                   <Modal.Heading>
                     Programar Viagem
-                    <p className="text-sm text-default-500 font-normal">
+                    <p className="text-sm text-muted font-normal">
                       Configure uma viagem recorrente para os passageiros selecionados
                     </p>
                   </Modal.Heading>
@@ -337,10 +337,10 @@ export default function ScheduledTripModal({
               </div>
 
               {/* Toggle para viagem personalizada */}
-              <div className="flex items-center justify-between p-4 bg-default-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-default rounded-lg">
                 <div>
                   <h4 className="text-sm font-medium">Viagem Personalizada</h4>
-                  <p className="text-xs text-default-500">
+                  <p className="text-xs text-muted">
                     Definir locais de origem e destino personalizados
                   </p>
                 </div>
@@ -358,7 +358,7 @@ export default function ScheduledTripModal({
               </div>
 
               {!isFlexibleTrip ? (
-                <p className="text-xs text-default-400">
+                <p className="text-xs text-muted">
                   <Icon icon="solar:info-circle-linear" className="w-3.5 h-3.5 inline mr-1" />
                   O sistema usará automaticamente o endereço cadastrado dos passageiros e da
                   empresa conforme o tipo de viagem.
@@ -377,8 +377,8 @@ export default function ScheduledTripModal({
                   {intermediateStops.length > 0 && (
                     <div className="space-y-3">
                       <div className="flex items-center gap-2 px-1">
-                        <Icon icon="solar:map-point-wave-linear" className="text-default-500" />
-                        <span className="text-xs font-medium text-default-500">
+                        <Icon icon="solar:map-point-wave-linear" className="text-muted" />
+                        <span className="text-xs font-medium text-muted">
                           Paradas intermediárias ({intermediateStops.length})
                         </span>
                       </div>

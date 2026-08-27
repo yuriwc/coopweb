@@ -122,12 +122,12 @@ export default function LocationEntry({
         </Button>
 
         {location.showContactFields && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3 bg-default-50 rounded-lg">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3 bg-default rounded-lg">
             <TextField value={location.nome} onChange={(v) => onUpdate({ nome: v })}>
               <Label>Nome do contato</Label>
               <InputGroup>
                 <InputGroup.Prefix>
-                  <Icon icon="solar:user-linear" className="w-4 h-4 text-default-400" />
+                  <Icon icon="solar:user-linear" className="w-4 h-4 text-muted" />
                 </InputGroup.Prefix>
                 <InputGroup.Input placeholder="Nome de quem recebe" />
               </InputGroup>
@@ -139,7 +139,7 @@ export default function LocationEntry({
               <Label>WhatsApp</Label>
               <InputGroup>
                 <InputGroup.Prefix>
-                  <Icon icon="solar:chat-round-dots-linear" className="w-4 h-4 text-default-400" />
+                  <Icon icon="solar:chat-round-dots-linear" className="w-4 h-4 text-muted" />
                 </InputGroup.Prefix>
                 <InputGroup.Input placeholder="(00) 00000-0000" />
               </InputGroup>
@@ -148,7 +148,7 @@ export default function LocationEntry({
               <Label>Email</Label>
               <InputGroup>
                 <InputGroup.Prefix>
-                  <Icon icon="solar:letter-linear" className="w-4 h-4 text-default-400" />
+                  <Icon icon="solar:letter-linear" className="w-4 h-4 text-muted" />
                 </InputGroup.Prefix>
                 <InputGroup.Input placeholder="contato@email.com" />
               </InputGroup>
