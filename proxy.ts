@@ -11,6 +11,16 @@ const publicRoutes = [
     whenAuthenticated: undefined,
     isPrefix: true,
   },
+  // Link público exigido pelas lojas de app para solicitação de exclusão de conta
+  {
+    path: "/exclusao-de-conta",
+    whenAuthenticated: undefined,
+  },
+  // Link público exigido pelas lojas de app para a política de privacidade
+  {
+    path: "/politica-de-privacidade",
+    whenAuthenticated: undefined,
+  },
 ];
 
 const REDIRECT_WHEN_NOT_AUTHENTICATED = "/signin";
