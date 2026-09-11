@@ -2,22 +2,21 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Funcionario } from "@/src/model/funcionario";
-import TipoViagemSimples from "../components/tipo-viagem-simples";
 import ShowToast from "@/src/components/Toast";
 import SelectCooperativas from "../select/cooperativas";
 import SelectCentrosCusto from "../select/centros-custo";
-import LocationEntry, {
-  EMPTY_LOCATION,
-  LocationFormState,
-} from "../components/location-entry";
+import { EMPTY_LOCATION, LocationFormState } from "../components/location-entry";
 import { Modal } from "@heroui/react";
 import { Button } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { Avatar } from "@heroui/react";
-import { Card } from "@heroui/react";
-import { Chip } from "@heroui/react";
-import { Switch } from "@heroui/react";
 import { fetchComLog } from "@/src/utils/log-fetch";
+import {
+  BlocoTrajeto,
+  ListaPassageiros,
+  OpcaoViagem,
+  Secao,
+  SeletorTipoViagem,
+} from "./partes";
 
 interface LocationCoordinate {
   lat: number;
@@ -38,6 +37,22 @@ interface Props {
   empresa: string;
   token: string;
 }
+
+// Os valores são os que a API espera — o texto visível fica só no título.
+const TIPOS_VIAGEM: OpcaoViagem[] = [
+  {
+    valor: "Apanha",
+    titulo: "Apanha",
+    descricao: "Casa → Trabalho",
+    icone: "solar:home-2-linear",
+  },
+  {
+    valor: "Retorno",
+    titulo: "Retorno",
+    descricao: "Trabalho → Casa",
+    icone: "solar:buildings-2-linear",
+  },
+];
 
 export default function UnifiedTripModal({
   isOpen,
@@ -100,8 +115,7 @@ export default function UnifiedTripModal({
       );
 
       if (centroCustoEncontrado) {
-        const valueString = centroCustoEncontrado.value.toString();
-        return valueString;
+        return centroCustoEncontrado.value.toString();
       }
 
       return "";
@@ -267,9 +281,7 @@ export default function UnifiedTripModal({
       const destName = destination.place?.name || "Destino";
       const stopsCount = intermediateStops.length;
       const stopsText =
-        stopsCount > 0
-          ? ` (${stopsCount} parada${stopsCount > 1 ? "s" : ""})`
-          : "";
+        stopsCount > 0 ? ` (${stopsCount} parada${stopsCount > 1 ? "s" : ""})` : "";
       return `${originName} → ${destName}${stopsText}`;
     }
 
@@ -279,175 +291,81 @@ export default function UnifiedTripModal({
   return (
     <Modal>
       <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpen}>
-        <Modal.Container size="lg" scroll="inside" className="!max-w-2xl">
-          <Modal.Dialog>
+        <Modal.Container scroll="inside">
+          {/* A largura fica no Dialog: é ele que carrega o max-w do tamanho,
+              o Container é só o wrapper externo. */}
+          <Modal.Dialog className="w-full max-w-4xl">
             {({ close }) => (
               <>
                 <Modal.CloseTrigger />
                 <Modal.Header>
                   <Modal.Heading>
-                    Solicitar Viagem
-                    <p className="text-sm text-muted font-normal">
+                    Solicitar viagem
+                    <p className="text-sm font-normal text-muted">
+                      {passagers.length}{" "}
+                      {passagers.length === 1 ? "passageiro" : "passageiros"} ·{" "}
                       {getTripTypeDescription()}
                     </p>
                   </Modal.Heading>
                 </Modal.Header>
 
-                <Modal.Body className="gap-6">
-              {/* Passageiros selecionados */}
-              <Card>
-                <Card.Header>
-                  <div className="flex items-center gap-2">
-                    <Icon icon="solar:users-group-rounded-linear" className="text-lg" />
-                    <span className="text-sm font-medium">
-                      Passageiros ({passagers.length})
-                    </span>
-                  </div>
-                </Card.Header>
-                <Card.Content className="pt-0">
-                  <div className="flex flex-wrap gap-2">
-                    {passagers.map((passager) => (
-                      <Chip key={passager.id} variant="tertiary" color="accent">
-                        <Avatar size="sm">
-                          <Avatar.Fallback>
-                            {passager.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
-                          </Avatar.Fallback>
-                        </Avatar>
-                        {passager.name}
-                      </Chip>
-                    ))}
-                  </div>
-                </Card.Content>
-              </Card>
+                {/* @container: as colunas reagem à largura do modal, não à da janela. */}
+                <Modal.Body className="@container gap-6">
+                  <Secao titulo="Passageiros">
+                    <ListaPassageiros passageiros={passagers} />
+                  </Secao>
 
-              {/* Toggle para viagem personalizada */}
-              <div className="flex items-center justify-between p-4 bg-default rounded-lg">
-                <div>
-                  <h4 className="text-sm font-medium">Viagem Personalizada</h4>
-                  <p className="text-xs text-muted">
-                    Definir locais de origem e destino personalizados
-                  </p>
-                </div>
-                <Switch
-                  isSelected={isFlexibleTrip}
-                  onChange={setIsFlexibleTrip}
-                  aria-label="Ativar viagem personalizada"
-                >
-                  <Switch.Content>
-                    <Switch.Control>
-                      <Switch.Thumb />
-                    </Switch.Control>
-                  </Switch.Content>
-                </Switch>
-              </div>
-
-              {!isFlexibleTrip ? (
-                /* Viagem normal */
-                <TipoViagemSimples selectedPlan={selectedPlan} setSelectedPlan={setSelectedPlan} />
-              ) : (
-                /* Viagem personalizada */
-                <div className="space-y-4">
-                  {/* Origem */}
-                  <LocationEntry
-                    label="Origem"
-                    placeholder="Buscar local de origem..."
-                    icon="solar:routing-2-linear"
-                    location={origin}
-                    onPlaceSelect={(place) =>
-                      updateLocation(setOrigin, { place })
-                    }
-                    onUpdate={(updates) =>
-                      updateLocation(setOrigin, updates)
-                    }
-                  />
-
-                  {/* Paradas intermediárias */}
-                  {intermediateStops.length > 0 && (
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2 px-1">
-                        <Icon icon="solar:map-point-wave-linear" className="text-muted" />
-                        <span className="text-xs font-medium text-muted">
-                          Paradas intermediárias ({intermediateStops.length})
-                        </span>
-                      </div>
-                      {intermediateStops.map((stop, index) => (
-                        <LocationEntry
-                          key={index}
-                          label={`Parada ${index + 1}`}
-                          placeholder="Buscar local da parada..."
-                          icon="solar:map-point-linear"
-                          location={stop}
-                          onPlaceSelect={(place) =>
-                            updateIntermediateStop(index, { place })
-                          }
-                          onUpdate={(updates) =>
-                            updateIntermediateStop(index, updates)
-                          }
-                          onRemove={() => removeIntermediateStop(index)}
-                        />
-                      ))}
-                    </div>
+                  {!isFlexibleTrip && (
+                    <Secao titulo="Tipo de viagem">
+                      <SeletorTipoViagem
+                        opcoes={TIPOS_VIAGEM}
+                        valor={selectedPlan}
+                        onChange={setSelectedPlan}
+                        rotulo="Tipo de viagem"
+                        className="@xl:grid-cols-2"
+                      />
+                    </Secao>
                   )}
 
-                  {/* Botão adicionar parada */}
-                  <Button
-                    size="sm"
-                    variant="tertiary"
-                    onPress={addIntermediateStop}
-                    className="w-full"
-                  >
-                    <Icon icon="solar:add-circle-linear" />
-                    Adicionar parada intermediária
-                  </Button>
+                  <Secao titulo="Trajeto">
+                    <BlocoTrajeto
+                      ativo={isFlexibleTrip}
+                      onAtivoChange={setIsFlexibleTrip}
+                      origem={origin}
+                      destino={destination}
+                      paradas={intermediateStops}
+                      onOrigemUpdate={(updates) => updateLocation(setOrigin, updates)}
+                      onDestinoUpdate={(updates) => updateLocation(setDestination, updates)}
+                      onParadaUpdate={updateIntermediateStop}
+                      onParadaAdd={addIntermediateStop}
+                      onParadaRemove={removeIntermediateStop}
+                    />
+                  </Secao>
 
-                  {/* Destino */}
-                  <LocationEntry
-                    label="Destino"
-                    placeholder="Buscar local de destino..."
-                    icon="solar:flag-linear"
-                    location={destination}
-                    onPlaceSelect={(place) =>
-                      updateLocation(setDestination, { place })
-                    }
-                    onUpdate={(updates) =>
-                      updateLocation(setDestination, updates)
-                    }
-                  />
-                </div>
-              )}
-
-              {/* Cooperativa e Centro de custo */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <SelectCooperativas
-                  empresa={empresa}
-                  setCooperativa={setCooperativa}
-                  token={token}
-                />
-
-                <SelectCentrosCusto
-                  empresa={empresa}
-                  setCentroCusto={setCentroCusto}
-                  initialCentroCusto={centroCusto}
-                  token={token}
-                />
-              </div>
+                  <Secao titulo="Cobrança">
+                    <div className="grid grid-cols-1 gap-4 @xl:grid-cols-2">
+                      <SelectCooperativas
+                        empresa={empresa}
+                        setCooperativa={setCooperativa}
+                        token={token}
+                      />
+                      <SelectCentrosCusto
+                        empresa={empresa}
+                        setCentroCusto={setCentroCusto}
+                        initialCentroCusto={centroCusto}
+                        token={token}
+                      />
+                    </div>
+                  </Secao>
                 </Modal.Body>
 
                 <Modal.Footer>
-                  <Button
-                    variant="danger-soft"
-                    onPress={close}
-                    isDisabled={isLoading}
-                  >
+                  <Button variant="tertiary" onPress={close} isDisabled={isLoading}>
                     Cancelar
                   </Button>
-                  <Button
-                    variant="primary"
-                    onPress={handleSubmit}
-                    isPending={isLoading}
-                  >
-                    {!isLoading && <Icon icon="solar:car-linear" />}
-                    {isLoading ? "Criando..." : "Criar Viagem"}
+                  <Button variant="primary" onPress={handleSubmit} isPending={isLoading}>
+                    {!isLoading && <Icon icon="solar:car-linear" className="size-4" />}
+                    {isLoading ? "Criando..." : "Criar viagem"}
                   </Button>
                 </Modal.Footer>
               </>

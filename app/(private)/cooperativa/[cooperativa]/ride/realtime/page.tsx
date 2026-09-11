@@ -1,13 +1,15 @@
-import ViagemList from "./viagem-list";
+import ViagensRealtimeList from "@/src/components/ViagensRealtimeList";
 
+// Na área da cooperativa o id vem da rota: sem seletor.
 const App = async (props: { params: Promise<{ cooperativa: string }> }) => {
-  const params = await props.params;
+  const { cooperativa } = await props.params;
 
-  // Para cooperativas, usamos diretamente o ID da cooperativa
-  // Não precisamos buscar lista de cooperativas como no layout de empresa
-  const cooperativaId = params.cooperativa;
-
-  return <ViagemList cooperativaId={cooperativaId} />;
+  return (
+    <ViagensRealtimeList
+      basePath={`/cooperativa/${cooperativa}/ride/realtime`}
+      cooperativaId={cooperativa}
+    />
+  );
 };
 
 export default App;

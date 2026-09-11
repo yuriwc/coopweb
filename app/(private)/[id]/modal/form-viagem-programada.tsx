@@ -2,7 +2,6 @@
 
 import { Funcionario } from "@/src/model/funcionario";
 import { Button } from "@heroui/react";
-import TipoViagem from "../tipoViagem";
 import { useState } from "react";
 import { DateValue, RangeCalendar, RangeValue } from "@heroui/react";
 import {
@@ -11,29 +10,24 @@ import {
   isWeekend,
   getDayOfWeek,
 } from "@internationalized/date";
-import {
-  Checkbox,
-  TimeField,
-  Label,
-  type TimeValue,
-} from "@heroui/react";
+import { Checkbox, TimeField, Label, type TimeValue } from "@heroui/react";
 import { DateInputGroup } from "@heroui/react/date-input-group";
 import type { DateSegment } from "@react-stately/datepicker";
-import { Switch } from "@heroui/react";
 import { useLocale } from "@react-aria/i18n";
 import SelectCooperativas from "../select/cooperativas";
 import SelectCentrosCusto from "../select/centros-custo";
-import LocationEntry, {
-  EMPTY_LOCATION,
-  LocationFormState,
-} from "../components/location-entry";
+import { EMPTY_LOCATION, LocationFormState } from "../components/location-entry";
 import { Modal } from "@heroui/react";
-import { Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { Avatar } from "@heroui/react";
-import { Card } from "@heroui/react";
 import ShowToast from "@/src/components/Toast";
 import { fetchComLog } from "@/src/utils/log-fetch";
+import {
+  BlocoTrajeto,
+  ListaPassageiros,
+  OpcaoViagem,
+  Secao,
+  SeletorTipoViagem,
+} from "./partes";
 
 interface LocationDTO {
   lat: number;
@@ -60,6 +54,28 @@ const DEFAULT_PERIOD = {
   end: today(getLocalTimeZone()).add({ weeks: 4 }),
 };
 
+// Os valores são os que a API espera — o texto visível fica só no título.
+const PLANOS: OpcaoViagem[] = [
+  {
+    valor: "Apanha",
+    titulo: "Apanha",
+    descricao: "Casa → Trabalho",
+    icone: "solar:home-2-linear",
+  },
+  {
+    valor: "Retorno",
+    titulo: "Retorno",
+    descricao: "Trabalho → Casa",
+    icone: "solar:buildings-2-linear",
+  },
+  {
+    valor: "APANHA_E_RETORNO",
+    titulo: "Apanha e retorno",
+    descricao: "Ida e volta no mesmo dia",
+    icone: "solar:refresh-circle-linear",
+  },
+];
+
 export default function ScheduledTripModal({
   isOpen,
   onOpen,
@@ -83,6 +99,13 @@ export default function ScheduledTripModal({
   const [origin, setOrigin] = useState<LocationFormState>({ ...EMPTY_LOCATION });
   const [destination, setDestination] = useState<LocationFormState>({ ...EMPTY_LOCATION });
   const [intermediateStops, setIntermediateStops] = useState<LocationFormState[]>([]);
+
+  const ehApanhaERetorno = selectedPlan === "APANHA_E_RETORNO";
+  const rotuloHoraPrincipal = ehApanhaERetorno
+    ? "Hora da apanha"
+    : selectedPlan === "Retorno"
+      ? "Hora do retorno"
+      : "Hora da viagem";
 
   const updateLocation = (
     setter: React.Dispatch<React.SetStateAction<LocationFormState>>,
@@ -132,6 +155,11 @@ export default function ScheduledTripModal({
       return false;
     }
 
+    if (!cooperativa) {
+      ShowToast({ color: "danger", title: "Selecione uma cooperativa!" });
+      return false;
+    }
+
     if (new Set(cidades).size !== 1) {
       ShowToast({
         color: "danger",
@@ -161,17 +189,11 @@ export default function ScheduledTripModal({
     }
 
     if (!horaViagem) {
-      ShowToast({
-        color: "danger",
-        title:
-          selectedPlan === "RETORNO"
-            ? "Informe a hora do retorno!"
-            : "Informe a hora da viagem!",
-      });
+      ShowToast({ color: "danger", title: `Informe a ${rotuloHoraPrincipal.toLowerCase()}!` });
       return false;
     }
 
-    if (selectedPlan === "APANHA_E_RETORNO" && !horaRetorno) {
+    if (ehApanhaERetorno && !horaRetorno) {
       ShowToast({ color: "danger", title: "Informe a hora do retorno!" });
       return false;
     }
@@ -203,7 +225,7 @@ export default function ScheduledTripModal({
       dataInicial: value?.start,
       dataFinal: value?.end,
       horaViagem,
-      horaRetorno: selectedPlan === "APANHA_E_RETORNO" ? horaRetorno : undefined,
+      horaRetorno: ehApanhaERetorno ? horaRetorno : undefined,
     };
 
     if (isFlexibleTrip) {
@@ -285,250 +307,170 @@ export default function ScheduledTripModal({
   return (
     <Modal>
       <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpen}>
-        <Modal.Container size="lg" scroll="inside">
-          <Modal.Dialog>
+        <Modal.Container scroll="inside">
+          {/* A largura fica no Dialog: é ele que carrega o max-w do tamanho,
+              o Container é só o wrapper externo. */}
+          <Modal.Dialog className="w-full max-w-6xl">
             {({ close }) => (
               <>
                 <Modal.CloseTrigger />
                 <Modal.Header>
                   <Modal.Heading>
-                    Programar Viagem
-                    <p className="text-sm text-muted font-normal">
-                      Configure uma viagem recorrente para os passageiros selecionados
+                    Programar viagem
+                    <p className="text-sm font-normal text-muted">
+                      Viagem recorrente para {passagers.length}{" "}
+                      {passagers.length === 1 ? "passageiro" : "passageiros"}
                     </p>
                   </Modal.Heading>
                 </Modal.Header>
 
-                <Modal.Body className="gap-6">
-              {/* Passageiros selecionados */}
-              <Card>
-                <Card.Header>
-                  <div className="flex items-center gap-2">
-                    <Icon icon="solar:users-group-rounded-linear" className="text-lg" />
-                    <span className="text-sm font-medium">
-                      Passageiros ({passagers.length})
-                    </span>
-                  </div>
-                </Card.Header>
-                <Card.Content className="pt-0">
-                  <div className="flex flex-wrap gap-2">
-                    {passagers.map((passager) => (
-                      <Chip key={passager.id} variant="tertiary" color="accent">
-                        <Avatar size="sm">
-                          <Avatar.Fallback>
-                            {passager.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
-                          </Avatar.Fallback>
-                        </Avatar>
-                        {passager.name}
-                      </Chip>
-                    ))}
-                  </div>
-                </Card.Content>
-              </Card>
+                {/* @container: as colunas reagem à largura do modal, não à da janela. */}
+                <Modal.Body className="@container gap-6">
+                  <Secao titulo="Passageiros">
+                    <ListaPassageiros passageiros={passagers} />
+                  </Secao>
 
-              {/* Cooperativa e tipo de viagem */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <SelectCooperativas
-                  setCooperativa={setCooperativa}
-                  empresa={empresa}
-                  token={token}
-                />
-                <TipoViagem selectedPlan={selectedPlan} setSelectedPlan={setSelectedPlan} />
-              </div>
+                  <Secao titulo="Plano de viagem">
+                    <SeletorTipoViagem
+                      opcoes={PLANOS}
+                      valor={selectedPlan}
+                      onChange={setSelectedPlan}
+                      rotulo="Plano de viagem"
+                      className="@2xl:grid-cols-3"
+                    />
+                  </Secao>
 
-              {/* Toggle para viagem personalizada */}
-              <div className="flex items-center justify-between p-4 bg-default rounded-lg">
-                <div>
-                  <h4 className="text-sm font-medium">Viagem Personalizada</h4>
-                  <p className="text-xs text-muted">
-                    Definir locais de origem e destino personalizados
-                  </p>
-                </div>
-                <Switch
-                  isSelected={isFlexibleTrip}
-                  onChange={setIsFlexibleTrip}
-                  aria-label="Ativar viagem personalizada"
-                >
-                  <Switch.Content>
-                    <Switch.Control>
-                      <Switch.Thumb />
-                    </Switch.Control>
-                  </Switch.Content>
-                </Switch>
-              </div>
+                  {/* Período e horários lado a lado: o calendário tem largura
+                      própria e precisa de uma coluna que caiba nela. */}
+                  <div className="grid gap-6 @4xl:grid-cols-[auto_minmax(0,1fr)]">
+                    <Secao titulo="Período">
+                      <div className="space-y-4">
+                        <RangeCalendar
+                          aria-label="Período da viagem"
+                          value={value}
+                          onChange={setValue}
+                          isDateUnavailable={(date) =>
+                            (evitarFinsDeSemana && isWeekend(date, locale)) ||
+                            (evitarDomingos && getDayOfWeek(date, locale) === 0)
+                          }
+                        >
+                          <RangeCalendar.Header>
+                            <RangeCalendar.Heading />
+                            <RangeCalendar.NavButton slot="previous" />
+                            <RangeCalendar.NavButton slot="next" />
+                          </RangeCalendar.Header>
+                          <RangeCalendar.Grid>
+                            <RangeCalendar.GridHeader>
+                              {(day) => (
+                                <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>
+                              )}
+                            </RangeCalendar.GridHeader>
+                            <RangeCalendar.GridBody>
+                              {(date) => <RangeCalendar.Cell date={date} />}
+                            </RangeCalendar.GridBody>
+                          </RangeCalendar.Grid>
+                        </RangeCalendar>
 
-              {!isFlexibleTrip ? (
-                <p className="text-xs text-muted">
-                  <Icon icon="solar:info-circle-linear" className="w-3.5 h-3.5 inline mr-1" />
-                  O sistema usará automaticamente o endereço cadastrado dos passageiros e da
-                  empresa conforme o tipo de viagem.
-                </p>
-              ) : (
-                <div className="space-y-4">
-                  <LocationEntry
-                    label="Origem"
-                    placeholder="Buscar local de origem..."
-                    icon="solar:routing-2-linear"
-                    location={origin}
-                    onPlaceSelect={(place) => updateLocation(setOrigin, { place })}
-                    onUpdate={(updates) => updateLocation(setOrigin, updates)}
-                  />
-
-                  {intermediateStops.length > 0 && (
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2 px-1">
-                        <Icon icon="solar:map-point-wave-linear" className="text-muted" />
-                        <span className="text-xs font-medium text-muted">
-                          Paradas intermediárias ({intermediateStops.length})
-                        </span>
+                        <div className="space-y-2">
+                          <Checkbox
+                            id="evitar-fins-de-semana"
+                            onChange={() => setEvitarFinsDeSemana(!evitarFinsDeSemana)}
+                            isSelected={evitarFinsDeSemana}
+                          >
+                            <Checkbox.Content>
+                              <Checkbox.Control>
+                                <Checkbox.Indicator />
+                              </Checkbox.Control>
+                              <span className="text-sm">Evitar fins de semana</span>
+                            </Checkbox.Content>
+                          </Checkbox>
+                          <Checkbox
+                            id="evitar-domingos"
+                            onChange={() => setEvitarDomingos(!evitarDomingos)}
+                            isSelected={evitarDomingos}
+                          >
+                            <Checkbox.Content>
+                              <Checkbox.Control>
+                                <Checkbox.Indicator />
+                              </Checkbox.Control>
+                              <span className="text-sm">Evitar domingos</span>
+                            </Checkbox.Content>
+                          </Checkbox>
+                        </div>
                       </div>
-                      {intermediateStops.map((stop, index) => (
-                        <LocationEntry
-                          key={index}
-                          label={`Parada ${index + 1}`}
-                          placeholder="Buscar local da parada..."
-                          icon="solar:map-point-linear"
-                          location={stop}
-                          onPlaceSelect={(place) => updateIntermediateStop(index, { place })}
-                          onUpdate={(updates) => updateIntermediateStop(index, updates)}
-                          onRemove={() => removeIntermediateStop(index)}
+                    </Secao>
+
+                    <div className="space-y-6">
+                      <Secao titulo="Horários">
+                        <div className="grid gap-4 @4xl:grid-cols-2">
+                          <TimeField
+                            hourCycle={24}
+                            isRequired
+                            onChange={setHoraViagem}
+                            value={horaViagem}
+                          >
+                            <Label>{rotuloHoraPrincipal}</Label>
+                            <DateInputGroup variant="secondary">
+                              <DateInputGroup.Input>
+                                {(segment: DateSegment) => (
+                                  <DateInputGroup.Segment segment={segment} />
+                                )}
+                              </DateInputGroup.Input>
+                            </DateInputGroup>
+                          </TimeField>
+
+                          {ehApanhaERetorno && (
+                            <TimeField
+                              hourCycle={24}
+                              isRequired
+                              onChange={setHoraRetorno}
+                              value={horaRetorno}
+                            >
+                              <Label>Hora do retorno</Label>
+                              <DateInputGroup variant="secondary">
+                                <DateInputGroup.Input>
+                                  {(segment: DateSegment) => (
+                                    <DateInputGroup.Segment segment={segment} />
+                                  )}
+                                </DateInputGroup.Input>
+                              </DateInputGroup>
+                            </TimeField>
+                          )}
+                        </div>
+                      </Secao>
+
+                      <Secao titulo="Trajeto">
+                        <BlocoTrajeto
+                          ativo={isFlexibleTrip}
+                          onAtivoChange={setIsFlexibleTrip}
+                          origem={origin}
+                          destino={destination}
+                          paradas={intermediateStops}
+                          onOrigemUpdate={(updates) => updateLocation(setOrigin, updates)}
+                          onDestinoUpdate={(updates) => updateLocation(setDestination, updates)}
+                          onParadaUpdate={updateIntermediateStop}
+                          onParadaAdd={addIntermediateStop}
+                          onParadaRemove={removeIntermediateStop}
                         />
-                      ))}
-                    </div>
-                  )}
+                      </Secao>
 
-                  <Button
-                    size="sm"
-                    variant="tertiary"
-                    onPress={addIntermediateStop}
-                    className="w-full"
-                  >
-                    <Icon icon="solar:add-circle-linear" />
-                    Adicionar parada intermediária
-                  </Button>
-
-                  <LocationEntry
-                    label="Destino"
-                    placeholder="Buscar local de destino..."
-                    icon="solar:flag-linear"
-                    location={destination}
-                    onPlaceSelect={(place) => updateLocation(setDestination, { place })}
-                    onUpdate={(updates) => updateLocation(setDestination, updates)}
-                  />
-                </div>
-              )}
-
-              <SelectCentrosCusto
-                empresa={empresa}
-                setCentroCusto={setCentroCusto}
-                initialCentroCusto={centroCusto}
-                token={token}
-              />
-
-              <div className="h-px bg-gray-200 dark:bg-gray-700" />
-
-              {/* Período e horários */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">
-                    Período da Viagem
-                  </h3>
-                  <div className="space-y-4">
-                    <RangeCalendar
-                      aria-label="Data da Viagem"
-                      value={value}
-                      onChange={setValue}
-                      isDateUnavailable={(date) =>
-                        (evitarFinsDeSemana && isWeekend(date, locale)) ||
-                        (evitarDomingos && getDayOfWeek(date, locale) === 0)
-                      }
-                      className="w-full"
-                    >
-                      <RangeCalendar.Header>
-                        <RangeCalendar.Heading />
-                        <RangeCalendar.NavButton slot="previous" />
-                        <RangeCalendar.NavButton slot="next" />
-                      </RangeCalendar.Header>
-                      <RangeCalendar.Grid className="w-full">
-                        <RangeCalendar.GridHeader>
-                          {(day) => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
-                        </RangeCalendar.GridHeader>
-                        <RangeCalendar.GridBody>
-                          {(date) => <RangeCalendar.Cell date={date} />}
-                        </RangeCalendar.GridBody>
-                      </RangeCalendar.Grid>
-                    </RangeCalendar>
-                    <div className="space-y-2">
-                      <Checkbox
-                        id="evitar-fins-de-semana"
-                        onChange={() => setEvitarFinsDeSemana(!evitarFinsDeSemana)}
-                        isSelected={evitarFinsDeSemana}
-                      >
-                        <Checkbox.Content>
-                          <Checkbox.Control>
-                            <Checkbox.Indicator />
-                          </Checkbox.Control>
-                          <span className="text-sm">Evitar fins de semana</span>
-                        </Checkbox.Content>
-                      </Checkbox>
-                      <Checkbox
-                        id="evitar-domingos"
-                        onChange={() => setEvitarDomingos(!evitarDomingos)}
-                        isSelected={evitarDomingos}
-                      >
-                        <Checkbox.Content>
-                          <Checkbox.Control>
-                            <Checkbox.Indicator />
-                          </Checkbox.Control>
-                          <span className="text-sm">Evitar domingos</span>
-                        </Checkbox.Content>
-                      </Checkbox>
+                      <Secao titulo="Cobrança">
+                        <div className="grid gap-4 @4xl:grid-cols-2">
+                          <SelectCooperativas
+                            setCooperativa={setCooperativa}
+                            empresa={empresa}
+                            token={token}
+                          />
+                          <SelectCentrosCusto
+                            empresa={empresa}
+                            setCentroCusto={setCentroCusto}
+                            initialCentroCusto={centroCusto}
+                            token={token}
+                          />
+                        </div>
+                      </Secao>
                     </div>
                   </div>
-                </div>
-
-                <div>
-                  <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">
-                    Horários
-                  </h3>
-                  <div className="space-y-4">
-                    <TimeField
-                      hourCycle={24}
-                      isRequired
-                      onChange={setHoraViagem}
-                      value={horaViagem}
-                    >
-                      <Label>
-                        {selectedPlan === "RETORNO"
-                          ? "Hora do retorno"
-                          : selectedPlan === "APANHA_E_RETORNO"
-                            ? "Hora da apanha"
-                            : "Hora da viagem"}
-                      </Label>
-                      <DateInputGroup variant="secondary">
-                        <DateInputGroup.Input>
-                          {(segment: DateSegment) => <DateInputGroup.Segment segment={segment} />}
-                        </DateInputGroup.Input>
-                      </DateInputGroup>
-                    </TimeField>
-                    {selectedPlan === "APANHA_E_RETORNO" && (
-                      <TimeField
-                        hourCycle={24}
-                        isRequired
-                        onChange={setHoraRetorno}
-                        value={horaRetorno}
-                      >
-                        <Label>Hora do retorno</Label>
-                        <DateInputGroup variant="secondary">
-                          <DateInputGroup.Input>
-                            {(segment: DateSegment) => <DateInputGroup.Segment segment={segment} />}
-                          </DateInputGroup.Input>
-                        </DateInputGroup>
-                      </TimeField>
-                    )}
-                  </div>
-                </div>
-              </div>
                 </Modal.Body>
 
                 <Modal.Footer>
@@ -540,8 +482,10 @@ export default function ScheduledTripModal({
                     onPress={handleSolicitarViagem}
                     isPending={isLoading}
                   >
-                    {!isLoading && <Icon icon="solar:calendar-add-linear" className="w-4 h-4" />}
-                    {isLoading ? "Programando..." : "Programar Viagem"}
+                    {!isLoading && (
+                      <Icon icon="solar:calendar-add-linear" className="size-4" />
+                    )}
+                    {isLoading ? "Programando..." : "Programar viagem"}
                   </Button>
                 </Modal.Footer>
               </>

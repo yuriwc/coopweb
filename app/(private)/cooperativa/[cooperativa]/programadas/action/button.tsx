@@ -55,6 +55,7 @@ export default function ActionButton({
       <Motorista motoristas={motoristas} setMotorista={setSelectedMotorista} />
       <Confirm
         name={selectedMotorista?.nome || ""}
+        isDisabled={!selectedMotorista}
         onCancel={async () => {}}
         onConfirm={async () => {
           if (selectedMotorista && idProgramacao) {

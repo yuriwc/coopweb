@@ -5,9 +5,11 @@ interface ModalProps {
   name: string;
   onConfirm: () => void;
   onCancel: () => Promise<unknown>;
+  /** Sem motorista escolhido não há o que confirmar. */
+  isDisabled?: boolean;
 }
 
-export default function App({ name, onCancel, onConfirm }: ModalProps) {
+export default function App({ name, onCancel, onConfirm, isDisabled }: ModalProps) {
   const { isOpen, open, setOpen } = useOverlayState();
 
   const handleClose = (close: () => void) => {
@@ -21,7 +23,12 @@ export default function App({ name, onCancel, onConfirm }: ModalProps) {
 
   return (
     <>
-      <Button variant="primary" className="shrink-0" onPress={open}>
+      <Button
+        variant="primary"
+        className="shrink-0"
+        onPress={open}
+        isDisabled={isDisabled}
+      >
         Alocar motorista
       </Button>
       <Modal>

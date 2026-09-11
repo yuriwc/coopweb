@@ -1,15 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@heroui/react";
-import { Card } from "@heroui/react";
-import { Chip } from "@heroui/react";
+import { Button, Chip, ComboBox, Input, Label, ListBox, cn } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { ComboBox, Input, ListBox, Label } from "@heroui/react";
 import { Spinner } from "@heroui/react/spinner";
 import { Modal, useOverlayState } from "@heroui/react";
-import { RelatorioCooperativaMes, VoucherCooperativa, EmpresaLabelValue } from "../../../../../src/model/relatorio-vouchers";
+import {
+  RelatorioCooperativaMes,
+  StatusVoucher,
+  VoucherCooperativa,
+  EmpresaLabelValue,
+} from "../../../../../src/model/relatorio-vouchers";
 import ShowToast from "../../../../../src/components/Toast";
 import VouchersCooperativaTable from "./vouchers-cooperativa-table";
 import { aprovarVoucher } from "./action/aprovar-voucher";
@@ -17,6 +19,7 @@ import { cancelarVoucher } from "./action/cancelar-voucher";
 import ConfirmarAcaoModal from "./modal/confirmar-acao-modal";
 import ConfirmarPagamentoModal from "./modal/confirmar-pagamento-modal";
 import AplicarDescontoModal from "./modal/aplicar-desconto-modal";
+import { Bezel, EASE, Rotulo, TONE, rise, type Tone } from "@/src/components/ui/superficies";
 
 interface LabelValue {
   value: string;
@@ -51,59 +54,106 @@ const ANOS = Array.from({ length: 5 }, (_, i) => {
   return { value: ano.toString(), label: ano.toString() };
 });
 
-const STATUS_OPTIONS = [
-  { value: "TODOS", label: "Todos" },
-  { value: "PENDENTE", label: "Pendente" },
-  { value: "APROVADO", label: "Aprovado" },
-  { value: "PAGO", label: "Pago" },
-  { value: "CANCELADO", label: "Cancelado" },
+// Os cartões de resumo também são o filtro de status: clicar filtra a tabela.
+const CARTOES: Array<{
+  valor: "TODOS" | StatusVoucher;
+  titulo: string;
+  icone: string;
+  tom: Tone;
+}> = [
+  { valor: "TODOS", titulo: "Total do período", icone: "solar:bill-list-linear", tom: "accent" },
+  { valor: "PENDENTE", titulo: "Aguardando aprovação", icone: "solar:clock-circle-linear", tom: "warning" },
+  { valor: "APROVADO", titulo: "Aguardando pagamento", icone: "solar:check-circle-linear", tom: "accent" },
+  { valor: "PAGO", titulo: "Pagos", icone: "solar:shield-check-linear", tom: "success" },
+  { valor: "CANCELADO", titulo: "Cancelados", icone: "solar:close-circle-linear", tom: "danger" },
 ];
 
-export default function FaturasClient({ 
-  cooperativaId, 
-  relatorioInicial, 
+const formatCurrency = (value: number) =>
+  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
+
+function FiltroCombo({
+  rotulo,
+  itens,
+  valor,
+  onChange,
+  placeholder,
+}: {
+  rotulo: string;
+  itens: LabelValue[];
+  valor: string;
+  onChange: (valor: string) => void;
+  placeholder: string;
+}) {
+  return (
+    <ComboBox
+      selectedKey={valor}
+      onSelectionChange={(key) => {
+        if (key) onChange(key as string);
+      }}
+      defaultItems={itens}
+      className="w-full"
+    >
+      <Label>{rotulo}</Label>
+      <ComboBox.InputGroup>
+        <Input placeholder={placeholder} />
+        <ComboBox.Trigger />
+      </ComboBox.InputGroup>
+      <ComboBox.Popover>
+        <ListBox>
+          {(item: LabelValue) => (
+            <ListBox.Item id={item.value} textValue={item.label}>
+              {item.label}
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          )}
+        </ListBox>
+      </ComboBox.Popover>
+    </ComboBox>
+  );
+}
+
+export default function FaturasClient({
+  cooperativaId,
+  relatorioInicial,
   empresasDisponiveis,
   errorInicial,
-  token
+  token,
 }: FaturasClientProps) {
   const router = useRouter();
   const [relatorio, setRelatorio] = useState<RelatorioCooperativaMes | null>(relatorioInicial);
   const [error, setError] = useState<string | null>(errorInicial);
   const [loading, setLoading] = useState(false);
-  
-  // Filtros
+  const [baixandoPdf, setBaixandoPdf] = useState(false);
+
   const [mesAtual] = useState(() => new Date().getMonth() + 1);
   const [anoAtual] = useState(() => new Date().getFullYear());
   const [mesSelecionado, setMesSelecionado] = useState<string>(mesAtual.toString());
   const [anoSelecionado, setAnoSelecionado] = useState<string>(anoAtual.toString());
   const [empresaSelecionada, setEmpresaSelecionada] = useState<string>("TODAS");
-  const [statusFiltro, setStatusFiltro] = useState<string>("TODOS");
-  
-  // Modal para relatório mensal
+  const [statusFiltro, setStatusFiltro] = useState<"TODOS" | StatusVoucher>("TODOS");
+
   const { isOpen, open, close } = useOverlayState();
   const [mesRelatorio, setMesRelatorio] = useState<string>(mesAtual.toString());
   const [anoRelatorio, setAnoRelatorio] = useState<string>(anoAtual.toString());
   const [loadingRelatorio, setLoadingRelatorio] = useState(false);
 
-  // Ações por voucher (aprovar/pagar/cancelar/desconto)
   const [vouchersProcessando, setVouchersProcessando] = useState<Set<string>>(new Set());
   const [voucherParaAprovar, setVoucherParaAprovar] = useState<VoucherCooperativa | null>(null);
   const [voucherParaCancelar, setVoucherParaCancelar] = useState<VoucherCooperativa | null>(null);
   const [voucherParaPagar, setVoucherParaPagar] = useState<VoucherCooperativa | null>(null);
   const [voucherParaDesconto, setVoucherParaDesconto] = useState<VoucherCooperativa | null>(null);
 
-  const buscarDados = async () => {
+  const buscarDados = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
-      // Construir URL com parâmetros
       const params = new URLSearchParams();
-      params.append('mes', mesSelecionado);
-      params.append('ano', anoSelecionado);
-      
+      params.append("mes", mesSelecionado);
+      params.append("ano", anoSelecionado);
+
       if (empresaSelecionada !== "TODAS") {
-        params.append('empresaId', empresaSelecionada);
+        params.append("empresaId", empresaSelecionada);
       }
 
       const response = await fetch(
@@ -117,8 +167,7 @@ export default function FaturasClient({
       );
 
       if (response.ok) {
-        const data = await response.json();
-        setRelatorio(data);
+        setRelatorio(await response.json());
       } else {
         setError(`Erro ${response.status}: ${response.statusText}`);
       }
@@ -128,16 +177,25 @@ export default function FaturasClient({
     } finally {
       setLoading(false);
     }
-  };
+  }, [cooperativaId, mesSelecionado, anoSelecionado, empresaSelecionada, token]);
+
+  // Mudou mês, ano ou empresa: busca sozinho. Antes era preciso lembrar de
+  // clicar em "Atualizar", enquanto o status filtrava na hora — dois
+  // comportamentos diferentes para filtros que parecem iguais.
+  const primeiraRenderizacao = useRef(true);
+  useEffect(() => {
+    if (primeiraRenderizacao.current) {
+      primeiraRenderizacao.current = false;
+      return;
+    }
+    buscarDados();
+  }, [buscarDados]);
 
   function marcarProcessando(voucherId: string, processando: boolean) {
     setVouchersProcessando((prev) => {
       const next = new Set(prev);
-      if (processando) {
-        next.add(voucherId);
-      } else {
-        next.delete(voucherId);
-      }
+      if (processando) next.add(voucherId);
+      else next.delete(voucherId);
       return next;
     });
   }
@@ -214,511 +272,321 @@ export default function FaturasClient({
     if (voucherId) marcarProcessando(voucherId, false);
   }
 
+  const baixarArquivo = async (url: string, nomeArquivo: string) => {
+    const response = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+
+    if (!response.ok) {
+      throw new Error(`Erro ${response.status}`);
+    }
+
+    const blob = await response.blob();
+    const objectUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = objectUrl;
+    link.download = nomeArquivo;
+    document.body.appendChild(link);
+    link.click();
+    window.URL.revokeObjectURL(objectUrl);
+    document.body.removeChild(link);
+  };
+
   const gerarPDF = async () => {
+    setBaixandoPdf(true);
     try {
-      // Construir URL com parâmetros
       const params = new URLSearchParams();
-      params.append('mes', mesSelecionado);
-      params.append('ano', anoSelecionado);
-      
+      params.append("mes", mesSelecionado);
+      params.append("ano", anoSelecionado);
       if (empresaSelecionada !== "TODAS") {
-        params.append('empresaId', empresaSelecionada);
+        params.append("empresaId", empresaSelecionada);
       }
 
-      const response = await fetch(
+      await baixarArquivo(
         `${process.env.NEXT_PUBLIC_SERVER}/api/v1/voucher/cooperativa/${cooperativaId}/mes/pdf?${params.toString()}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        `vouchers_${MESES.find((m) => m.value === mesSelecionado)?.label}_${anoSelecionado}.pdf`
       );
-
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `vouchers_${MESES.find(m => m.value === mesSelecionado)?.label}_${anoSelecionado}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      } else {
-        setError(`Erro ao gerar PDF: ${response.status}`);
-      }
     } catch (err) {
       console.error("Erro ao gerar PDF:", err);
-      setError("Erro ao gerar PDF");
+      ShowToast({ color: "danger", title: "Não foi possível gerar o PDF" });
+    } finally {
+      setBaixandoPdf(false);
     }
   };
 
   const gerarRelatorioMensal = async () => {
     setLoadingRelatorio(true);
-    
     try {
-      const response = await fetch(
+      await baixarArquivo(
         `${process.env.NEXT_PUBLIC_SERVER}/api/v1/relatorio/cooperativa/${cooperativaId}/motoristas/pdf?mes=${mesRelatorio}&ano=${anoRelatorio}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        `relatorio_mensal_${MESES.find((m) => m.value === mesRelatorio)?.label}_${anoRelatorio}.pdf`
       );
-
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `relatorio_mensal_${MESES.find(m => m.value === mesRelatorio)?.label}_${anoRelatorio}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-        close();
-      } else {
-        setError(`Erro ao gerar relatório: ${response.status}`);
-      }
+      close();
     } catch (err) {
       console.error("Erro ao gerar relatório:", err);
-      setError("Erro ao gerar relatório");
+      ShowToast({ color: "danger", title: "Não foi possível gerar o relatório" });
     } finally {
       setLoadingRelatorio(false);
     }
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value);
-  };
+  const resumo = useMemo(() => {
+    const vazio = { total: { quantidade: 0, valor: 0 } } as Record<
+      string,
+      { quantidade: number; valor: number }
+    >;
 
-  const getStatusStats = (vouchers: VoucherCooperativa[]) => {
-    const stats = vouchers.reduce((acc, voucher) => {
-      acc[voucher.status] = (acc[voucher.status] || 0) + 1;
+    const acumulado = (relatorio?.vouchers ?? []).reduce((acc, voucher) => {
+      const atual = acc[voucher.status] ?? { quantidade: 0, valor: 0 };
+      acc[voucher.status] = {
+        quantidade: atual.quantidade + 1,
+        valor: atual.valor + voucher.valorTotal,
+      };
+      acc.total = {
+        quantidade: acc.total.quantidade + 1,
+        valor: acc.total.valor + voucher.valorTotal,
+      };
       return acc;
-    }, {} as Record<string, number>);
+    }, vazio);
 
-    return {
-      PAGO: stats.PAGO || 0,
-      PENDENTE: stats.PENDENTE || 0,
-      APROVADO: stats.APROVADO || 0,
-    };
-  };
+    return acumulado;
+  }, [relatorio]);
 
-  const getValorTotalPorStatus = (vouchers: VoucherCooperativa[]) => {
-    return vouchers.reduce((acc, voucher) => {
-      acc[voucher.status] = (acc[voucher.status] || 0) + voucher.valorTotal;
-      return acc;
-    }, {} as Record<string, number>);
-  };
+  const vouchersFiltrados = useMemo(
+    () =>
+      (relatorio?.vouchers ?? []).filter((voucher) =>
+        statusFiltro === "TODOS" ? true : voucher.status === statusFiltro
+      ),
+    [relatorio, statusFiltro]
+  );
 
-  const vouchersFiltrados = relatorio?.vouchers.filter(voucher => {
-    if (statusFiltro === "TODOS") return true;
-    return voucher.status === statusFiltro;
-  }) || [];
-
-  const statusStats = relatorio ? getStatusStats(relatorio.vouchers) : { PAGO: 0, PENDENTE: 0, APROVADO: 0 };
-  const valorStats = relatorio ? getValorTotalPorStatus(relatorio.vouchers) : { PAGO: 0, PENDENTE: 0, APROVADO: 0 };
-
-  // Criar array de opções de empresas
-  const opcoesEmpresas = [
-    { value: "TODAS", label: "Todas as empresas" },
-    ...empresasDisponiveis
-  ];
+  const opcoesEmpresas = [{ value: "TODAS", label: "Todas as empresas" }, ...empresasDisponiveis];
+  const nomeMes = MESES.find((m) => m.value === mesSelecionado)?.label ?? "";
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto p-4 sm:p-8 max-w-7xl">
-        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <div className="flex items-center gap-4">
-            <Button variant="secondary" onPress={() => router.back()}>
-              ← Voltar
+    <div className="min-h-[calc(100dvh-4rem)]">
+      <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <header className="flex flex-col gap-3 motion-safe:animate-rise sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 items-center gap-3">
+            <Button
+              isIconOnly
+              variant="tertiary"
+              aria-label="Voltar"
+              className="shrink-0 rounded-full"
+              onPress={() => router.back()}
+            >
+              <Icon icon="solar:arrow-left-linear" className="size-4" />
             </Button>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
-                Faturas da Cooperativa
+            <div className="min-w-0">
+              <h1 className="truncate text-xl font-semibold tracking-tight text-foreground">
+                Faturas da cooperativa
               </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Gestão de vouchers e pagamentos ·{" "}
-                {relatorio ? `${relatorio.total} vouchers` : "Carregando..."}
+              <p className="mt-0.5 text-sm text-muted">
+                {nomeMes} de {anoSelecionado}
+                {relatorio ? ` · ${relatorio.total} vouchers` : ""}
               </p>
             </div>
           </div>
 
-          <Button variant="tertiary" size="sm" onPress={open}>
-            <Icon icon="solar:file-chart-linear" />
-            Relatório Mensal
-          </Button>
+          <div className="flex shrink-0 flex-wrap items-center gap-2">
+            <Button variant="tertiary" size="sm" className="rounded-full" onPress={open}>
+              <Icon icon="solar:chart-square-linear" className="size-4" />
+              Relatório mensal
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="rounded-full"
+              onPress={gerarPDF}
+              isPending={baixandoPdf}
+              isDisabled={!relatorio}
+            >
+              {!baixandoPdf && <Icon icon="solar:download-linear" className="size-4" />}
+              Baixar PDF
+            </Button>
+          </div>
         </header>
 
-        {/* Filtros */}
-        <Card className="mb-6">
-          <Card.Content>
-            <div className="flex flex-col lg:flex-row gap-4">
-              <div className="flex flex-col sm:flex-row gap-4 flex-1">
-                <ComboBox
-                  selectedKey={mesSelecionado}
-                  onSelectionChange={(key) => {
-                    if (key) {
-                      setMesSelecionado(key as string);
-                    }
-                  }}
-                  className="max-w-xs"
-                  defaultItems={MESES}
-                >
-                  <Label>Mês</Label>
-                  <ComboBox.InputGroup>
-                    <Input placeholder="Buscar mês" />
-                    <ComboBox.Trigger />
-                  </ComboBox.InputGroup>
-                  <ComboBox.Popover>
-                    <ListBox>
-                      {(mes: LabelValue) => (
-                        <ListBox.Item id={mes.value} textValue={mes.label}>
-                          {mes.label}
-                          <ListBox.ItemIndicator />
-                        </ListBox.Item>
-                      )}
-                    </ListBox>
-                  </ComboBox.Popover>
-                </ComboBox>
+        {/* Filtros do servidor: mudar qualquer um recarrega os dados. */}
+        <Bezel
+          className="mt-5 motion-safe:animate-rise"
+          style={rise(60)}
+          coreClassName="flex flex-col gap-4 p-4 sm:flex-row sm:items-end"
+        >
+          <div className="grid flex-1 gap-4 sm:grid-cols-3">
+            <FiltroCombo
+              rotulo="Mês"
+              itens={MESES}
+              valor={mesSelecionado}
+              onChange={setMesSelecionado}
+              placeholder="Buscar mês"
+            />
+            <FiltroCombo
+              rotulo="Ano"
+              itens={ANOS}
+              valor={anoSelecionado}
+              onChange={setAnoSelecionado}
+              placeholder="Buscar ano"
+            />
+            <FiltroCombo
+              rotulo="Empresa"
+              itens={opcoesEmpresas}
+              valor={empresaSelecionada}
+              onChange={setEmpresaSelecionada}
+              placeholder="Buscar empresa"
+            />
+          </div>
 
-                <ComboBox
-                  selectedKey={anoSelecionado}
-                  onSelectionChange={(key) => {
-                    if (key) {
-                      setAnoSelecionado(key as string);
-                    }
-                  }}
-                  className="max-w-xs"
-                  defaultItems={ANOS}
-                >
-                  <Label>Ano</Label>
-                  <ComboBox.InputGroup>
-                    <Input placeholder="Buscar ano" />
-                    <ComboBox.Trigger />
-                  </ComboBox.InputGroup>
-                  <ComboBox.Popover>
-                    <ListBox>
-                      {(ano: LabelValue) => (
-                        <ListBox.Item id={ano.value} textValue={ano.label}>
-                          {ano.label}
-                          <ListBox.ItemIndicator />
-                        </ListBox.Item>
-                      )}
-                    </ListBox>
-                  </ComboBox.Popover>
-                </ComboBox>
+          <Button
+            isIconOnly
+            variant="tertiary"
+            className="shrink-0 rounded-full"
+            aria-label="Recarregar faturas"
+            onPress={() => buscarDados()}
+            isPending={loading}
+          >
+            {!loading && <Icon icon="solar:refresh-linear" className="size-4" />}
+          </Button>
+        </Bezel>
 
-                <ComboBox
-                  selectedKey={empresaSelecionada}
-                  onSelectionChange={(key) => {
-                    if (key) {
-                      setEmpresaSelecionada(key as string);
-                    }
-                  }}
-                  className="max-w-xs"
-                  defaultItems={opcoesEmpresas}
-                >
-                  <Label>Empresa</Label>
-                  <ComboBox.InputGroup>
-                    <Input placeholder="Buscar empresa" />
-                    <ComboBox.Trigger />
-                  </ComboBox.InputGroup>
-                  <ComboBox.Popover>
-                    <ListBox>
-                      {(empresa: LabelValue) => (
-                        <ListBox.Item id={empresa.value} textValue={empresa.label}>
-                          {empresa.label}
-                          <ListBox.ItemIndicator />
-                        </ListBox.Item>
-                      )}
-                    </ListBox>
-                  </ComboBox.Popover>
-                </ComboBox>
+        {/* Resumo que também filtra */}
+        <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-5">
+          {CARTOES.map((cartao, indice) => {
+            const dados =
+              cartao.valor === "TODOS"
+                ? resumo.total
+                : resumo[cartao.valor] ?? { quantidade: 0, valor: 0 };
+            const ativo = statusFiltro === cartao.valor;
 
-                <ComboBox
-                  selectedKey={statusFiltro}
-                  onSelectionChange={(key) => {
-                    if (key) {
-                      setStatusFiltro(key as string);
-                    }
-                  }}
-                  className="max-w-xs"
-                  defaultItems={STATUS_OPTIONS}
-                >
-                  <Label>Status</Label>
-                  <ComboBox.InputGroup>
-                    <Input placeholder="Buscar status" />
-                    <ComboBox.Trigger />
-                  </ComboBox.InputGroup>
-                  <ComboBox.Popover>
-                    <ListBox>
-                      {(status: LabelValue) => (
-                        <ListBox.Item id={status.value} textValue={status.label}>
-                          {status.label}
-                          <ListBox.ItemIndicator />
-                        </ListBox.Item>
-                      )}
-                    </ListBox>
-                  </ComboBox.Popover>
-                </ComboBox>
-              </div>
-
-              <Button
-                variant="primary"
-                onPress={() => buscarDados()}
-                isPending={loading}
-                className="self-end"
+            return (
+              <button
+                key={cartao.valor}
+                type="button"
+                aria-pressed={ativo}
+                onClick={() => setStatusFiltro(cartao.valor)}
+                className="group rounded-[1.75rem] text-left motion-safe:animate-rise focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                style={rise(100 + indice * 40)}
               >
-                {!loading && <Icon icon="solar:refresh-linear" />}
-                Atualizar
+                <Bezel
+                  className={cn(ativo && "ring-2 ring-accent")}
+                  coreClassName={cn(
+                    "flex h-full flex-col justify-between gap-3 p-4 transition-transform duration-500 group-hover:-translate-y-0.5",
+                    EASE
+                  )}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <Rotulo className="truncate">{cartao.titulo}</Rotulo>
+                    <span
+                      className={cn(
+                        "flex size-7 shrink-0 items-center justify-center rounded-lg",
+                        TONE[cartao.tom].soft,
+                        TONE[cartao.tom].text
+                      )}
+                    >
+                      <Icon icon={cartao.icone} className="size-4" />
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-lg font-semibold leading-none tracking-tight tabular-nums text-foreground">
+                      {formatCurrency(dados.valor)}
+                    </p>
+                    <p className={cn("mt-1.5 text-xs font-medium", TONE[cartao.tom].text)}>
+                      {dados.quantidade} voucher{dados.quantidade === 1 ? "" : "s"}
+                    </p>
+                  </div>
+                </Bezel>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Lista */}
+        <Bezel className="mt-4 motion-safe:animate-rise" style={rise(320)} coreClassName="p-5">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-base font-semibold text-foreground">Vouchers</h2>
+            {statusFiltro !== "TODOS" && (
+              <Chip size="sm" variant="tertiary" color="accent">
+                {CARTOES.find((c) => c.valor === statusFiltro)?.titulo}
+                <button
+                  type="button"
+                  aria-label="Limpar filtro de status"
+                  className="opacity-70 transition-opacity hover:opacity-100"
+                  onClick={() => setStatusFiltro("TODOS")}
+                >
+                  <Icon icon="solar:close-circle-linear" className="size-3.5" />
+                </button>
+              </Chip>
+            )}
+          </div>
+
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <Spinner size="lg" color="accent" />
+            </div>
+          ) : error ? (
+            <div className="flex flex-col items-center gap-4 px-6 py-16 text-center">
+              <span className="flex size-14 items-center justify-center rounded-full bg-danger-soft text-danger">
+                <Icon icon="solar:danger-circle-linear" className="size-7" />
+              </span>
+              <div>
+                <p className="font-semibold text-foreground">Erro ao carregar as faturas</p>
+                <p className="mt-1 text-sm text-muted">{error}</p>
+              </div>
+              <Button variant="tertiary" className="rounded-full" onPress={() => buscarDados()}>
+                <Icon icon="solar:refresh-linear" className="size-4" />
+                Tentar novamente
               </Button>
             </div>
-          </Card.Content>
-        </Card>
-
-        {/* Cards de Resumo */}
-        {relatorio && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-              {/* Total Geral */}
-              <Card className="border border-transparent dark:border-default">
-                <Card.Header className="pb-2">
-                  <div className="flex items-center gap-2">
-                    <Icon icon="solar:calculator-linear" className="w-5 h-5 text-blue-500" />
-                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Geral</span>
-                  </div>
-                </Card.Header>
-                <Card.Content className="pt-0">
-                  <div className="text-2xl font-bold text-gray-800 dark:text-white">
-                    {formatCurrency(relatorio.vouchers.reduce((acc, v) => acc + v.valorTotal, 0))}
-                  </div>
-                  <p className="text-xs text-gray-500">{relatorio.total} vouchers</p>
-                </Card.Content>
-              </Card>
-
-              {/* Pendentes */}
-              <Card className="border border-transparent dark:border-default">
-                <Card.Header className="pb-2">
-                  <div className="flex items-center gap-2">
-                    <Icon icon="solar:clock-circle-linear" className="w-5 h-5 text-yellow-500" />
-                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Pendentes</span>
-                  </div>
-                </Card.Header>
-                <Card.Content className="pt-0">
-                  <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
-                    {formatCurrency(valorStats.PENDENTE || 0)}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Chip size="sm" color="warning" variant="tertiary">
-                      {statusStats.PENDENTE} vouchers
-                    </Chip>
-                  </div>
-                </Card.Content>
-              </Card>
-
-              {/* Aprovados */}
-              <Card className="border border-transparent dark:border-default">
-                <Card.Header className="pb-2">
-                  <div className="flex items-center gap-2">
-                    <Icon icon="solar:check-circle-linear" className="w-5 h-5 text-blue-500" />
-                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Aprovados</span>
-                  </div>
-                </Card.Header>
-                <Card.Content className="pt-0">
-                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                    {formatCurrency(valorStats.APROVADO || 0)}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Chip size="sm" color="accent" variant="tertiary">
-                      {statusStats.APROVADO} vouchers
-                    </Chip>
-                  </div>
-                </Card.Content>
-              </Card>
-
-              {/* Pagos */}
-              <Card className="border border-transparent dark:border-default">
-                <Card.Header className="pb-2">
-                  <div className="flex items-center gap-2">
-                    <Icon icon="solar:shield-check-linear" className="w-5 h-5 text-green-500" />
-                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Pagos</span>
-                  </div>
-                </Card.Header>
-                <Card.Content className="pt-0">
-                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                    {formatCurrency(valorStats.PAGO || 0)}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Chip size="sm" color="success" variant="tertiary">
-                      {statusStats.PAGO} vouchers
-                    </Chip>
-                  </div>
-                </Card.Content>
-              </Card>
-          </div>
-        )}
-
-        {/* Tabela de Vouchers */}
-        <Card>
-          <Card.Content>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold text-gray-800 dark:text-white">
-                Lista de Vouchers
-              </h2>
-              <div className="flex items-center gap-2">
-                {statusFiltro !== "TODOS" && (
-                  <Chip size="sm" variant="tertiary" color="accent">
-                    Status: {statusFiltro}
-                  </Chip>
-                )}
-                {empresaSelecionada !== "TODAS" && (
-                  <Chip size="sm" variant="tertiary" color="default">
-                    Empresa: {empresasDisponiveis.find(e => e.value === empresaSelecionada)?.label || empresaSelecionada}
-                  </Chip>
-                )}
-                {relatorio && (
-                  <Chip size="sm" variant="tertiary" color="default">
-                    {MESES.find(m => m.value === mesSelecionado)?.label} {anoSelecionado}
-                  </Chip>
-                )}
-                {relatorio && (
-                  <Button
-                    variant="tertiary"
-                    size="sm"
-                    onPress={gerarPDF}
-                    className="text-success"
-                  >
-                    <Icon icon="solar:document-add-linear" />
-                    Gerar PDF
-                  </Button>
-                )}
-              </div>
-            </div>
-
-            {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <Spinner size="lg" color="accent" />
-              </div>
-            ) : error ? (
-              <div className="text-center py-12">
-                <div className="mb-4">
-                  <Icon icon="solar:danger-circle-linear" className="w-12 h-12 mx-auto text-red-500" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
-                  Erro ao carregar dados
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4">{error}</p>
-                <Button variant="tertiary" onPress={() => buscarDados()}>
-                  <Icon icon="solar:refresh-linear" />
-                  Tentar Novamente
-                </Button>
-              </div>
-            ) : relatorio ? (
-              <VouchersCooperativaTable
-                vouchers={vouchersFiltrados}
-                vouchersProcessando={vouchersProcessando}
-                onAprovar={handleAbrirAprovar}
-                onAbrirPagamento={handleAbrirPagamento}
-                onAbrirDesconto={handleAbrirDesconto}
-                onCancelar={handleAbrirCancelar}
-              />
-            ) : (
-              <div className="text-center py-12">
-                <div className="mb-4">
-                  <Icon icon="solar:document-linear" className="w-12 h-12 mx-auto text-gray-400" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
-                  Nenhum dado encontrado
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Não há vouchers para o período selecionado
-                </p>
-              </div>
-            )}
-          </Card.Content>
-        </Card>
+          ) : (
+            <VouchersCooperativaTable
+              vouchers={vouchersFiltrados}
+              vouchersProcessando={vouchersProcessando}
+              onAprovar={handleAbrirAprovar}
+              onAbrirPagamento={handleAbrirPagamento}
+              onAbrirDesconto={handleAbrirDesconto}
+              onCancelar={handleAbrirCancelar}
+            />
+          )}
+        </Bezel>
       </div>
 
-      {/* Modal para Relatório Mensal */}
+      {/* Relatório mensal */}
       <Modal>
-        <Modal.Backdrop isOpen={isOpen} onOpenChange={(open) => { if (!open) close(); }}>
-          <Modal.Container placement="center" size="sm">
-            <Modal.Dialog>
+        <Modal.Backdrop
+          isOpen={isOpen}
+          onOpenChange={(aberto) => {
+            if (!aberto) close();
+          }}
+        >
+          <Modal.Container placement="center">
+            <Modal.Dialog className="w-full max-w-lg">
               <Modal.CloseTrigger />
               <Modal.Header>
                 <Modal.Heading>
-                  <div className="flex items-center gap-2">
-                    <Icon icon="solar:file-chart-linear" className="w-5 h-5 text-orange-500" />
-                    <span>Relatório Mensal da Cooperativa</span>
-                  </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 font-normal">
-                    Relatório com o total gerado por motorista entre todas as empresas
+                  Relatório mensal
+                  <p className="text-sm font-normal text-muted">
+                    Total gerado por motorista, somando todas as empresas
                   </p>
                 </Modal.Heading>
               </Modal.Header>
               <Modal.Body>
-                <div className="flex flex-col gap-4">
-                  <ComboBox
-                    selectedKey={mesRelatorio}
-                    onSelectionChange={(key) => {
-                      if (key) {
-                        setMesRelatorio(key as string);
-                      }
-                    }}
-                    isRequired
-                    defaultItems={MESES}
-                  >
-                    <Label>Mês</Label>
-                    <ComboBox.InputGroup>
-                      <Input placeholder="Buscar mês" />
-                      <ComboBox.Trigger />
-                    </ComboBox.InputGroup>
-                    <ComboBox.Popover>
-                      <ListBox>
-                        {(mes: LabelValue) => (
-                          <ListBox.Item id={mes.value} textValue={mes.label}>
-                            {mes.label}
-                            <ListBox.ItemIndicator />
-                          </ListBox.Item>
-                        )}
-                      </ListBox>
-                    </ComboBox.Popover>
-                  </ComboBox>
-
-                  <ComboBox
-                    selectedKey={anoRelatorio}
-                    onSelectionChange={(key) => {
-                      if (key) {
-                        setAnoRelatorio(key as string);
-                      }
-                    }}
-                    isRequired
-                    defaultItems={ANOS}
-                  >
-                    <Label>Ano</Label>
-                    <ComboBox.InputGroup>
-                      <Input placeholder="Buscar ano" />
-                      <ComboBox.Trigger />
-                    </ComboBox.InputGroup>
-                    <ComboBox.Popover>
-                      <ListBox>
-                        {(ano: LabelValue) => (
-                          <ListBox.Item id={ano.value} textValue={ano.label}>
-                            {ano.label}
-                            <ListBox.ItemIndicator />
-                          </ListBox.Item>
-                        )}
-                      </ListBox>
-                    </ComboBox.Popover>
-                  </ComboBox>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <FiltroCombo
+                    rotulo="Mês"
+                    itens={MESES}
+                    valor={mesRelatorio}
+                    onChange={setMesRelatorio}
+                    placeholder="Buscar mês"
+                  />
+                  <FiltroCombo
+                    rotulo="Ano"
+                    itens={ANOS}
+                    valor={anoRelatorio}
+                    onChange={setAnoRelatorio}
+                    placeholder="Buscar ano"
+                  />
                 </div>
               </Modal.Body>
               <Modal.Footer>
-                <Button variant="danger-soft" onPress={close}>
+                <Button variant="tertiary" onPress={close} isDisabled={loadingRelatorio}>
                   Cancelar
                 </Button>
                 <Button
@@ -726,8 +594,8 @@ export default function FaturasClient({
                   onPress={gerarRelatorioMensal}
                   isPending={loadingRelatorio}
                 >
-                  {!loadingRelatorio && <Icon icon="solar:download-linear" />}
-                  Gerar Relatório
+                  {!loadingRelatorio && <Icon icon="solar:download-linear" className="size-4" />}
+                  Baixar relatório
                 </Button>
               </Modal.Footer>
             </Modal.Dialog>

@@ -1,6 +1,6 @@
-import { getToken } from "../../../../../src/utils/token/get-token";
-import ViagemList from "./viagem-list";
-import { ISelect } from "../../../../../src/interface/ISelect";
+import { getToken } from "@/src/utils/token/get-token";
+import ViagensRealtimeList from "@/src/components/ViagensRealtimeList";
+import { ISelect } from "@/src/interface/ISelect";
 
 const App = async (props: { params: Promise<{ id: string }> }) => {
   const params = await props.params;
@@ -28,7 +28,12 @@ const App = async (props: { params: Promise<{ id: string }> }) => {
     console.error("Erro ao buscar cooperativas:", err);
   }
 
-  return <ViagemList cooperativas={cooperativas} />;
+  return (
+    <ViagensRealtimeList
+      basePath={`/${params.id}/ride/realtime`}
+      cooperativas={cooperativas}
+    />
+  );
 };
 
 export default App;

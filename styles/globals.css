@@ -3,6 +3,59 @@
 @import "@heroui/styles";
 @config "../tailwind.config.js";
 
+@theme {
+  /* Entrada "com massa": sobe e aparece com curva de mola (só transform/opacity). */
+  --animate-rise: rise 0.8s cubic-bezier(0.32, 0.72, 0, 1) both;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/**
+ * Checkbox e radio visíveis.
+ *
+ * O tema padrão do HeroUI deixa os campos sem borda (--field-border: transparent,
+ * --field-border-width: 0px). Em campo com fundo preenchido isso funciona, mas o
+ * checkbox da tabela e o radio do plano de viagem viravam um vulto quase branco
+ * sobre fundo branco.
+ *
+ * A borda vai direto no elemento que a desenha, não pelos tokens: medindo no
+ * navegador, o valor herdado não acompanhava a troca de tema (token branco no
+ * pai e borda preta no filho). Dá ~3,3:1 contra o fundo, o mínimo que a
+ * WCAG 1.4.11 pede para limite de controle.
+ *
+ * O estado marcado do HeroUI tem especificidade maior e continua vencendo, então
+ * o controle seguirá preenchido com a cor de destaque quando selecionado.
+ */
+.checkbox__control,
+.radio__control {
+  border-width: 1px;
+  border-color: rgb(0 0 0 / 0.45);
+}
+
+.checkbox:not([data-selected="true"]):not([aria-checked="true"]):hover .checkbox__control,
+.radio:not([data-selected="true"]):not([aria-checked="true"]):hover .radio__control {
+  border-color: rgb(0 0 0 / 0.7);
+}
+
+.dark .checkbox__control,
+.dark .radio__control {
+  border-color: rgb(255 255 255 / 0.45);
+}
+
+.dark .checkbox:not([data-selected="true"]):not([aria-checked="true"]):hover .checkbox__control,
+.dark .radio:not([data-selected="true"]):not([aria-checked="true"]):hover .radio__control {
+  border-color: rgb(255 255 255 / 0.75);
+}
+
 body {
   font-family: "Inter", sans-serif;
   background-color: #F5F5F5;
