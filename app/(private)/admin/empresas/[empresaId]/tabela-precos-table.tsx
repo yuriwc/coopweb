@@ -13,37 +13,24 @@ function formatCurrency(value: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 }
 
-function Valor({ valor, sufixo }: { valor: number | null; sufixo?: string }) {
+function Valor({ valor }: { valor: number | null }) {
   if (valor == null) {
     return <span className="italic text-warning">não definido</span>;
   }
-  return (
-    <span className="tabular-nums">
-      {formatCurrency(valor)}
-      {sufixo ? <span className="text-muted">{sufixo}</span> : null}
-    </span>
-  );
+  return <span className="tabular-nums">{formatCurrency(valor)}</span>;
 }
 
 /** Lado da empresa em cima, da cooperativa embaixo — mesma ordem das colunas do formulário. */
-function ParValores({
-  empresa,
-  cooperativa,
-  sufixo,
-}: {
-  empresa: number | null;
-  cooperativa: number | null;
-  sufixo?: string;
-}) {
+function ParValores({ empresa, cooperativa }: { empresa: number | null; cooperativa: number | null }) {
   return (
     <dl className="grid grid-cols-[auto_auto] gap-x-2 gap-y-0.5 text-sm w-max">
       <dt className="text-xs text-muted self-center">Empresa</dt>
       <dd>
-        <Valor valor={empresa} sufixo={sufixo} />
+        <Valor valor={empresa} />
       </dd>
       <dt className="text-xs text-muted self-center">Cooperativa</dt>
       <dd>
-        <Valor valor={cooperativa} sufixo={sufixo} />
+        <Valor valor={cooperativa} />
       </dd>
     </dl>
   );
@@ -61,7 +48,7 @@ export default function TabelaPrecosTable({ rotas, onEditar, onDesativar }: Tabe
               <Table.Column isRowHeader>ROTA</Table.Column>
               <Table.Column>VALOR DA ROTA</Table.Column>
               <Table.Column>ROTEIRO EXTREMO</Table.Column>
-              <Table.Column>HORA PARADA</Table.Column>
+              <Table.Column>HORA PARADA (VALOR FIXO)</Table.Column>
               <Table.Column>AÇÕES</Table.Column>
             </Table.Header>
             <Table.Body items={rotas}>
@@ -96,7 +83,6 @@ export default function TabelaPrecosTable({ rotas, onEditar, onDesativar }: Tabe
                       <ParValores
                         empresa={item[horaParada.empresa]}
                         cooperativa={item[horaParada.cooperativa]}
-                        sufixo="/h"
                       />
                     </Table.Cell>
                     <Table.Cell>
