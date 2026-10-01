@@ -3,6 +3,7 @@ import { EmpresaResumo, UsuarioEmpresa } from "../model/admin";
 import { Empresa } from "../model/empresa";
 import { Funcionario } from "../model/funcionario";
 import { MotoristaResumo } from "../model/admin";
+import { RotaTabelaPreco } from "../model/tabela-preco";
 import { getToken } from "../utils/token/get-token";
 
 /**
@@ -62,6 +63,11 @@ export async function listarCooperativasDaEmpresa(
       `/api/v1/empresa/${empresaId}/cooperativas`,
     )) ?? []
   );
+}
+
+/** Só as rotas ativas; a API não devolve as desativadas. */
+export async function listarTabelaPreco(empresaId: string): Promise<RotaTabelaPreco[]> {
+  return (await getJson<RotaTabelaPreco[]>(`/api/v1/tabela-preco/empresa/${empresaId}`)) ?? [];
 }
 
 /** O backend devolve apenas id e nome nesta rota (MotoristaBasicDTO). */
