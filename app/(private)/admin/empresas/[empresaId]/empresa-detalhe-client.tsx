@@ -350,7 +350,7 @@ export default function EmpresaDetalheClient({
                         </Alert.Title>
                         <Alert.Description>
                           Cadastradas antes dos valores da cooperativa e dos acréscimos, estão sem
-                          esses valores. Enquanto isso, o motorista não consegue lançar roteiro
+                          esses valores. Enquanto isso, o motorista não consegue marcar roteiro
                           extremo nem hora parada nessas corridas. Use Editar para preencher.
                         </Alert.Description>
                       </Alert.Content>

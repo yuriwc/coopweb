@@ -46,8 +46,8 @@ const ROTULO_CAMPO: Record<CampoValorRota, string> = {
   precoCooperativa: "Valor da rota",
   acrescimoRoteiroExtremo: "Roteiro extremo (acréscimo)",
   acrescimoRoteiroExtremoCooperativa: "Roteiro extremo (acréscimo)",
-  valorHoraParada: "Hora parada (por hora)",
-  valorHoraParadaCooperativa: "Hora parada (por hora)",
+  valorHoraParada: "Hora parada (valor fixo)",
+  valorHoraParadaCooperativa: "Hora parada (valor fixo)",
 };
 
 function camposIniciais(rota: RotaTabelaPreco | null): Campos {
@@ -174,7 +174,7 @@ export default function RotaTabelaPrecoModal({
                         <Alert.Content>
                           <Alert.Title>Rota sem os valores da cooperativa e dos acréscimos</Alert.Title>
                           <Alert.Description>
-                            Preencha os campos vazios. Até lá, o motorista não consegue lançar
+                            Preencha os campos vazios. Até lá, o motorista não consegue marcar
                             roteiro extremo nem hora parada nas corridas desta rota.
                           </Alert.Description>
                         </Alert.Content>
@@ -261,9 +261,9 @@ export default function RotaTabelaPrecoModal({
                     </div>
 
                     <p className="text-xs text-muted -mt-2">
-                      O roteiro extremo é somado quando o motorista marca a corrida assim. A hora
-                      parada é cobrada proporcional aos minutos parados. Use 0 quando a rota não
-                      tiver o acréscimo.
+                      Roteiro extremo e hora parada são somados uma vez quando o motorista marca a
+                      opção na finalização, independente do tempo de espera. Use 0 quando a rota
+                      não tiver o acréscimo.
                     </p>
 
                     {paresInvertidos.length > 0 ? (

@@ -14,7 +14,7 @@ export interface RotaTabelaPreco {
   precoCooperativa: number | null;
   acrescimoRoteiroExtremo: number | null;
   acrescimoRoteiroExtremoCooperativa: number | null;
-  /** Valor de uma hora parada; a cobrança é proporcional aos minutos informados pelo motorista. */
+  /** Valor fixo, somado uma vez quando o motorista marca hora parada (UC-ADM-04 v0.3). */
   valorHoraParada: number | null;
   valorHoraParadaCooperativa: number | null;
   ativo: boolean;
