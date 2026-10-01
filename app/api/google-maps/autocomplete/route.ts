@@ -3,7 +3,9 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const input = searchParams.get('input');
-  
+  // tipo=cidade: só municípios (tabela de preços); sem ele, endereços e estabelecimentos
+  const somenteCidades = searchParams.get('tipo') === 'cidade';
+
   if (!input) {
     return NextResponse.json({ error: 'Input parameter is required' }, { status: 400 });
   }
@@ -21,7 +23,7 @@ export async function GET(request: NextRequest) {
     url.searchParams.append('key', apiKey);
     url.searchParams.append('input', input);
     url.searchParams.append('components', 'country:br');
-    url.searchParams.append('types', 'establishment|geocode');
+    url.searchParams.append('types', somenteCidades ? '(cities)' : 'establishment|geocode');
     url.searchParams.append('language', 'pt-BR');
 
     const response = await fetch(url.toString());

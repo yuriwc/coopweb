@@ -2,17 +2,21 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Card, Chip, Table, Tabs, useOverlayState } from "@heroui/react";
+import { Alert, Button, Card, Chip, Table, Tabs, useOverlayState } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import ShowToast from "@/src/components/Toast";
 import { ROLE_LABEL, Role, UsuarioEmpresa } from "@/src/model/admin";
 import { Cooperativa } from "@/src/model/cooperativas";
 import { Empresa } from "@/src/model/empresa";
 import { Funcionario } from "@/src/model/funcionario";
+import { RotaTabelaPreco, rotaIncompleta } from "@/src/model/tabela-preco";
+import DesativarRotaModal from "./desativar-rota-modal";
 import NovoUsuarioModal from "./novo-usuario-modal";
+import RotaTabelaPrecoModal from "./rota-tabela-preco-modal";
+import TabelaPrecosTable from "./tabela-precos-table";
 import VincularCooperativaModal from "./vincular-cooperativa-modal";
 
-type Aba = "funcionarios" | "usuarios" | "cooperativas";
+type Aba = "funcionarios" | "usuarios" | "cooperativas" | "precos";
 
 interface EmpresaDetalheClientProps {
   empresaId: string;
@@ -21,6 +25,7 @@ interface EmpresaDetalheClientProps {
   usuarios: UsuarioEmpresa[];
   cooperativasVinculadas: { label: string; value: string }[];
   todasCooperativas: Cooperativa[];
+  tabelaPreco: RotaTabelaPreco[];
 }
 
 function rotuloRole(role: Role | null) {
@@ -34,14 +39,52 @@ export default function EmpresaDetalheClient({
   usuarios,
   cooperativasVinculadas,
   todasCooperativas,
+  tabelaPreco,
 }: EmpresaDetalheClientProps) {
   const router = useRouter();
   const [aba, setAba] = useState<Aba>("funcionarios");
   const novoUsuario = useOverlayState();
   const vincularCooperativa = useOverlayState();
+  const formRota = useOverlayState();
+  const desativarRota = useOverlayState();
+  const [rotaSelecionada, setRotaSelecionada] = useState<RotaTabelaPreco | null>(null);
 
   const idsVinculados = new Set(cooperativasVinculadas.map((c) => c.value));
   const cooperativasDisponiveis = todasCooperativas.filter((c) => !idsVinculados.has(c.id));
+
+  const rotas = [...tabelaPreco].sort(
+    (a, b) =>
+      a.cidadeOrigem.localeCompare(b.cidadeOrigem, "pt-BR") ||
+      a.cidadeDestino.localeCompare(b.cidadeDestino, "pt-BR"),
+  );
+  const rotasIncompletas = rotas.filter(rotaIncompleta).length;
+
+  function abrirNovaRota() {
+    setRotaSelecionada(null);
+    formRota.open();
+  }
+
+  function abrirEdicaoRota(rota: RotaTabelaPreco) {
+    setRotaSelecionada(rota);
+    formRota.open();
+  }
+
+  function abrirDesativacaoRota(rota: RotaTabelaPreco) {
+    setRotaSelecionada(rota);
+    desativarRota.open();
+  }
+
+  function handleRotaSalva(acao: "criada" | "atualizada") {
+    formRota.close();
+    ShowToast({ color: "success", title: acao === "criada" ? "Rota cadastrada" : "Rota atualizada" });
+    router.refresh();
+  }
+
+  function handleRotaDesativada() {
+    desativarRota.close();
+    ShowToast({ color: "success", title: "Rota desativada" });
+    router.refresh();
+  }
 
   function handleUsuarioCriado() {
     novoUsuario.close();
@@ -90,6 +133,11 @@ export default function EmpresaDetalheClient({
                   <Tabs.Tab id="cooperativas">
                     <Tabs.Separator />
                     Cooperativas ({cooperativasVinculadas.length})
+                    <Tabs.Indicator />
+                  </Tabs.Tab>
+                  <Tabs.Tab id="precos">
+                    <Tabs.Separator />
+                    Tabela de preços ({rotas.length})
                     <Tabs.Indicator />
                   </Tabs.Tab>
                 </Tabs.List>
@@ -277,6 +325,57 @@ export default function EmpresaDetalheClient({
                   )}
                 </div>
               </Tabs.Panel>
+
+              <Tabs.Panel id="precos">
+                <div className="pt-4 space-y-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Preço fixo por rota: quanto a empresa paga e quanto a cooperativa recebe.
+                      Cada rota vale nos dois sentidos.
+                    </p>
+                    <Button variant="primary" size="sm" onPress={abrirNovaRota}>
+                      <Icon icon="solar:add-circle-linear" className="w-4 h-4" />
+                      Nova rota
+                    </Button>
+                  </div>
+
+                  {rotasIncompletas > 0 ? (
+                    <Alert status="warning">
+                      <Alert.Indicator />
+                      <Alert.Content>
+                        <Alert.Title>
+                          {rotasIncompletas === 1
+                            ? "1 rota precisa ser atualizada"
+                            : `${rotasIncompletas} rotas precisam ser atualizadas`}
+                        </Alert.Title>
+                        <Alert.Description>
+                          Cadastradas antes dos valores da cooperativa e dos acréscimos, estão sem
+                          esses valores. Enquanto isso, o motorista não consegue lançar roteiro
+                          extremo nem hora parada nessas corridas. Use Editar para preencher.
+                        </Alert.Description>
+                      </Alert.Content>
+                    </Alert>
+                  ) : null}
+
+                  {rotas.length === 0 ? (
+                    <div className="text-center py-12">
+                      <Icon icon="solar:tag-price-linear" className="w-12 h-12 mx-auto text-muted" />
+                      <h3 className="text-lg font-semibold text-muted mt-4">
+                        Nenhuma rota com preço fixo
+                      </h3>
+                      <p className="text-sm text-muted">
+                        Viagens entre cidades sem rota cadastrada não recebem preço de tabela.
+                      </p>
+                    </div>
+                  ) : (
+                    <TabelaPrecosTable
+                      rotas={rotas}
+                      onEditar={abrirEdicaoRota}
+                      onDesativar={abrirDesativacaoRota}
+                    />
+                  )}
+                </div>
+              </Tabs.Panel>
             </Tabs>
           </Card.Content>
         </Card>
@@ -295,6 +394,22 @@ export default function EmpresaDetalheClient({
         empresaId={empresaId}
         cooperativas={cooperativasDisponiveis}
         onSucesso={handleCooperativaVinculada}
+      />
+
+      <RotaTabelaPrecoModal
+        isOpen={formRota.isOpen}
+        onOpenChange={formRota.setOpen}
+        empresaId={empresaId}
+        rota={rotaSelecionada}
+        onSucesso={handleRotaSalva}
+      />
+
+      <DesativarRotaModal
+        isOpen={desativarRota.isOpen}
+        onOpenChange={desativarRota.setOpen}
+        empresaId={empresaId}
+        rota={rotaSelecionada}
+        onSucesso={handleRotaDesativada}
       />
     </div>
   );

@@ -114,4 +114,6 @@ export type ResultadoAcao<T = undefined> = {
   success: boolean;
   message?: string;
   data?: T;
+  /** Erros de validação por campo (nome do campo no DTO → mensagem), quando o backend os envia. */
+  errors?: Record<string, string>;
 };
